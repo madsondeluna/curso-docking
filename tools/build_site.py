@@ -27,6 +27,7 @@ ICONS = ['material/key-variant', 'material/book-alphabet', 'material/magnet', 'm
 
 
 def slug(text):
+    text = text.replace('Δ', 'delta ')
     text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode()
     return re.sub(r'[^a-z0-9]+', '-', text.lower()).strip('-')[:48].rstrip('-')
 

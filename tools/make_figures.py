@@ -939,8 +939,186 @@ def fig_fluxo():
     save(fig, 'pratica_fluxo.png')
 
 
+# ---------------------------------------------------------------- energia de ligacao: dG e ddG
+RT = 0.593        # kcal/mol a 25 C
+ERRO_VINA = 2.85  # erro padrao da funcao do Vina no conjunto de treino (Trott e Olson, 2010)
+
+
+def _kd(g):
+    """Kd (mol/L) estimado a partir de um dG (kcal/mol), em texto curto."""
+    k = np.exp(g / RT)
+    for fator, un in ((1e-12, 'pM'), (1e-9, 'nM'), (1e-6, 'µM'), (1e-3, 'mM')):
+        if k < fator * 1000:
+            v = k / fator
+            return f'{float(f"{v:.2g}"):g} {un}'
+    return f'{k:.2f} M'
+
+
+def _poco(ax, x0, largura, profundidade, cor, n=200):
+    """Perfil de energia livre com um poco gaussiano; devolve o ponto mais fundo."""
+    x = np.linspace(x0, x0 + largura, n)
+    c, w = x0 + largura / 2, largura / 7
+    y = -profundidade * np.exp(-((x - c) ** 2) / (2 * w ** 2))
+    ax.plot(x, y, color=INK, lw=1.4, zorder=2)
+    ax.fill_between(x, y, 0, color=cor, alpha=0.18, lw=0, zorder=1)
+    return c, -profundidade
+
+
+def _ligante(ax, x, y, cor=POSE):
+    ax.scatter([x - 0.12, x, x + 0.12], [y + 0.32, y + 0.38, y + 0.32], s=60, color=cor, edgecolor=INK,
+               lw=0.5, zorder=5)
+
+
+def fig_dg_poco():
+    fig, ax = plt.subplots(figsize=(12, 5.2))
+    casos = ((0.3, 'Mpro + ensitrelvir', _load_rows('mpro')[0]['energia_kcal_mol'], C[0]),
+             (7.6, 'eIF4E + cap do mRNA', _load_rows('eif4e')[0]['energia_kcal_mol'], C[7]))
+    ax.axhline(0, color=GREY, lw=1, ls=(0, (4, 3)), zorder=0)
+    ax.text(14.4, 0.25, 'receptor e ligante separados: nível de referência', ha='right', fontsize=9.5, color=GREY)
+    for x0, nome, g, cor in casos:
+        c, fundo = _poco(ax, x0, 5.2, -g, cor)
+        _ligante(ax, c, fundo)
+        ax.text(c, 1.1, nome, ha='center', fontsize=11)
+        ax.plot([c, c + 2.9], [fundo, fundo], color=cor, lw=0.8, ls=(0, (2, 2)))
+        ax.add_patch(FancyArrowPatch((c + 2.85, 0), (c + 2.85, fundo), arrowstyle='-|>', mutation_scale=13,
+                                     lw=1.3, color=cor, zorder=4))
+        ax.text(c + 3.0, fundo / 2, f'ΔG = {g:.1f}\nkcal/mol'.replace('.', ',').replace('-', '−'), va='center',
+                fontsize=10, color=cor)
+        ax.text(c, fundo - 0.9, f'Kd estimado ≈ {_kd(g)}', ha='center', va='top', fontsize=9.5)
+    ax.text(7.2, -12.2, 'Poço mais fundo: o ligante precisa de mais energia para sair, e passa mais tempo ligado.',
+            ha='center', fontsize=10)
+    ax.set_xlim(0, 14.5); ax.set_ylim(-12.8, 1.9)
+    ax.set_ylabel('Energia livre (kcal/mol)')
+    ax.tick_params(axis='x', bottom=False, top=False, labelbottom=False)
+    ax.set_title('ΔG de ligação: a profundidade do poço (pose 1 do Vina nas práticas A e B)')
+    save(fig, 'fund_dg_poco.png')
+
+
+def fig_dg_kd():
+    fig, ax = plt.subplots(figsize=(13, 3.9))
+    zonas = ((0, -4.1, '#eef0f4', 'muito fraca\nKd acima de 1 mM'), (-4.1, -8.2, '#dde1e9', 'fraca\nKd entre 1 µM e 1 mM'),
+             (-8.2, -12.3, '#c5ccd9', 'forte\nKd entre 1 nM e 1 µM'), (-12.3, -16.4, '#aab4c6', 'muito forte\nKd abaixo de 1 nM'))
+    for a, b, cor, lab in zonas:
+        ax.add_patch(Rectangle((b, 0), a - b, 1, fc=cor, ec='white', lw=1.5, zorder=1))
+        ax.text((a + b) / 2, 0.5, lab, ha='center', va='center', fontsize=9.5)
+    for k, lab in ((1e-3, '1 mM'), (1e-6, '1 µM'), (1e-9, '1 nM'), (1e-12, '1 pM')):
+        g = RT * np.log(k)
+        ax.plot([g, g], [1, 1.12], color=INK, lw=1)
+        ax.text(g, 1.17, lab, ha='center', va='bottom', fontsize=9.5)
+    ax.text(-8.2, 1.55, 'Kd', ha='center', fontsize=10)
+    for nome, cor, lab in (('mpro', C[0], 'Prática A'), ('eif4e', C[7], 'Prática B')):
+        g = _load_rows(nome)[0]['energia_kcal_mol']
+        ax.plot(g, -0.18, marker='^', ms=11, color=cor, mec=INK, mew=0.5, clip_on=False, zorder=5)
+        ax.text(g, -0.38, f'{lab}\n{g:.1f}'.replace('.', ',').replace('-', '−'), ha='center', va='top', fontsize=9,
+                color=cor)
+    y = -1.05
+    ax.annotate('', xy=(-13.66, y), xytext=(-12.3, y), arrowprops=dict(arrowstyle='-|>', color=INK, lw=1.2))
+    ax.text(-14.0, y, '1,36 kcal/mol mais negativo = Kd 10 vezes menor', ha='left', va='center', fontsize=9.5)
+    ax.set_xlim(0.3, -16.9); ax.set_ylim(-1.35, 1.85)
+    ax.set_xticks(np.arange(0, -17, -2))
+    ax.set_xticklabels([f'{v:.0f}'.replace('-', '−') for v in np.arange(0, -17, -2)])
+    ax.set_xlabel('ΔG de ligação (kcal/mol), ΔG = RT ln Kd com RT = 0,593 kcal/mol a 25 °C')
+    ax.tick_params(axis='y', left=False, right=False, labelleft=False)
+    ax.tick_params(axis='x', top=False)
+    for lado in ('left', 'right', 'top'):
+        ax.spines[lado].set_visible(False)
+    ax.spines['bottom'].set_position(('data', -1.35))
+    ax.set_title('Régua de afinidade: ΔG e Kd')
+    save(fig, 'fund_dg_kd.png')
+
+
+def fig_dg_entalpia():
+    fig, ax = plt.subplots(figsize=(9.5, 5.0))
+    lig = (('ligante A\nmuitos contatos, perde liberdade', -14.0, 5.0), ('ligante B\npoucos contatos, libera água', -5.0, -4.0))
+    w = 0.24
+    for i, (nome, dh, ts) in enumerate(lig):
+        for j, (v, cor) in enumerate(((dh, C[0]), (ts, C[5]), (dh + ts, INK))):
+            x = i + (j - 1) * (w + 0.04)
+            ax.bar(x, v, width=w, color=cor, edgecolor=INK, lw=0.5)
+            ax.text(x, v + (0.4 if v > 0 else -0.4), f'{v:+.0f}'.replace('-', '−'), ha='center',
+                    va='bottom' if v > 0 else 'top', fontsize=9.5)
+    ax.axhline(0, color=INK, lw=0.8)
+    ax.set_xticks([0, 1]); ax.set_xticklabels([n for n, _, _ in lig])
+    ax.tick_params(axis='x', top=False, bottom=False)
+    ax.set_xlim(-0.55, 1.55); ax.set_ylim(-17, 8)
+    ax.set_ylabel('kcal/mol')
+    ax.legend(handles=[Rectangle((0, 0), 1, 1, fc=C[0], ec=INK, lw=0.5, label='ΔH: ligações e contatos formados'),
+                       Rectangle((0, 0), 1, 1, fc=C[5], ec=INK, lw=0.5, label='−TΔS: liberdade perdida, água liberada'),
+                       Rectangle((0, 0), 1, 1, fc=INK, ec=INK, lw=0.5, label='ΔG = ΔH − TΔS')],
+              loc='upper right', fontsize=9)
+    ax.set_title('Dois ligantes com o mesmo ΔG = −9 kcal/mol por caminhos diferentes (esquema)')
+    save(fig, 'fund_dg_entalpia.png')
+
+
+def fig_ddg():
+    fig, (a, b) = plt.subplots(1, 2, figsize=(13, 5.0), gridspec_kw={'width_ratios': [1.25, 1]})
+    a.axhline(0, color=GREY, lw=1, ls=(0, (4, 3)), zorder=0)
+    a.text(10.9, 0.15, 'separados', ha='right', va='bottom', fontsize=9.5, color=GREY)
+    c1, f1 = _poco(a, 0.3, 4.6, 9.0, CRISTAL)
+    c2, f2 = _poco(a, 5.6, 4.6, 5.5, ERRO)
+    _ligante(a, c1, f1); _ligante(a, c2, f2)
+    a.text(c1, 0.7, 'proteína selvagem', ha='center', fontsize=10.5)
+    a.text(c2, 0.7, 'proteína mutante', ha='center', fontsize=10.5)
+    a.plot([c1, c2 + 1.3], [f1, f1], color=CRISTAL, lw=0.9, ls=(0, (2, 2)))
+    a.add_patch(FancyArrowPatch((c2 + 1.2, f1), (c2 + 1.2, f2), arrowstyle='-|>', mutation_scale=13, lw=1.3,
+                                color=ERRO, zorder=4))
+    a.text(c2 + 1.4, (f1 + f2) / 2, 'ΔΔG > 0', va='center', fontsize=10.5, color=ERRO)
+    a.text(5.5, -10.6, 'ΔΔG = ΔG(mutante) − ΔG(selvagem)', ha='center', fontsize=10.5)
+    a.text(5.5, -11.5, 'positivo: a mutação deixa o poço mais raso e enfraquece a ligação', ha='center', fontsize=9.5)
+    a.set_xlim(0, 11); a.set_ylim(-12, 1.4)
+    a.set_ylabel('Energia livre (kcal/mol)')
+    a.tick_params(axis='x', bottom=False, top=False, labelbottom=False)
+    a.set_title('ΔΔG: o mesmo ligante em duas proteínas (esquema)')
+    dd = [0, 1.364, 2.728, 4.092]
+    vezes = [1, 10, 100, 1000]
+    b.bar(range(4), vezes, color=[GREY, C[5], ERRO, ERRO], edgecolor=INK, lw=0.5, width=0.6)
+    for i, v in enumerate(vezes):
+        b.text(i, v * 1.25, f'{v}×'.replace('1000', '1 000'), ha='center', va='bottom', fontsize=10)
+    b.axvline(1.62, color=INK, ls=(0, (4, 3)), lw=1)
+    b.text(1.68, 6000, 'hot spot: ΔΔG ≥ 2 kcal/mol\n(Bogan e Thorn, 1998)', fontsize=9, va='top')
+    b.set_yscale('log'); b.set_ylim(0.5, 1e4)
+    b.set_xticks(range(4)); b.set_xticklabels([f'{v:.2f}'.replace('.', ',') for v in dd])
+    b.tick_params(axis='x', top=False)
+    b.set_xlabel('ΔΔG (kcal/mol)'); b.set_ylabel('Quantas vezes o Kd aumenta')
+    b.set_title('Cada 1,36 kcal/mol multiplica o Kd por 10')
+    fig.tight_layout(w_pad=3)
+    save(fig, 'fund_ddg.png')
+
+
+def fig_ddg_poses():
+    fig, axs = plt.subplots(1, 2, figsize=(13, 5.0))
+    lugar = {'mpro': ((1.6, -9.55), (5.0, -8.95)), 'eif4e': ((1.6, -6.95), (9.6, -5.62))}
+    for ax, nome, alvo, titulo in ((axs[0], 'mpro', 2, 'Prática A, Mpro: pose 1 contra pose 2'),
+                                   (axs[1], 'eif4e', 16, 'Prática B, eIF4E: pose 1 contra pose 16')):
+        rows = _load_rows(nome)
+        e = np.array([r['energia_kcal_mol'] for r in rows]); r = np.array([r['rmsd_A'] for r in rows])
+        x = np.arange(1, len(e) + 1)
+        ax.axhspan(e[0], e[0] + ERRO_VINA, color=BAND, lw=0, zorder=0)
+        cores = [CRISTAL if v < 2 else ERRO for v in r]
+        ax.scatter(x, e, c=cores, s=50, edgecolor=INK, lw=0.4, zorder=3)
+        g1, g2 = e[0], e[alvo - 1]
+        ax.annotate(f'pose {alvo}: {g2:.2f} kcal/mol, RMSD {r[alvo - 1]:.1f} Å'.replace('.', ',').replace('-', '−'),
+                    (alvo, g2), xytext=lugar[nome][1], textcoords='data', ha='left', va='center', fontsize=9,
+                    arrowprops=dict(arrowstyle='-', color=INK, lw=0.7))
+        ax.annotate(f'pose 1: {g1:.2f} kcal/mol, RMSD {r[0]:.1f} Å'.replace('.', ',').replace('-', '−'),
+                    (1, g1), xytext=lugar[nome][0], textcoords='data', ha='left', va='center', fontsize=9,
+                    arrowprops=dict(arrowstyle='-', color=INK, lw=0.7))
+        ax.text(len(e) + 0.5, e[0] + ERRO_VINA - 0.12,
+                f'faixa de {ERRO_VINA:.2f} kcal/mol acima da pose 1:\no erro típico do Vina não separa estas poses\n'
+                f'ΔΔG entre pose 1 e pose {alvo} = {g2 - g1:.2f} kcal/mol'.replace('.', ','),
+                ha='right', va='top', fontsize=9)
+        ax.set_xlim(0, len(e) + 1); ax.set_ylim(e.min() - 1.3, e[0] + ERRO_VINA + 0.3)
+        ax.set_xticks([1, 5, 10, 15, 20])
+        ax.set_xlabel('Pose, em ordem de energia'); ax.set_ylabel('Energia do Vina (kcal/mol)')
+        ax.set_title(titulo)
+    legend(fig, [('RMSD < 2 Å: pose correta', CRISTAL), ('RMSD > 3 Å: pose errada', ERRO)], y=-0.01)
+    fig.tight_layout(rect=(0, 0.05, 1, 1), w_pad=3)
+    save(fig, 'fund_ddg_poses.png')
+
+
 def main():
     fig_binding_models(); fig_vocabulary(); fig_forces(); fig_flexibility(); fig_search(); fig_levels_cost()
+    fig_dg_poco(); fig_dg_kd(); fig_dg_entalpia(); fig_ddg(); fig_ddg_poses()
     fig_smiles(); fig_smiles_reading(); fig_resistance(); fig_p53_mdm2(); fig_barnase_barstar(); fig_md_docking()
     fig_cavidades(); fig_tipos_sitio(); fig_pocket_ranking(); fig_fluxo()
     fig_poses_scatter(); fig_mpro_result(); fig_eif4e_result(); fig_rmsd(); fig_metrics(); fig_fingerprint()

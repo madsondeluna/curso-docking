@@ -27,6 +27,7 @@ Material didático e prática em servidores web sobre docking molecular: prever 
 | 1 | O que o docking responde e o que não responde | seção 1 |
 | 2 | Chave e fechadura, encaixe induzido, seleção conformacional | seção 2 |
 | 3 | As forças que seguram o ligante | seção 3 |
+| 3b | Energia de ligação: ΔG, Kd, ΔH e TΔS, ΔΔG entre poses, mutantes e ligantes | seção Energia de ligação |
 | 4 | Tipos de sítio; nem toda cavidade é um sítio | seção 4 |
 | 5 | Tipos de docking: flexibilidade, busca, parceiros | seção 5 |
 | 6 | Níveis de modelagem e quanto cada um custa | seção 6 |
@@ -89,6 +90,69 @@ A energia de um complexo vem de interações fracas somadas, mais o custo de tir
 **Exemplo saudável.** O reconhecimento do cap pela eIF4E é um sanduíche cátion-π: a guanina metilada, carregada positivamente, fica entre dois triptofanos (Tomoo *et al.*, 2002). Essa é a interação que a Prática B tenta reproduzir.
 
 **Exemplo patológico.** Caudas e cargas erradas quebram o reconhecimento. Na anemia falciforme, trocar um glutamato por uma valina põe um ponto hidrofóbico na superfície da hemoglobina, e as moléculas passam a se grudar umas nas outras em vez de ficarem dispersas.
+
+
+## Energia de ligação: ΔG e ΔΔG
+
+Todo número que o docking devolve é uma estimativa de ΔG de ligação. Esta seção diz o que esse número significa, como ele se liga à afinidade medida em bancada e o que é o ΔΔG, a diferença entre dois ΔG.
+
+**O que é ΔG de ligação.** É a diferença de energia livre entre o complexo e as duas moléculas separadas:
+
+$$\Delta G_{lig} = G_{complexo} - (G_{receptor} + G_{ligante})$$
+
+ΔG negativo quer dizer que a ligação acontece espontaneamente; quanto mais negativo, mais estável o complexo.
+
+**Analogia: o poço.** Receptor e ligante separados ficam no nível de referência. Ao se ligarem, o sistema desce para um poço, e o ΔG é a profundidade dele. Num poço fundo o ligante precisa de muita energia para sair e passa mais tempo ligado; num poço raso ele sai com facilidade.
+
+![ΔG como profundidade do poço](imagens/fund_dg_poco.png)
+
+**ΔG e Kd.** A constante de dissociação Kd é a concentração de ligante em que metade dos receptores está ocupada. As duas grandezas se relacionam por ΔG = RT ln Kd, com Kd em mol/L e RT = 0,593 kcal/mol a 25 °C. A escala é logarítmica: cada 1,36 kcal/mol mais negativo divide o Kd por 10.
+
+| ΔG (kcal/mol) | Kd | Leitura |
+|---------------|----|---------|
+| −4,1 | 1 mM | ligação muito fraca, típica de fragmentos |
+| −8,2 | 1 µM | ponto de partida comum de um composto ativo |
+| −12,3 | 1 nM | afinidade típica de um fármaco otimizado |
+| −16,4 | 1 pM | ligação muito forte, como a de anticorpos de alta afinidade |
+
+![Régua de afinidade](imagens/fund_dg_kd.png)
+
+**Do que o ΔG é feito.** ΔG = ΔH − TΔS. O termo ΔH soma as ligações de hidrogênio, pontes salinas e contatos que se formam, descontados os que o ligante e o receptor faziam com a água. O termo −TΔS mede a ordem: o ligante e as cadeias laterais perdem liberdade ao se encaixar, o que custa energia, e as águas que forravam o bolsão saem para o solvente, o que devolve energia. Dois ligantes podem chegar ao mesmo ΔG por caminhos opostos, um com muitos contatos e muita perda de liberdade, outro com poucos contatos e muita água liberada.
+
+![Entalpia e entropia](imagens/fund_dg_entalpia.png)
+
+**O que o docking calcula.** A energia do AutoDock Vina é uma função empírica: soma termos de contato estérico, ligação de hidrogênio e contato hidrofóbico, com pesos ajustados para reproduzir afinidades medidas, e divide o total por 1 + 0,0585 × N, em que N é o número de ligações rotáveis do ligante, uma correção grosseira para a liberdade perdida (Trott e Olson, 2010). A função não tem termo eletrostático explícito, trata a água de forma implícita e mantém o receptor rígido. No conjunto de treino, o erro padrão foi de 2,85 kcal/mol, o equivalente a um fator de cerca de 100 no Kd.
+
+**ΔG entre poses.** Para o mesmo ligante no mesmo receptor, cada pose recebe um ΔG, e o programa as ordena por ele. A diferença entre duas poses é pequena perto do erro da função:
+
+| Prática | Pose 1 | Pose comparada | Diferença | RMSD das duas |
+|---------|--------|----------------|-----------|---------------|
+| A, Mpro | −9,13 | pose 2: −8,71 | 0,42 kcal/mol | 1,5 Å contra 8,3 Å |
+| B, eIF4E | −6,53 | pose 16: −4,98 | 1,55 kcal/mol | 6,5 Å contra 4,3 Å |
+
+Na Mpro, a pose certa e uma pose 8 Å fora estão separadas por 0,42 kcal/mol. Na eIF4E, a pose mais próxima do cristal fica 1,55 kcal/mol pior que a primeira. As duas diferenças estão dentro dos 2,85 kcal/mol de erro: a energia sozinha não decide entre elas.
+
+![ΔG entre poses nas práticas](imagens/fund_ddg_poses.png)
+
+**ΔΔG.** É a diferença entre dois ΔG. Comparando uma proteína mutante com a selvagem, para o mesmo ligante:
+
+$$\Delta\Delta G = \Delta G_{mutante} - \Delta G_{selvagem}$$
+
+| ΔΔG | Significado | Efeito no Kd |
+|-----|-------------|--------------|
+| positivo | a mutação deixa o poço mais raso e enfraquece a ligação | Kd maior |
+| perto de zero | a mutação não altera a ligação | igual |
+| negativo | a mutação aprofunda o poço e fortalece a ligação | Kd menor |
+
+A mesma conta compara dois ligantes no mesmo receptor, ΔG(ligante B) − ΔG(ligante A), e é a base para decidir qual análogo sintetizar. Um ΔΔG de 1,36 kcal/mol multiplica o Kd por 10; 2,73 kcal/mol, por 100.
+
+![ΔΔG entre selvagem e mutante](imagens/fund_ddg.png)
+
+**Exemplo saudável: hot spots de interfaces.** Trocando resíduos por alanina, um a um, e medindo o ΔΔG de cada troca em 2 325 mutantes, Bogan e Thorn (1998) mostraram que a energia de uma interface proteína-proteína se concentra em poucos resíduos, os hot spots, ricos em triptofano, tirosina e arginina e cercados por resíduos que afastam a água. Na barnase e na barstar, pares de resíduos carregados contribuem com 1,6 a 7 kcal/mol de energia de acoplamento (Schreiber e Fersht, 1995).
+
+**Exemplo patológico: resistência.** A mutação T315I da ABL é um ΔΔG positivo para o imatinibe: o fármaco perde a ligação de hidrogênio com a Thr315 e esbarra na isoleucina, enquanto a enzima continua ligando o ATP (seção 9). A resistência a um fármaco é, em termos de energia, uma mutação com ΔΔG grande para o fármaco e pequeno para o substrato natural.
+
+**O que o docking diz sobre ΔΔG.** Na Prática B, o cap completo (m7GTP, três fosfatos) e o m7GMP (um fosfato) receberam −6,53 e −6,44 kcal/mol: ΔΔG de 0,09 kcal/mol, embora no cristal os três fosfatos façam pontes salinas com Arg157, Lys162 e Glu103. Diferenças de 1 a 2 kcal/mol ficam abaixo do que o docking resolve. Para ΔΔG nessa faixa, os cálculos de perturbação de energia livre chegam a um erro próximo de 1 kcal/mol (Wang *et al.*, 2015), ao custo de dias em GPU (seção 6).
 
 
 ## 4. Onde o ligante se encaixa: tipos de sítio
@@ -222,7 +286,7 @@ Quatro números, e o que conta como bom e como ruim em cada um.
 
 ![Como o RMSD é calculado](imagens/fund_rmsd.png)
 
-**Energia e constante de dissociação.** Dá para converter a pontuação numa estimativa grosseira de Kd por Kd ≈ exp(ΔG/RT), com RT ≈ 0,593 kcal/mol a 25 °C. A pose 1 da Prática A, com −9,1 kcal/mol, daria cerca de 200 nM; a da Prática B, com −6,5, daria cerca de 17 µM. Trate esses valores como ordem de grandeza, nunca como medida.
+**Energia e constante de dissociação.** Dá para converter a pontuação numa estimativa grosseira de Kd por Kd ≈ exp(ΔG/RT), com RT ≈ 0,593 kcal/mol a 25 °C. A pose 1 da Prática A, com −9,1 kcal/mol, daria cerca de 200 nM; a da Prática B, com −6,5, daria cerca de 17 µM. Trate esses valores como ordem de grandeza, nunca como medida; a seção Energia de ligação detalha a conversão.
 
 **Eficiência do ligante.** Dividir a energia pelo número de átomos pesados evita premiar moléculas grandes só por serem grandes (Hopkins, Groom e Alex, 2004). O ensitrelvir, com 37 átomos pesados, fica em 0,25 kcal/mol por átomo; o cap, com 33, fica em 0,20.
 
@@ -447,6 +511,8 @@ Os arquivos com todas as cavidades e as distâncias até os ligantes estão em [
 - Jumper, J. *et al.* Highly accurate protein structure prediction with AlphaFold. *Nature* **2021**, *596*, 583-589. https://doi.org/10.1038/s41586-021-03819-2
 - Kim, S. *et al.* PubChem 2023 update. *Nucleic Acids Res.* **2022**, *51*, D1373-D1380. https://doi.org/10.1093/nar/gkac956
 - Weininger, D. SMILES, a chemical language and information system. 1. Introduction to methodology and encoding rules. *J. Chem. Inf. Comput. Sci.* **1988**, *28*, 31-36. https://doi.org/10.1021/ci00057a005
+- Bogan, A. A.; Thorn, K. S. Anatomy of hot spots in protein interfaces. *J. Mol. Biol.* **1998**, *280*, 1-9. https://doi.org/10.1006/jmbi.1998.1843
+- Schreiber, G.; Fersht, A. R. Energetics of protein-protein interactions: analysis of the barnase-barstar interface by single mutations and double mutant cycles. *J. Mol. Biol.* **1995**, *248*, 478-486. https://doi.org/10.1016/s0022-2836(95)80064-6
 - Hopkins, A. L.; Groom, C. R.; Alex, A. Ligand efficiency: a useful metric for lead selection. *Drug Discov. Today* **2004**, *9*, 430-431. https://doi.org/10.1016/S1359-6446(04)03069-7
 
 
