@@ -112,11 +112,11 @@ Na Mpro são oito cavidades e só a primeira é o sítio ativo. As outras sete f
 
 ![Cavidades da Mpro](imagens/fund_cavidades.png)
 
-**O caso alostérico, com número.** Na estrutura 5MO4 a ABL tem dois fármacos ligados ao mesmo tempo. O P2Rank acerta os dois: a cavidade 1 (escore 27,9) é o sítio do ATP, a 2,1 Å do nilotinibe, e a cavidade 3 (escore 5,0) é o bolso do miristoil, a 0,9 Å do asciminibe. Um sítio alostérico é uma cavidade de verdade, só costuma ser menor e pior pontuada que a ortostérica.
+**Sítio alostérico na quinase ABL.** Na estrutura 5MO4 a ABL tem dois fármacos ligados ao mesmo tempo. O P2Rank acerta os dois: a cavidade 1 (escore 27,9) é o sítio do ATP, a 2,1 Å do nilotinibe, e a cavidade 3 (escore 5,0) é o bolso do miristoil, a 0,9 Å do asciminibe. Um sítio alostérico é uma cavidade de verdade, só costuma ser menor e pior pontuada que a ortostérica.
 
 **Consequência clínica de um sítio alostérico.** O asciminibe se liga ao bolso onde normalmente entra a cauda miristoilada da própria proteína e trava a quinase numa forma inativa (Wylie *et al.*, 2017). Como não disputa o sítio do ATP, mantém atividade em leucemias com a mutação T315I, que confere resistência ao imatinibe (Gorre *et al.*, 2001). Mudar de cavidade foi a saída para a resistência.
 
-**O caso críptico, com número.** O KRAS foi considerado não medicável por décadas: a superfície é lisa, sem bolsão evidente ao lado do nucleotídeo. Ostrem *et al.* (2013) mostraram que inibidores covalentes da cisteína 12 abrem um bolso novo, o switch II, e disso veio o sotorasibe (Canon *et al.*, 2019). Na estrutura com o fármaco (6OIM), o P2Rank põe esse bolso em segundo lugar. Na estrutura sem fármaco (4OBE), ele ainda aparece, mas em terceiro lugar e com escore 9,5 contra 21,5 do sítio do GDP: existe, porém raso. Uma cavidade pode ser pequena demais hoje e virar sítio amanhã.
+**Sítio críptico no KRAS.** O KRAS foi considerado não medicável por décadas: a superfície é lisa, sem bolsão evidente ao lado do nucleotídeo. Ostrem *et al.* (2013) mostraram que inibidores covalentes da cisteína 12 abrem um bolso novo, o switch II, e disso veio o sotorasibe (Canon *et al.*, 2019). Na estrutura com o fármaco (6OIM), o P2Rank põe esse bolso em segundo lugar. Na estrutura sem fármaco (4OBE), ele ainda aparece, mas em terceiro lugar e com escore 9,5 contra 21,5 do sítio do GDP: existe, porém raso. Uma cavidade pode ser pequena demais hoje e virar sítio amanhã.
 
 **Cuidados ao olhar uma cavidade.**
 
@@ -170,7 +170,7 @@ A barnase e a barstar formam um dos complexos mais fortes já medidos entre duas
 
 **Como escolher o nível.** Use o mais barato que responda à sua pergunta. Para escolher 50 compostos entre um milhão, docking rígido basta. Para decidir qual de dois análogos sintetizar, docking não basta.
 
-**Escala real.** Lyun *et al.* (2019) testaram por docking mais de 170 milhões de moléculas que nem existiam em estoque, e compraram e testaram os melhores em bancada. Nessa escala, mesmo alguns segundos por molécula viram semanas de computador.
+**Triagem em escala de milhões.** Lyu *et al.* (2019) testaram por docking mais de 170 milhões de moléculas que nem existiam em estoque, e compraram e testaram os melhores em bancada. Nessa escala, mesmo alguns segundos por molécula viram semanas de computador.
 
 **Atenção com o aprendizado de máquina.** Modelos como o DiffDock produzem poses em segundos, mas uma avaliação independente mostrou que boa parte das poses geradas por métodos de IA viola geometria básica, como comprimentos de ligação e choques com a proteína (Buttenschoen, Morris e Deane, 2024). Velocidade não substitui conferir a pose.
 
@@ -265,7 +265,7 @@ Uma troca de um único resíduo no sítio muda o encaixe e pode anular um fárma
 | Depois | testa se a pose se mantém em água, a 310 K | uma pose boa no escore pode se desfazer em poucos nanossegundos |
 | Depois | estima a energia com MM/GBSA ou FEP | funções de pontuação de docking são rápidas, não exatas |
 
-**O critério prático.** Simule o complexo e acompanhe o RMSD do ligante ao longo do tempo. Se ele oscila numa faixa estreita, a pose é estável. Se cresce e o ligante sai do sítio, o docking entregou uma pose plausível na geometria e errada na física.
+**Como testar a estabilidade de uma pose.** Simule o complexo e acompanhe o RMSD do ligante ao longo do tempo. Se ele oscila numa faixa estreita, a pose é estável. Se cresce e o ligante sai do sítio, o docking entregou uma pose plausível na geometria e errada na física.
 
 O curso de dinâmica molecular deste mesmo conjunto cobre essa parte: [madsondeluna.com/curso-md](https://madsondeluna.com/curso-md/).
 
@@ -278,7 +278,7 @@ Passo a passo com todos os cliques e valores: [guias/mpro.md](guias/mpro.md).
 
 ![Os oito passos da prática](imagens/pratica_fluxo.png)
 
-**O sistema.** A protease principal (Mpro, ou 3CL) corta a poliproteína do vírus em pontos específicos; sem ela, o vírus não se replica. O ensitrelvir é um inibidor não covalente, de uso oral, aprovado no Japão. A estrutura 8HBK traz os dois juntos, a 1,8 Å.
+**A proteína e o fármaco.** A protease principal (Mpro, ou 3CL) corta a poliproteína do vírus em pontos específicos; sem ela, o vírus não se replica. O ensitrelvir é um inibidor não covalente, de uso oral, aprovado no Japão. A estrutura 8HBK traz os dois juntos, a 1,8 Å.
 
 **O procedimento, em cinco passos.** 1. Conferir a estrutura no PDB. 2. Remover o ligante e guardar a posição original como gabarito. 3. Montar a caixa de busca sobre o sítio. 4. Rodar o docking só com a proteína. 5. Comparar a pose obtida com a guardada.
 
