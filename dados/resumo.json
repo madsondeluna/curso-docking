@@ -1,0 +1,42 @@
+{
+  "eif4e": {
+    "pdb": "1IPC",
+    "cadeia": "A",
+    "ligante": "MGP",
+    "atomos_receptor": 1540,
+    "atomos_ligante_com_H": 48,
+    "ligacoes_rotaveis": 10,
+    "carga_pH74": -3,
+    "smiles_pH74": "C[n+]1cn([C@@H]2O[C@H](CO[P@@](=O)([O-])O[P@@](=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c2nc(N)[nH]c(=O)c21",
+    "centro_A": [
+      54.59,
+      114.72,
+      -7.8
+    ],
+    "tamanho_A": [
+      23,
+      22,
+      30
+    ]
+  },
+  "mpro": {
+    "pdb": "8HBK",
+    "cadeia": "A",
+    "ligante": "7YY",
+    "atomos_receptor": 2316,
+    "atomos_ligante_com_H": 54,
+    "ligacoes_rotaveis": 5,
+    "carga_pH74": 0,
+    "smiles_pH74": "Cn1cnc(Cn2c(=O)nc(Nc3cc4cn(C)nc4cc3Cl)n(Cc3cc(F)c(F)cc3F)c2=O)n1",
+    "centro_A": [
+      -21.75,
+      -11.26,
+      2.66
+    ],
+    "tamanho_A": [
+      28,
+      27,
+      26
+    ]
+  }
+}

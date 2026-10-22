@@ -1,0 +1,8 @@
+Date: Thu 22 Oct 2026 12:55:42 
+Ligand: Cn1cnc(Cn2c(=O)nc(Nc3cc4cn(C)nc4cc3Cl)n(Cc3cc(F)c(F)cc3F)c2=O)n1
+Method: Vina
+pH: 7.4
+Target: receptor.pdb
+Sampling exhaustivity: 8
+Box size: 28 27 26
+Box center: -21.75 -11.26 2.66

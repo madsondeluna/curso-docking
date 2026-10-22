@@ -1,0 +1,31 @@
+{
+ "pdb": "6OIM",
+ "cavidades": [
+  {
+   "rank": 1,
+   "score": 19.32,
+   "prob": 0.829,
+   "centro": [
+    -5.21,
+    3.43,
+    7.12
+   ],
+   "n_residuos": 18,
+   "ligante_mais_proximo": "GDP A302",
+   "distancia_A": 1.5
+  },
+  {
+   "rank": 2,
+   "score": 6.7,
+   "prob": 0.371,
+   "centro": [
+    3.67,
+    -7.02,
+    -0.9
+   ],
+   "n_residuos": 17,
+   "ligante_mais_proximo": "MOV A303",
+   "distancia_A": 0.9
+  }
+ ]
+}

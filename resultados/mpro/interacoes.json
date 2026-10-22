@@ -1,0 +1,136 @@
+{
+ "cristal": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "CYS145"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR26"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "THR25"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "MET165"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "HIS41"
+  }
+ ],
+ "pose 1": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "CYS145"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "MET165"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "HIS41"
+  }
+ ],
+ "pose 2": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "HIS41"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLN189"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "MET165"
+  },
+  {
+   "tipo": "halogênio",
+   "residuo": "PHE140"
+  },
+  {
+   "tipo": "halogênio",
+   "residuo": "GLU166"
+  }
+ ],
+ "pose 3": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "HIS164"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "CYS145"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "MET165"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "HIS41"
+  }
+ ],
+ "pose 16": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLN189"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "GLN189"
+  }
+ ]
+}

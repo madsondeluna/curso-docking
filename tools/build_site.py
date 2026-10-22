@@ -1,0 +1,158 @@
+"""Monta site_src/ (entrada do MkDocs) a partir do README, dos guias e das imagens.
+
+O README vira uma pagina por secao `##`; a capa recebe o titulo, a introducao,
+os cartoes de navegacao e o roteiro. Copia dados/ para o site, para os links de
+download funcionarem. Gera tambem mkdocs.gen.yml com o nav.
+"""
+import re, shutil, unicodedata
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+OUT = ROOT / 'site_src'
+REPO = 'https://github.com/madsondeluna/curso-docking'
+
+# secoes que ficam na capa ou somem do site (o menu lateral substitui o indice)
+HOME = {'Roteiro da aula'}
+DROP = {'Índice'}
+# secoes que se juntam a anterior em vez de virar pagina propria
+MERGE = {'Licença'}
+# grupos do menu lateral, pelo titulo da secao
+REFERENCE = {'Referência técnica', 'Referências'}
+# secoes da pratica: titulo comeca com este prefixo
+PRATICA = 'Prática'
+
+ICONS = ['material/key-variant', 'material/book-alphabet', 'material/magnet', 'material/shape-outline',
+         'material/scale-balance', 'material/dna', 'material/movie-open', 'material/database',
+         'material/flask', 'material/alert-circle-outline', 'material/robot-outline']
+
+
+def slug(text):
+    text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode()
+    return re.sub(r'[^a-z0-9]+', '-', text.lower()).strip('-')[:48].rstrip('-')
+
+
+def repo_links(text, prefix=''):
+    """Links relativos para arquivos que nao entram no site viram links do GitHub."""
+    text = re.sub(rf'\]\({prefix}(tools)(/[^)]*)?\)',
+                  lambda m: f']({REPO}/tree/main/{m.group(1)}{m.group(2) or ""})', text)
+    return re.sub(rf'\]\({prefix}LICENSE\)', f']({REPO}/blob/main/LICENSE)', text)
+
+
+def promote(body):
+    """Sobe cada titulo um nivel (## vira #), sem tocar em blocos de codigo."""
+    out, fence = [], False
+    for line in body.split('\n'):
+        if line.startswith('```'):
+            fence = not fence
+        if not fence and re.match(r'#{2,6} ', line):
+            line = line[1:]
+        out.append(line)
+    return '\n'.join(out)
+
+
+def label(title):
+    """O numero da secao ("1. ") fica no titulo da pagina, nao no menu nem na URL."""
+    return re.sub(r'^\d+\.\s*', '', title)
+
+
+def split_readme(text):
+    """Devolve (preambulo, [(titulo, corpo com o titulo)]) cortando em `## `."""
+    parts = re.split(r'^(?=## )', text, flags=re.M)
+    sections = []
+    for part in parts[1:]:
+        title = part.split('\n', 1)[0][3:].strip()
+        sections.append((title, part.rstrip() + '\n'))
+    return parts[0], sections
+
+
+def home_page(preamble, roteiro, pages, pratica):
+    lines = preamble.strip().split('\n')
+    title = lines[0].lstrip('# ').strip()
+    rest = '\n'.join(lines[1:]).strip()
+    intro, _, rest = rest.partition('\n\n')
+    autoria = rest[rest.index('| Autoria'):].strip()
+    cards = '\n\n'.join(
+        f'-   :{ICONS[i % len(ICONS)].replace("/", "-")}:{{ .lg .middle }} [{t}]({f})'
+        for i, (t, f) in enumerate(pages + pratica))
+    return f'''---
+hide:
+  - navigation
+  - toc
+---
+
+<div class="hero" markdown>
+
+# {title}
+
+{intro}
+
+[Ir para a prática]({pratica[0][1]}){{ .md-button .md-button--primary }}
+[Começar a aula]({pages[0][1]}){{ .md-button }}
+
+</div>
+
+## Conteúdo
+
+<div class="grid cards" markdown>
+
+{cards}
+
+</div>
+
+{promote(roteiro).replace('# Roteiro da aula', '## Roteiro da aula', 1)}
+
+## Autoria
+
+{autoria}
+'''
+
+
+def main():
+    shutil.rmtree(OUT, ignore_errors=True)
+    OUT.mkdir(parents=True)
+    shutil.copytree(ROOT / 'imagens', OUT / 'imagens', ignore=shutil.ignore_patterns('._*'))
+    shutil.copytree(ROOT / 'dados', OUT / 'dados', ignore=shutil.ignore_patterns('._*'))
+    shutil.copytree(ROOT / 'site_theme', OUT, dirs_exist_ok=True, ignore=shutil.ignore_patterns('._*'))
+
+    preamble, sections = split_readme(repo_links((ROOT / 'README.md').read_text()))
+
+    # junta as secoes MERGE a anterior
+    merged = []
+    for title, body in sections:
+        if title in MERGE and merged:
+            merged[-1] = (merged[-1][0], merged[-1][1] + '\n' + body)
+        else:
+            merged.append((title, body))
+
+    roteiro, aula, pratica, refs = '', [], [], []
+    for title, body in merged:
+        if title in DROP:
+            continue
+        if title in HOME:
+            roteiro = body
+            continue
+        name = f'{slug(label(title))}.md'
+        (OUT / name).write_text(promote(body))
+        grupo = refs if title in REFERENCE else pratica if title.startswith(PRATICA) else aula
+        grupo.append((title, name))
+
+    (OUT / 'index.md').write_text(home_page(preamble, roteiro, aula, pratica))
+
+    def entries(items, indent):
+        return '\n'.join(f'{indent}- "{label(t)}": {f}' for t, f in items)
+
+    nav = f'''INHERIT: mkdocs.yml
+nav:
+  - Início: index.md
+  - Aula:
+{entries(aula, '      ')}
+  - Prática:
+{entries(pratica, '      ')}
+  - Referência:
+{entries(refs, '      ')}
+'''
+    (ROOT / 'mkdocs.gen.yml').write_text(nav)
+
+
+if __name__ == '__main__':
+    main()

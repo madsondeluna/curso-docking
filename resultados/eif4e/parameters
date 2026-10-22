@@ -1,0 +1,7 @@
+Date: Thu 22 Oct 2026 12:50:14 
+Ligand: C[n+]1cn([C@@H]2O[C@H](CO[P@@](=O)([O-])O[P@@](=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c2nc(N)[nH]c(=O)c21
+Method: Vina
+Target: receptor.pdb
+Sampling exhaustivity: 8
+Box size: 23 22 30
+Box center: 54.59 114.72 -7.8

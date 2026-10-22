@@ -1,0 +1,96 @@
+{
+ "pdb": "4OBE",
+ "cavidades": [
+  {
+   "rank": 1,
+   "score": 30.85,
+   "prob": 0.921,
+   "centro": [
+    -16.59,
+    -16.75,
+    10.79
+   ],
+   "n_residuos": 32,
+   "ligante_mais_proximo": "GDP B201",
+   "distancia_A": 1.1
+  },
+  {
+   "rank": 2,
+   "score": 21.51,
+   "prob": 0.853,
+   "centro": [
+    1.49,
+    -11.27,
+    40.26
+   ],
+   "n_residuos": 19,
+   "ligante_mais_proximo": "GDP A201",
+   "distancia_A": 0.9
+  },
+  {
+   "rank": 3,
+   "score": 9.47,
+   "prob": 0.551,
+   "centro": [
+    1.37,
+    -19.58,
+    50.91
+   ],
+   "n_residuos": 17,
+   "ligante_mais_proximo": "GDP A201",
+   "distancia_A": 9.0
+  },
+  {
+   "rank": 4,
+   "score": 3.83,
+   "prob": 0.156,
+   "centro": [
+    -0.8,
+    -24.8,
+    28.32
+   ],
+   "n_residuos": 14,
+   "ligante_mais_proximo": "GDP A201",
+   "distancia_A": 12.7
+  },
+  {
+   "rank": 5,
+   "score": 2.09,
+   "prob": 0.047,
+   "centro": [
+    -11.46,
+    -19.92,
+    52.05
+   ],
+   "n_residuos": 7,
+   "ligante_mais_proximo": "GDP A201",
+   "distancia_A": 15.3
+  },
+  {
+   "rank": 6,
+   "score": 1.75,
+   "prob": 0.031,
+   "centro": [
+    -11.12,
+    -26.57,
+    28.18
+   ],
+   "n_residuos": 10,
+   "ligante_mais_proximo": "GDP B201",
+   "distancia_A": 13.4
+  },
+  {
+   "rank": 7,
+   "score": 1.59,
+   "prob": 0.024,
+   "centro": [
+    -3.54,
+    -22.04,
+    3.4
+   ],
+   "n_residuos": 7,
+   "ligante_mais_proximo": "GDP B201",
+   "distancia_A": 15.4
+  }
+ ]
+}

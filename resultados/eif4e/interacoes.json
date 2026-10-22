@@ -1,0 +1,208 @@
+{
+ "cristal": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 1": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR203"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "ARG112"
+  }
+ ],
+ "pose 2": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR203"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR211"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "ARG112"
+  }
+ ],
+ "pose 3": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR203"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "ARG112"
+  }
+ ],
+ "pose 16": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ALA204"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ALA204"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "TRP56"
+  }
+ ]
+}

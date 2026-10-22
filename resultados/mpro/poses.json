@@ -1,0 +1,102 @@
+[
+ {
+  "pose": 1,
+  "energia_kcal_mol": -9.127,
+  "rmsd_A": 1.51
+ },
+ {
+  "pose": 2,
+  "energia_kcal_mol": -8.707,
+  "rmsd_A": 8.32
+ },
+ {
+  "pose": 3,
+  "energia_kcal_mol": -8.645,
+  "rmsd_A": 6.73
+ },
+ {
+  "pose": 4,
+  "energia_kcal_mol": -8.429,
+  "rmsd_A": 7.27
+ },
+ {
+  "pose": 5,
+  "energia_kcal_mol": -8.304,
+  "rmsd_A": 7.93
+ },
+ {
+  "pose": 6,
+  "energia_kcal_mol": -8.293,
+  "rmsd_A": 7.07
+ },
+ {
+  "pose": 7,
+  "energia_kcal_mol": -8.291,
+  "rmsd_A": 8.75
+ },
+ {
+  "pose": 8,
+  "energia_kcal_mol": -8.147,
+  "rmsd_A": 7.98
+ },
+ {
+  "pose": 9,
+  "energia_kcal_mol": -8.082,
+  "rmsd_A": 7.77
+ },
+ {
+  "pose": 10,
+  "energia_kcal_mol": -8.035,
+  "rmsd_A": 8.76
+ },
+ {
+  "pose": 11,
+  "energia_kcal_mol": -7.98,
+  "rmsd_A": 6.29
+ },
+ {
+  "pose": 12,
+  "energia_kcal_mol": -7.853,
+  "rmsd_A": 8.58
+ },
+ {
+  "pose": 13,
+  "energia_kcal_mol": -7.658,
+  "rmsd_A": 8.07
+ },
+ {
+  "pose": 14,
+  "energia_kcal_mol": -7.536,
+  "rmsd_A": 6.1
+ },
+ {
+  "pose": 15,
+  "energia_kcal_mol": -7.339,
+  "rmsd_A": 8.32
+ },
+ {
+  "pose": 16,
+  "energia_kcal_mol": -7.291,
+  "rmsd_A": 9.0
+ },
+ {
+  "pose": 17,
+  "energia_kcal_mol": -7.203,
+  "rmsd_A": 7.81
+ },
+ {
+  "pose": 18,
+  "energia_kcal_mol": -7.195,
+  "rmsd_A": 5.94
+ },
+ {
+  "pose": 19,
+  "energia_kcal_mol": -7.077,
+  "rmsd_A": 5.6
+ },
+ {
+  "pose": 20,
+  "energia_kcal_mol": -6.999,
+  "rmsd_A": 6.63
+ }
+]

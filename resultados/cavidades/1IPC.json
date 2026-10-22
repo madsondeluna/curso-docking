@@ -1,0 +1,70 @@
+{
+ "pdb": "1IPC",
+ "cavidades": [
+  {
+   "rank": 1,
+   "score": 26.99,
+   "prob": 0.898,
+   "centro": [
+    52.34,
+    113.46,
+    -9.48
+   ],
+   "n_residuos": 21,
+   "ligante_mais_proximo": "MGP A1000",
+   "distancia_A": 1.5
+  },
+  {
+   "rank": 2,
+   "score": 1.29,
+   "prob": 0.014,
+   "centro": [
+    34.5,
+    94.44,
+    -15.38
+   ],
+   "n_residuos": 5,
+   "ligante_mais_proximo": "MGP A1000",
+   "distancia_A": 26.2
+  },
+  {
+   "rank": 3,
+   "score": 1.12,
+   "prob": 0.01,
+   "centro": [
+    54.52,
+    96.42,
+    -8.37
+   ],
+   "n_residuos": 7,
+   "ligante_mais_proximo": "MGP A1000",
+   "distancia_A": 15.9
+  },
+  {
+   "rank": 4,
+   "score": 1.07,
+   "prob": 0.008,
+   "centro": [
+    44.66,
+    97.26,
+    -6.2
+   ],
+   "n_residuos": 6,
+   "ligante_mais_proximo": "MGP A1000",
+   "distancia_A": 17.2
+  },
+  {
+   "rank": 5,
+   "score": 0.72,
+   "prob": 0.002,
+   "centro": [
+    44.37,
+    97.16,
+    -12.01
+   ],
+   "n_residuos": 7,
+   "ligante_mais_proximo": "MGP A1000",
+   "distancia_A": 17.9
+  }
+ ]
+}
