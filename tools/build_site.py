@@ -33,7 +33,7 @@ def slug(text):
 
 def repo_links(text, prefix=''):
     """Links relativos para arquivos que nao entram no site viram links do GitHub."""
-    text = re.sub(rf'\]\({prefix}(tools)(/[^)]*)?\)',
+    text = re.sub(rf'\]\({prefix}(tools|resultados)(/[^)]*)?\)',
                   lambda m: f']({REPO}/tree/main/{m.group(1)}{m.group(2) or ""})', text)
     return re.sub(rf'\]\({prefix}LICENSE\)', f']({REPO}/blob/main/LICENSE)', text)
 
@@ -48,6 +48,9 @@ def promote(body):
             line = line[1:]
         out.append(line)
     return '\n'.join(out)
+
+
+GUIAS = {'mpro': 'Passo a passo: Mpro', 'eif4e': 'Passo a passo: eIF4E'}
 
 
 def label(title):
@@ -109,7 +112,7 @@ hide:
 
 def main():
     shutil.rmtree(OUT, ignore_errors=True)
-    OUT.mkdir(parents=True)
+    (OUT / 'guias').mkdir(parents=True)
     shutil.copytree(ROOT / 'imagens', OUT / 'imagens', ignore=shutil.ignore_patterns('._*'))
     shutil.copytree(ROOT / 'dados', OUT / 'dados', ignore=shutil.ignore_patterns('._*'))
     shutil.copytree(ROOT / 'site_theme', OUT, dirs_exist_ok=True, ignore=shutil.ignore_patterns('._*'))
@@ -135,6 +138,11 @@ def main():
         (OUT / name).write_text(promote(body))
         grupo = refs if title in REFERENCE else pratica if title.startswith(PRATICA) else aula
         grupo.append((title, name))
+
+    for guia in sorted((ROOT / 'guias').glob('[!._]*.md')):
+        text = guia.read_text().replace('[Voltar à aula](../README.md)', '[Voltar à aula](../index.md)')
+        (OUT / 'guias' / guia.name).write_text(repo_links(text, r'\.\./'))
+        pratica.append((GUIAS.get(guia.stem, guia.stem), f'guias/{guia.name}'))
 
     (OUT / 'index.md').write_text(home_page(preamble, roteiro, aula, pratica))
 
