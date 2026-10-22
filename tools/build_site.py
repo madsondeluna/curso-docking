@@ -50,7 +50,7 @@ def promote(body):
     return '\n'.join(out)
 
 
-GUIAS = {'mpro': 'Passo a passo: Mpro', 'eif4e': 'Passo a passo: eIF4E'}
+GUIAS = {'mpro': 'Passo a passo: Mpro', 'eif4e': 'Passo a passo: eIF4E', 'cavidades': 'Passo a passo: cavidades'}
 
 
 def label(title):

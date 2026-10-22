@@ -340,6 +340,8 @@ Nenhuma das 20 poses chega perto do cristal. A pose 1 mantém o empilhamento com
 
 ## Prática C: cavidades e sítios no PrankWeb
 
+Passo a passo com as quatro estruturas e os critérios de julgamento: [guias/cavidades.md](guias/cavidades.md).
+
 **O que o aluno faz.** Submete um código PDB ao [PrankWeb](https://prankweb.cz/), olha as cavidades ordenadas por escore e decide quais podem ser sítios. Depois compara com os ligantes presentes na estrutura.
 
 | Estrutura | Pergunta | Resposta medida |
