@@ -906,10 +906,43 @@ def fig_pocket_ranking():
     save(fig, 'fund_cavidades_ranking.png')
 
 
+# ---------------------------------------------------------------- 13. fluxo da pratica
+def fig_fluxo():
+    """Os oito passos da pratica, com a ferramenta de cada um."""
+    passos = [('1', 'Inspecionar\na estrutura', 'RCSB PDB', SITE),
+              ('2', 'Informar\no ligante', 'SwissDock', C[0]),
+              ('3', 'Informar\no receptor', 'SwissDock', C[0]),
+              ('4', 'Definir\na caixa', 'SwissDock', C[0]),
+              ('5', 'Rodar\no docking', 'SwissDock', C[0]),
+              ('6', 'Ler energias\ne poses', 'arquivo de saída', PROT),
+              ('7', 'Medir o RMSD\ncontra o cristal', 'Mol*', CRISTAL),
+              ('8', 'Ver as\ninterações', 'PLIP', DESTAQUE)]
+    fig, ax = plt.subplots(figsize=(15, 3.4))
+    frame_off(ax)
+    ax.set_xlim(-0.6, len(passos) - 0.4); ax.set_ylim(-1.5, 1.3)
+    for i, (num, texto, ferramenta, cor) in enumerate(passos):
+        ax.add_patch(FancyBboxPatch((i - 0.42, -0.45), 0.84, 0.9, boxstyle='round,pad=0,rounding_size=0.08',
+                                    fc='white', ec=cor, lw=1.6, zorder=2))
+        ax.add_patch(Circle((i - 0.3, 0.33), 0.1, fc=cor, ec='none', zorder=3))
+        ax.text(i - 0.3, 0.33, num, ha='center', va='center', fontsize=8, color='white', fontweight='bold', zorder=4)
+        ax.text(i, -0.05, texto, ha='center', va='center', fontsize=9, zorder=4)
+        ax.text(i, -0.75, ferramenta, ha='center', va='center', fontsize=8, color=cor, zorder=4)
+        if i < len(passos) - 1:
+            ax.add_patch(FancyArrowPatch((i + 0.46, 0), (i + 0.54, 0), arrowstyle='-|>', mutation_scale=11,
+                                         color=GREY, lw=1.2, zorder=1))
+    ax.annotate('', xy=(1.0, -1.15), xytext=(4.0, -1.15),
+                arrowprops=dict(arrowstyle='-', color=C[0], lw=1.2))
+    ax.text(2.5, -1.3, 'tudo no navegador, sem cadastro', ha='center', va='top', fontsize=8.5, color=C[0])
+    ax.annotate('', xy=(6.0, -1.15), xytext=(7.0, -1.15), arrowprops=dict(arrowstyle='-', color=CRISTAL, lw=1.2))
+    ax.text(6.5, -1.3, 'só existe em redocking', ha='center', va='top', fontsize=8.5, color=CRISTAL)
+    fig.suptitle('Os oito passos da prática e a ferramenta de cada um', y=0.98, fontsize=11)
+    save(fig, 'pratica_fluxo.png')
+
+
 def main():
     fig_binding_models(); fig_vocabulary(); fig_forces(); fig_flexibility(); fig_search(); fig_levels_cost()
     fig_smiles(); fig_smiles_reading(); fig_resistance(); fig_p53_mdm2(); fig_barnase_barstar(); fig_md_docking()
-    fig_cavidades(); fig_tipos_sitio(); fig_pocket_ranking()
+    fig_cavidades(); fig_tipos_sitio(); fig_pocket_ranking(); fig_fluxo()
     fig_poses_scatter(); fig_mpro_result(); fig_eif4e_result(); fig_rmsd(); fig_metrics(); fig_fingerprint()
 
 

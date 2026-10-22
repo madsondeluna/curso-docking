@@ -2,7 +2,7 @@
 
 Material didático e prática em servidores web sobre docking molecular: prever onde e como uma molécula pequena se encaixa numa proteína. Dois sistemas opostos, resolvidos no mesmo servidor: o ensitrelvir na protease principal do SARS-CoV-2, em que o programa acerta a pose do cristal, e o cap do mRNA na proteína eIF4E, em que erra. Todos os arquivos de entrada estão neste repositório e baixam com um clique.
 
-| Prática | Ferramenta | Conta | O que o aluno faz |
+| Prática | Ferramenta | Conta | Conteúdo |
 |---------|------------|-------|-------------------|
 | A. Redocking do ensitrelvir | [SwissDock](https://www.swissdock.ch/) (AutoDock Vina) | não | docking, RMSD contra o cristal, interações |
 | B. O cap na eIF4E | SwissDock (Vina e Attracting Cavities) | não | o mesmo protocolo falhando, e por quê |
@@ -114,7 +114,7 @@ Na Mpro são oito cavidades e só a primeira é o sítio ativo. As outras sete f
 
 **O caso alostérico, com número.** Na estrutura 5MO4 a ABL tem dois fármacos ligados ao mesmo tempo. O P2Rank acerta os dois: a cavidade 1 (escore 27,9) é o sítio do ATP, a 2,1 Å do nilotinibe, e a cavidade 3 (escore 5,0) é o bolso do miristoil, a 0,9 Å do asciminibe. Um sítio alostérico é uma cavidade de verdade, só costuma ser menor e pior pontuada que a ortostérica.
 
-**Por que um sítio alostérico vale ouro.** O asciminibe se liga ao bolso onde normalmente entra a cauda miristoilada da própria proteína, e trava a quinase numa forma inativa (Wylie *et al.*, 2017). Como não disputa o sítio do ATP, ele continua funcionando em leucemias com a mutação T315I, que torna a proteína resistente ao imatinibe. Mudar de cavidade foi a saída para a resistência.
+**Consequência clínica de um sítio alostérico.** O asciminibe se liga ao bolso onde normalmente entra a cauda miristoilada da própria proteína e trava a quinase numa forma inativa (Wylie *et al.*, 2017). Como não disputa o sítio do ATP, mantém atividade em leucemias com a mutação T315I, que confere resistência ao imatinibe (Gorre *et al.*, 2001). Mudar de cavidade foi a saída para a resistência.
 
 **O caso críptico, com número.** O KRAS foi considerado não medicável por décadas: a superfície é lisa, sem bolsão evidente ao lado do nucleotídeo. Ostrem *et al.* (2013) mostraram que inibidores covalentes da cisteína 12 abrem um bolso novo, o switch II, e disso veio o sotorasibe (Canon *et al.*, 2019). Na estrutura com o fármaco (6OIM), o P2Rank põe esse bolso em segundo lugar. Na estrutura sem fármaco (4OBE), ele ainda aparece, mas em terceiro lugar e com escore 9,5 contra 21,5 do sítio do GDP: existe, porém raso. Uma cavidade pode ser pequena demais hoje e virar sítio amanhã.
 
@@ -168,7 +168,7 @@ A barnase e a barstar formam um dos complexos mais fortes já medidos entre duas
 | Dinâmica molecular com MM/GBSA | o complexo em água, com movimento | estabilidade da pose e energia melhor | horas a dias (Genheden e Ryde, 2015) |
 | Perturbação de energia livre (FEP) | diferença de energia livre entre dois ligantes | a melhor previsão de afinidade disponível | dias em GPU (Wang *et al.*, 2015) |
 
-**A regra prática.** Use o nível mais barato que responda à sua pergunta. Para escolher 50 compostos entre um milhão, docking rígido basta. Para decidir qual de dois análogos sintetizar, docking não basta.
+**Como escolher o nível.** Use o mais barato que responda à sua pergunta. Para escolher 50 compostos entre um milhão, docking rígido basta. Para decidir qual de dois análogos sintetizar, docking não basta.
 
 **Escala real.** Lyun *et al.* (2019) testaram por docking mais de 170 milhões de moléculas que nem existiam em estoque, e compraram e testaram os melhores em bancada. Nessa escala, mesmo alguns segundos por molécula viram semanas de computador.
 
@@ -276,9 +276,13 @@ Passo a passo com todos os cliques e valores: [guias/mpro.md](guias/mpro.md).
 
 **Baixe as entradas:** [dados/mpro.zip](dados/mpro.zip) (receptor, ligante do cristal, SMILES em pH 7,4 e a caixa de busca).
 
+![Os oito passos da prática](imagens/pratica_fluxo.png)
+
 **O sistema.** A protease principal (Mpro, ou 3CL) corta a poliproteína do vírus em pontos específicos; sem ela, o vírus não se replica. O ensitrelvir é um inibidor não covalente, de uso oral, aprovado no Japão. A estrutura 8HBK traz os dois juntos, a 1,8 Å.
 
-**O que o aluno faz.** Tira o ligante do cristal, guarda a pose original como gabarito, roda o docking só com a proteína e compara. Isso é um **redocking**: o teste padrão para saber se um protocolo funciona antes de aplicá-lo a moléculas novas.
+**O procedimento, em cinco passos.** 1. Conferir a estrutura no PDB. 2. Remover o ligante e guardar a posição original como gabarito. 3. Montar a caixa de busca sobre o sítio. 4. Rodar o docking só com a proteína. 5. Comparar a pose obtida com a guardada.
+
+Esse procedimento se chama **redocking** e mede se o protocolo recupera uma resposta conhecida. É o requisito mínimo antes de aplicar o mesmo protocolo a moléculas cuja pose ninguém conhece.
 
 | Parâmetro | Valor |
 |-----------|-------|
@@ -288,7 +292,7 @@ Passo a passo com todos os cliques e valores: [guias/mpro.md](guias/mpro.md).
 | Tamanho da caixa | 28 × 27 × 26 Å |
 | Exaustividade | 8 |
 
-**Resultado medido.** O trabalho levou 2 minutos no SwissDock e devolveu 20 poses.
+O trabalho levou 2 minutos no SwissDock e devolveu 20 poses.
 
 ![Poses da Prática A](imagens/pratica_mpro_poses.png)
 
@@ -313,7 +317,7 @@ Passo a passo: [guias/eif4e.md](guias/eif4e.md).
 
 **O que o cristal mostra.** Na estrutura 1IPC, a guanina metilada fica ensanduichada entre Trp56 e Trp102, numa interação cátion-π, e os fosfatos fazem pontes salinas com Arg157, Lys162 e Glu103.
 
-**Resultado medido com o Vina, o mesmo protocolo da Prática A.**
+Com o Vina, no mesmo protocolo da Prática A:
 
 ![Poses da Prática B](imagens/pratica_eif4e_poses.png)
 
@@ -324,7 +328,7 @@ Passo a passo: [guias/eif4e.md](guias/eif4e.md).
 
 Nenhuma das 20 poses chega perto do cristal. A pose 1 mantém o empilhamento com Trp102, mas **perde o Trp56**: o sanduíche não se forma.
 
-**Por que falhou.** Quatro causas plausíveis, e o que cada uma prevê:
+**Causas possíveis, e o que cada uma prevê.**
 
 | Causa | Teste | O que aconteceu |
 |-------|-------|-----------------|
@@ -333,16 +337,16 @@ Nenhuma das 20 poses chega perto do cristal. A pose 1 mantém o empilhamento com
 | Carga alta (−3) e dessolvatação mal tratada | o cap perde muita água ao entrar | consistente com o erro |
 | Receptor rígido | o sítio da eIF4E fecha sobre o cap | não testado aqui |
 
-**Trocando o método no mesmo servidor.** O Attracting Cavities, também do SwissDock, levou 15 minutos e devolveu 106 poses em 50 agrupamentos. A melhor pose do ranking fica em 4,60 Å, mas várias poses ficam entre 2,4 e 3,0 Å, e nelas a base metilada cai em cima do lugar certo, com RMSD de 0,85 Å só para o anel. Ou seja: o método mais caro encontra a resposta, mas não a coloca em primeiro lugar.
+**Trocando o método no mesmo servidor.** O Attracting Cavities, também do SwissDock, levou 15 minutos e devolveu 106 poses em 50 agrupamentos. A melhor pose do ranking fica em 4,60 Å, e várias poses ficam entre 2,4 e 3,0 Å. Nessas, o anel da guanina metilada cai a 0,85 Å da posição do cristal e são os fosfatos que ficam fora. O método mais caro gera a pose correta, mas a classifica em posição intermediária.
 
-**A lição da prática.** Um protocolo que acerta num sistema pode errar em outro. Redocking é obrigatório antes de confiar num protocolo, e um resultado sem referência experimental não tem como ser validado por dentro.
+**O que a prática B estabelece.** Um protocolo que acerta num sistema pode errar em outro, e a validação por redocking vale para o alvo em que foi feita. Sem referência experimental não existe critério interno para separar uma pose correta de uma errada.
 
 
 ## Prática C: cavidades e sítios no PrankWeb
 
 Passo a passo com as quatro estruturas e os critérios de julgamento: [guias/cavidades.md](guias/cavidades.md).
 
-**O que o aluno faz.** Submete um código PDB ao [PrankWeb](https://prankweb.cz/), olha as cavidades ordenadas por escore e decide quais podem ser sítios. Depois compara com os ligantes presentes na estrutura.
+**O procedimento, em quatro passos.** 1. Submeter um código PDB ao [PrankWeb](https://prankweb.cz/). 2. Ler a lista de cavidades ordenadas por escore. 3. Localizar cada cavidade no visualizador e ver de qual ligante ela está perto. 4. Decidir quais cavidades são sítios e quais são reentrâncias sem função conhecida.
 
 | Estrutura | Pergunta | Resposta medida |
 |-----------|----------|------------------|
@@ -353,7 +357,7 @@ Passo a passo com as quatro estruturas e os critérios de julgamento: [guias/cav
 
 Os arquivos com todas as cavidades e as distâncias até os ligantes estão em [resultados/cavidades](resultados/cavidades).
 
-**Fechamento da prática.** Junte as três partes: a Prática C mostra onde procurar, a A mostra o método funcionando e a B mostra o método falhando. Um resultado de docking só vale com as três perguntas respondidas: a cavidade é mesmo um sítio, o protocolo acerta num caso conhecido, e a pose sobrevive a um teste independente.
+**As três partes juntas.** A Prática C trata de onde procurar, a A do método funcionando e a B do método falhando. Um resultado de docking exige as três perguntas respondidas: a cavidade é mesmo um sítio, o protocolo acerta num caso de referência, e a pose sobrevive a um teste independente.
 
 
 ## Referência técnica

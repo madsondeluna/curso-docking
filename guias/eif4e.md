@@ -1,53 +1,100 @@
 # Passo a passo: o cap do mRNA na eIF4E
 
-O mesmo protocolo da Prática A, aplicado à eIF4E humana com o cap m7GTP (PDB 1IPC). Aqui ele falha, e a tarefa é descobrir por quê. Os valores vêm das execuções em `resultados/eif4e` e `resultados/eif4e_ac`.
+Prática B. O mesmo protocolo da Prática A, aplicado a outro sistema, onde ele falha. A tarefa não é só rodar: é descobrir por que falhou. Os valores vêm das execuções em `resultados/eif4e` e `resultados/eif4e_ac`.
 
-[Voltar à aula](../README.md) · [Passo a passo da Mpro](mpro.md) · [Passo a passo das cavidades](cavidades.md)
+[Voltar à aula](../README.md) · [Prática A: Mpro](mpro.md) · [Prática C: cavidades](cavidades.md)
 
-## O sistema, e por que ele foi escolhido
+![Os oito passos da prática](../imagens/pratica_fluxo.png)
+
+## O que será feito, em uma frase
+
+A estrutura 1IPC traz a proteína eIF4E humana com o cap do mRNA encaixado. Você repete exatamente os oito passos da Prática A, trocando apenas a proteína e o ligante, e compara o resultado.
+
+Repetir um protocolo validado em outro alvo testa até onde a validação se estende. A resposta aqui é que ela não se estende, e os números mostram em que ponto o método quebra.
+
+## O sistema, e por que foi escolhido
 
 Todo mRNA eucariótico começa com um cap: uma guanina metilada, com carga positiva no anel, presa ao resto da fita por três fosfatos. A eIF4E reconhece esse cap e recruta a maquinaria de tradução. É o passo limitante da síntese de proteínas.
 
-**Lado saudável.** Sem esse reconhecimento, a célula não traduz. É o controle de qual mensagem vira proteína.
+| Lado | O que acontece |
+|------|----------------|
+| Saudável | o reconhecimento do cap decide quais mensagens viram proteína |
+| Patológico | tumores com eIF4E ativa demais traduzem preferencialmente mensagens de proliferação e sobrevivência, o que faz da eIF4E um alvo em câncer |
 
-**Lado patológico.** Células tumorais com eIF4E ativa demais traduzem preferencialmente mensagens ligadas a proliferação e sobrevivência, o que faz da eIF4E um alvo em câncer.
+Este sistema reúne três dificuldades que a Prática A não tem: carga líquida −3, dez ligações rotáveis e uma interação cátion-π, que as funções de pontuação empíricas descrevem mal por não terem termo eletrostático explícito (Trott e Olson, 2010). A maior parte dos alvos reais se parece mais com este caso do que com o anterior.
 
-**Por que este caso está na aula.** Ele tem tudo que um exercício bem-comportado não tem: ligante muito carregado, muito flexível e uma interação que a maioria das funções de pontuação trata mal. É assim que a maior parte dos alvos reais se comporta.
+**Baixe as entradas:** [dados/eif4e.zip](../dados/eif4e.zip) e descompacte.
 
-**Baixe as entradas:** [dados/eif4e.zip](../dados/eif4e.zip)
+## Passo 1: ver no cristal o que deveria acontecer
 
-## Passo 1: ver o que deveria acontecer
+**1.1.** Abra [rcsb.org/structure/1IPC](https://www.rcsb.org/structure/1IPC).
 
-**O que fazer.** Abra [rcsb.org/structure/1IPC](https://www.rcsb.org/structure/1IPC), clique em **3D View** e localize o ligante MGP.
+**1.2.** Confira em **Experimental Data Snapshot**: raios X, resolução 2,0 Å. Em **Small Molecules**, confirme o ligante **MGP**, que é o cap m7GTP.
 
-**O que procurar.** A guanina metilada fica **entre dois triptofanos**, Trp56 e Trp102, como o recheio de um sanduíche. Os três fosfatos apontam para fora, em direção a Arg157, Lys162 e Glu103.
+**1.3.** Clique em **3D View** para abrir o Mol*.
 
-**Por que essa geometria é tão específica.** O anel da guanina metilada tem carga positiva, e anéis aromáticos atraem cargas positivas através da nuvem de elétrons π. É a interação cátion-π (Ma e Dougherty, 1997). O sítio da eIF4E é feito para explorá-la: dois anéis, um de cada lado.
+**1.4.** No campo de busca do visualizador, procure os resíduos **Trp56** e **Trp102** e deixe-os visíveis em bastões, junto com o ligante.
 
-**Guarde essa imagem.** Ela é o gabarito contra o qual você vai julgar as poses.
+**O que você deve ver.** A guanina metilada fica **entre os dois triptofanos**, como o recheio de um sanduíche. Os três fosfatos apontam para fora, na direção de Arg157, Lys162 e Glu103.
 
-## Passo 2: submeter, com o mesmo protocolo da Prática A
+**Por que essa geometria é tão específica.** O anel da guanina metilada tem carga positiva, e anéis aromáticos atraem cargas positivas pela nuvem de elétrons π. É a interação cátion-π (Ma e Dougherty, 1997). O sítio da eIF4E existe para explorá-la: dois anéis, um de cada lado.
 
-**O que selecionar, campo a campo.**
+Essa geometria, o anel entre os dois triptofanos, é o gabarito contra o qual cada pose será julgada nos passos 6 e 7.
 
-| Campo | Valor | Por quê |
-|-------|-------|---------|
-| Ligante | SMILES abaixo, estado de pH 7,4 | mesma regra da Prática A |
-| Alvo | `receptor.pdb` do pacote | cadeia A da 1IPC, 1 540 átomos pesados, sem o cap |
-| Centro da caixa | 54,59  114,72  −7,80 | centro do cap no cristal |
-| Tamanho da caixa | 23 × 22 × 30 Å | extensão do cap mais 8 Å de folga |
-| Método | **Docking with AutoDock Vina** | o mesmo da Prática A |
-| Exaustividade | 8 | a mesma da Prática A |
+## Passo 2: informar o ligante
+
+**2.1.** Abra [swissdock.ch](https://www.swissdock.ch/) e escolha a entrada por **SMILES**.
+
+**2.2.** Cole a linha de `ligante.smi`:
 
 ```
 C[n+]1cn([C@@H]2O[C@H](CO[P@@](=O)([O-])O[P@@](=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c2nc(N)[nH]c(=O)c21
 ```
 
-**Repare na carga.** No estado de pH 7,4 o cap tem carga total **−3**, por causa dos três fosfatos. O ensitrelvir da Prática A era neutro. Guarde essa diferença: ela volta no passo 4.
+**2.3.** Na lista de estados de protonação, escolha o da faixa que contém **pH 7,4**.
 
-**Por que manter tudo igual à Prática A.** Mudar uma coisa de cada vez é o que permite atribuir a causa. Se o protocolo é o mesmo e o resultado muda, a diferença está no sistema, não no procedimento.
+Nesse estado o cap tem carga total **−3**, por causa dos três fosfatos, enquanto o ensitrelvir da Prática A era neutro. Essa diferença reaparece no passo 8, entre as hipóteses para a falha.
 
-## Passo 3: o resultado, e como lê-lo
+O ligante também é mais flexível: 10 ligações rotáveis, contra 5 do ensitrelvir. Cada ligação rotável multiplica o número de conformações que o programa precisa percorrer.
+
+## Passo 3: informar o receptor
+
+**3.1.** No campo do alvo, envie `receptor.pdb` do pacote.
+
+É a cadeia A da 1IPC, com 1 540 átomos pesados, já sem água, sem íons e **sem o cap**. Os mesmos cuidados do passo 3 da Prática A valem aqui.
+
+## Passo 4: definir a caixa
+
+**4.1.** Preencha com os valores de `caixa.json`:
+
+| Campo | Valor |
+|-------|-------|
+| Centro X | 54,59 |
+| Centro Y | 114,72 |
+| Centro Z | −7,80 |
+| Tamanho X | 23 |
+| Tamanho Y | 22 |
+| Tamanho Z | 30 |
+
+**4.2.** Confira no visualizador que a caixa cobre a fenda onde estava o cap, entre os dois triptofanos.
+
+**Por que conferir a caixa com atenção aqui.** Quando um resultado sai errado, a caixa é a primeira suspeita. Confirmar agora que ela cobre o sítio permite descartar essa causa no passo 8.
+
+## Passo 5: rodar com o Vina
+
+**5.1.** Deixe a exaustividade em **8**.
+
+**5.2.** Clique em **Docking with AutoDock Vina**.
+
+**Por que manter tudo igual à Prática A.** Mudar uma variável de cada vez é o que permite atribuir a causa. Se o procedimento é idêntico e o resultado muda, a diferença está no sistema, não no protocolo.
+
+**O que esperar.** Cerca de 2 minutos e 20 poses.
+
+## Passo 6: ler o resultado
+
+**6.1.** Baixe e descompacte o pacote, e abra `vina_dock.pdbqt` como no passo 6 da Prática A.
+
+**O que você deve obter.**
 
 | Pose | Energia (kcal/mol) | RMSD (Å) |
 |------|--------------------|----------|
@@ -56,36 +103,48 @@ C[n+]1cn([C@@H]2O[C@H](CO[P@@](=O)([O-])O[P@@](=O)([O-])OP(=O)([O-])[O-])[C@@H](
 | 4 | −6,14 | 4,93 |
 | 16 | −4,98 | 4,35 |
 
-**Nenhuma das 20 poses fica abaixo de 3 Å.** A melhor pose em RMSD, a 16, está entre as piores em energia.
+**Nenhuma das 20 poses fica abaixo de 3 Å.** E a melhor pose em RMSD, a 16, está entre as piores em energia: se você escolhesse pelo critério normal, ficaria com a pose 1.
 
-**O que olhar além do número.** Abra a pose 1 junto com o cristal. Ela mantém o empilhamento com Trp102, mas **perde o Trp56**: o sanduíche não se forma. O programa achou metade da interação.
+## Passo 7: olhar a pose, não só o número
 
-**Por que isso é um resultado, e não um fracasso da prática.** Você acabou de ver, com números, o limite do método. Quem só rodou casos fáceis acha que docking resolve; quem viu este caso sabe perguntar o que foi testado.
+**7.1.** Abra `ligante_cristal.sdf` e `vina_dock.pdb` no [Mol*](https://molstar.org/viewer/), como no passo 7 da Prática A.
 
-## Passo 4: levantar e testar hipóteses
+**7.2.** Deixe visíveis também Trp56 e Trp102.
 
-**Como proceder.** Liste as causas possíveis, diga o que cada uma prevê e teste o que der para testar.
+**O que você deve ver.** A pose 1 mantém o empilhamento com **Trp102**, mas perde o **Trp56**. O programa achou metade da interação: encostou numa das fatias do sanduíche e não entrou entre as duas.
 
-| Hipótese | Previsão | Teste | Resultado |
-|----------|----------|-------|-----------|
-| Ligante flexível demais (10 ligações rotáveis) | com menos fosfatos, deve melhorar | repetir com m7GMP | continuou errando: 4,95 Å |
-| Função de pontuação fraca em cátion-π e eletrostática | outro método deve melhorar | repetir com Attracting Cavities | melhorou, passo 5 |
-| Carga −3 e custo de dessolvatação | ligantes neutros devem ir melhor | comparar com o ensitrelvir | consistente: o neutro acerta |
-| Receptor rígido, sítio que fecha sobre o cap | exigiria o receptor em movimento | precisa de dinâmica molecular | fora do alcance desta aula |
+![As poses da Prática B contra o cristal](../imagens/pratica_eif4e_poses.png)
 
-**Para testar o m7GMP,** troque a SMILES por esta e repita o passo 2:
+**Por que olhar a pose e não parar no RMSD.** O número 6,51 Å diz que a pose está errada; a imagem mostra de que maneira, e é disso que saem as hipóteses do passo seguinte.
+
+## Passo 8: investigar a causa
+
+Um resultado ruim não encerra o exercício. Liste as causas possíveis, diga o que cada uma preveria e teste as que estiverem ao seu alcance.
+
+| Hipótese | O que ela prevê | Como testar | O que aconteceu |
+|----------|------------------|-------------|------------------|
+| Ligante flexível demais (10 ligações rotáveis) | com menos fosfatos, melhora | repetir com o m7GMP | continuou errando: 4,95 Å |
+| Pontuação fraca em cátion-π e eletrostática | outro método melhora | repetir com Attracting Cavities | melhorou, passo 9 |
+| Carga −3 e custo alto de dessolvatação | ligantes neutros vão melhor | comparar com o ensitrelvir | consistente: o neutro acerta |
+| Receptor rígido, sítio que fecha sobre o cap | precisaria do receptor em movimento | exige dinâmica molecular | fora do alcance desta aula |
+
+**8.1. Para testar a primeira hipótese,** repita os passos 2 a 6 trocando apenas a SMILES por esta, do m7GMP, que tem um fosfato em vez de três:
 
 ```
 C[n+]1cn(c2c1C(=O)NC(=N2)N)[C@H]3[C@@H]([C@@H]([C@H](O3)COP(=O)([O-])[O-])O)O
 ```
 
-**Por que esse teste é informativo mesmo falhando.** Se a flexibilidade fosse a causa principal, tirar dois fosfatos teria resolvido. Não resolveu, o que empurra a explicação para a pontuação e a carga.
+**O que esperar.** Continua errando: a melhor pose fica a 4,95 Å considerando os átomos em comum.
 
-## Passo 5: trocar o método, no mesmo servidor
+**O que esse teste elimina.** Se a flexibilidade fosse a causa principal, remover dois fosfatos teria resolvido, porque o m7GMP tem 6 ligações rotáveis contra 10 do m7GTP. Não resolveu, o que desloca a explicação para a função de pontuação e para a carga.
 
-**O que fazer.** Repita a submissão do passo 2 e, no fim, clique em **Docking with Attracting Cavities** em vez do Vina.
+## Passo 9: trocar o método, no mesmo servidor
 
-**O que muda na tela.** Aparecem parâmetros que só existem nesse método: condições iniciais aleatórias (RIC), exaustividade de amostragem e prioridade de cavidade. A referência usou exaustividade 90, prioridade de cavidade 70 e 2 condições iniciais.
+**9.1.** Repita os passos 2 a 4 exatamente como antes.
+
+**9.2.** No fim, clique em **Docking with Attracting Cavities** em vez do Vina.
+
+**9.3.** Aparecem parâmetros que só existem nesse método. Use os da referência: exaustividade de amostragem **90**, prioridade de cavidade **70** e **2** condições iniciais aleatórias.
 
 **O que esperar.** Cerca de **15 minutos**, contra 2 do Vina, e 106 poses agrupadas em 50 famílias.
 
@@ -96,17 +155,27 @@ C[n+]1cn(c2c1C(=O)NC(=N2)N)[C@H]3[C@@H]([C@@H]([C@H](O3)COP(=O)([O-])[O-])O)O
 | Poses abaixo de 3 Å | nenhuma | 6% |
 | Tempo | 2 min | 15 min |
 
-**O detalhe que importa.** Numa das poses de topo, a base metilada cai praticamente em cima do lugar certo, com RMSD de 0,85 Å considerando só o anel. O que fica fora são os fosfatos.
+Separando a molécula em duas partes, o resultado fica mais claro: numa das poses de topo o anel da guanina metilada cai a 0,85 Å da posição do cristal, e são os três fosfatos que ficam fora do lugar. O método acerta a parte que o sítio reconhece e erra a cauda carregada.
 
-**A leitura honesta.** O método mais caro encontra a resposta, mas não a coloca em primeiro lugar. Sem o cristal para comparar, você não saberia qual das 106 poses escolher. Trocar de método melhorou a amostragem; não resolveu a pontuação.
+O Attracting Cavities gera poses corretas, mas as classifica em posição intermediária. Sem o cristal para comparar, o único critério disponível seria a energia, e ela apontaria para outra pose. Trocar de método melhorou a amostragem do espaço de busca, não a função que ordena os resultados.
 
-## O que concluir
+## O gráfico que resume as duas práticas
 
-- Um protocolo validado num sistema não está validado em outro. Redocking vale para o alvo em que foi feito.
-- Ligantes muito carregados e muito flexíveis são o caso difícil das funções de pontuação rápidas.
-- Quando o resultado é ruim, troque uma variável de cada vez e registre o que cada troca previa.
-- Sem referência experimental não há como validar uma pose por dentro. É por isso que a próxima etapa natural é a dinâmica molecular, que testa se a pose sobrevive em água.
+Pondo energia contra RMSD para todas as poses de A e B, a diferença fica evidente: na Mpro a melhor energia é a pose certa; na eIF4E, nenhuma pose chega perto, e a menos errada está entre as piores em energia.
+
+![Energia contra RMSD nas duas práticas](../imagens/pratica_energia_rmsd.png)
+
+## O que concluir desta prática
+
+1. Um protocolo validado num sistema não está validado em outro. O redocking vale para o alvo em que foi feito.
+2. Ligantes muito carregados e muito flexíveis são o caso difícil das funções de pontuação rápidas.
+3. Quando o resultado é ruim, troque uma variável de cada vez e registre o que cada troca previa.
+4. Sem referência experimental, não há como validar uma pose por dentro. É por isso que o passo seguinte natural é a dinâmica molecular, que testa se a pose sobrevive em água.
 
 ## Se o servidor estiver fora do ar
 
-Os resultados completos estão em [resultados/eif4e](https://github.com/madsondeluna/curso-docking/tree/main/resultados/eif4e), [resultados/eif4e_ac](https://github.com/madsondeluna/curso-docking/tree/main/resultados/eif4e_ac) e [resultados/eif4e_m7gmp](https://github.com/madsondeluna/curso-docking/tree/main/resultados/eif4e_m7gmp).
+| Pasta | Conteúdo |
+|-------|----------|
+| [resultados/eif4e](https://github.com/madsondeluna/curso-docking/tree/main/resultados/eif4e) | as 20 poses do Vina, energias, RMSD, interações e o complexo pronto para o PLIP |
+| [resultados/eif4e_ac](https://github.com/madsondeluna/curso-docking/tree/main/resultados/eif4e_ac) | as 106 poses do Attracting Cavities |
+| [resultados/eif4e_m7gmp](https://github.com/madsondeluna/curso-docking/tree/main/resultados/eif4e_m7gmp) | o teste com o m7GMP |

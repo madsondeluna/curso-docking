@@ -1,88 +1,110 @@
 # Passo a passo: encontrar cavidades e decidir quais são sítios
 
-Previsão de cavidades no PrankWeb, que roda o P2Rank, em quatro estruturas escolhidas para responder a uma pergunta cada. Os valores vêm das execuções guardadas em `resultados/cavidades`.
+Prática C. Previsão de cavidades no PrankWeb, que roda o programa P2Rank, em quatro estruturas, cada uma escolhida para responder a uma pergunta. Os valores vêm de `resultados/cavidades`.
 
-[Voltar à aula](../README.md) · [Passo a passo da Mpro](mpro.md) · [Passo a passo da eIF4E](eif4e.md)
+[Voltar à aula](../README.md) · [Prática A: Mpro](mpro.md) · [Prática B: eIF4E](eif4e.md)
 
-## Por que esta prática vem antes do docking, na vida real
+## O que será feito, em uma frase
 
-Nas Práticas A e B o sítio já era conhecido: o cristal trazia o ligante no lugar. Fora da aula, você costuma ter só a proteína. Aí a primeira pergunta não é "qual a melhor pose", e sim **"onde eu coloco a caixa"**.
+Nas Práticas A e B o sítio já era conhecido, porque o cristal trazia o ligante no lugar. Aqui você parte só da proteína e pergunta **onde colocar a caixa**. O servidor devolve uma lista de cavidades ordenadas, e a sua tarefa é decidir quais podem ser sítios de verdade.
 
-A resposta errada mais comum é supor que o maior buraco da superfície é o sítio. Esta prática mostra, com números, por que isso falha.
+O atalho mais comum nesse ponto é supor que o maior buraco da superfície é o sítio. Os três casos a seguir mostram, com números, por que ele falha.
 
-## Passo 1: submeter uma estrutura
+## Caso 1: quantas cavidades e quantos sítios?
 
-**O que fazer.** Abra [prankweb.cz](https://prankweb.cz/).
+### Passo 1.1: submeter a Mpro
 
-**O que selecionar.**
+**a.** Abra [prankweb.cz](https://prankweb.cz/).
 
-| Campo | Escolha | Por quê |
-|-------|---------|---------|
-| Tipo de entrada | **Experimental structure** | vamos usar estruturas resolvidas, não previstas |
-| Código | `8HBK` | a Mpro da Prática A |
-| Conservação | ligada | resíduos conservados entre espécies costumam ser funcionais, o que ajuda a separar sítio de buraco |
+**b.** Deixe selecionada a opção de **estrutura experimental**, que é a entrada por código PDB.
+
+**c.** Digite `8HBK`, a mesma estrutura da Prática A.
+
+**d.** Deixe a opção de **conservação** ligada.
+
+**e.** Envie.
+
+**Por que a conservação ajuda.** Um sítio de ligação sofre pressão evolutiva: mutações ali costumam quebrar a função, então os resíduos tendem a ser conservados entre espécies. Uma reentrância qualquer da superfície não sofre essa pressão. Conservação alta é um indício a mais de que a cavidade faz alguma coisa.
 
 **O que esperar.** Uma fila curta e, em poucos minutos, a página de resultados.
 
-**Por que a conservação ajuda.** Um sítio de ligação sofre pressão evolutiva: mutações ali costumam quebrar a função. Uma reentrância qualquer da superfície não sofre essa pressão. Conservação alta é um indício a mais de que a cavidade faz algo.
+### Passo 1.2: ler a página de resultados
 
-## Passo 2: ler a página de resultados
+A página tem três áreas: a lista de cavidades à direita, a sequência no alto e o visualizador 3D no centro.
 
-A página tem três áreas: a lista de cavidades, a sequência e o visualizador 3D.
+**a.** Na lista, entenda cada coluna antes de julgar:
 
-**O que olhar na lista.**
-
-| Coluna | O que significa | Como usar |
-|--------|-----------------|-----------|
+| Coluna | O que é | Como usar |
+|--------|---------|-----------|
 | Rank | posição pelo escore do P2Rank | ordem de suspeita, não de certeza |
-| Score | escore bruto do método | compare entre cavidades da **mesma** proteína |
+| Score | escore bruto | compare só entre cavidades da **mesma** proteína |
 | Probability | probabilidade calibrada de ser um sítio | leia como confiança, não como verdade |
-| Número de resíduos | tamanho da cavidade | cavidades grandes acomodam ligantes maiores |
+| Número de resíduos | tamanho da cavidade | cavidades maiores acomodam ligantes maiores |
 
-**O que fazer no visualizador.** Clique na lupa de cada linha para centralizar a cavidade. Os ligantes presentes na estrutura aparecem em bastões: é com eles que você vai comparar.
+**b.** Clique no ícone de lupa de cada linha. O visualizador centraliza aquela cavidade.
 
-**O que você deve ver na 8HBK.** Oito cavidades. A primeira, com escore 18,9, coincide com o ensitrelvir. As outras sete ficam de 8 a 26 Å dele.
+**c.** Repare que o ligante presente na estrutura aparece em bastões. É com ele que você compara: **a cavidade cai em cima do ligante ou longe dele?**
 
-**A conclusão do primeiro caso.** Uma proteína de 300 resíduos tem oito cavidades e um sítio. **Nem toda cavidade é um sítio.**
+**O que você deve encontrar na 8HBK.** Oito cavidades. A primeira, com escore 18,9, coincide com o ensitrelvir. As outras sete ficam de 8 a 26 Å dele.
 
-## Passo 3: um sítio alostérico aparece?
+![As oito cavidades da Mpro](../imagens/fund_cavidades.png)
 
-**O que fazer.** Repita o passo 1 com o código `5MO4`.
+Uma proteína de 300 resíduos tem, portanto, oito cavidades e um sítio. A diferença entre as duas palavras é o conteúdo desta prática.
 
-**O que essa estrutura tem de especial.** A quinase ABL com **dois fármacos ligados ao mesmo tempo**: o nilotinibe no sítio do ATP e o asciminibe no bolso do miristoil, que é alostérico.
+## Caso 2: um sítio alostérico aparece na lista?
 
-**O que esperar.**
+### Passo 2.1: submeter a quinase ABL
+
+**a.** Repita o passo 1.1 com o código `5MO4`.
+
+**O que essa estrutura tem de especial.** É a quinase ABL com **dois fármacos ligados ao mesmo tempo**: o nilotinibe no sítio do ATP, que é o sítio ortostérico, e o asciminibe no bolso do miristoil, que é alostérico.
+
+### Passo 2.2: comparar as cavidades com os dois fármacos
+
+**a.** Para cada uma das cinco cavidades, use a lupa e veja de qual fármaco ela está perto.
+
+**O que você deve encontrar.**
 
 | Cavidade | Escore | Fica a | Que sítio é |
 |----------|--------|--------|-------------|
-| 1 | 27,9 | 2,1 Å do nilotinibe | ortostérico, o sítio do ATP |
+| 1 | 27,9 | 2,1 Å do nilotinibe | ortostérico, sítio do ATP |
 | 2 | 5,2 | 16 Å de qualquer ligante | sem ligante conhecido |
-| 3 | 5,0 | 0,9 Å do asciminibe | alostérico, o bolso do miristoil |
+| 3 | 5,0 | 0,9 Å do asciminibe | alostérico, bolso do miristoil |
 
-**Como interpretar.** O método acha os dois sítios reais, mas põe o alostérico em terceiro lugar, com escore cinco vezes menor que o ortostérico. Sítios alostéricos costumam ser menores e menos óbvios geometricamente.
+O método acha os dois sítios reais, mas põe o alostérico em terceiro lugar, com escore cinco vezes menor que o do ortostérico. Sítios alostéricos costumam ser menores e menos pronunciados na geometria da superfície.
 
-**Por que isso vale ouro na clínica.** O asciminibe ocupa o lugar onde normalmente entra a cauda miristoilada da própria proteína e trava a quinase numa forma inativa (Wylie *et al.*, 2017). Como não disputa o sítio do ATP, continua funcionando em leucemias com a mutação T315I, que torna a proteína resistente ao imatinibe. Trocar de cavidade foi a saída para a resistência.
+**Consequência clínica.** O asciminibe ocupa o lugar onde normalmente entra a cauda miristoilada da própria proteína e trava a quinase numa forma inativa (Wylie *et al.*, 2017). Como não disputa o sítio do ATP, mantém atividade em leucemias com a mutação T315I, que confere resistência ao imatinibe (Gorre *et al.*, 2001). Mudar de cavidade foi a saída para a resistência.
 
-**O que você deve tirar daqui.** Se tivesse descartado tudo abaixo do primeiro lugar, teria jogado fora a cavidade que virou fármaco.
+Descartar tudo abaixo do primeiro lugar, neste caso, significaria descartar a cavidade que deu origem a um fármaco aprovado.
 
-## Passo 4: uma cavidade pode não existir ainda
+![Os quatro tipos de sítio](../imagens/fund_tipos_sitio.png)
 
-**O que fazer.** Rode `6OIM` e depois `4OBE`. São a mesma proteína, o KRAS: a primeira com o fármaco sotorasibe ligado, a segunda sem fármaco nenhum.
+## Caso 3: uma cavidade pode ainda não existir
 
-**O que esperar.**
+### Passo 3.1: submeter o KRAS com e sem fármaco
 
-| Estrutura | Cavidade do switch II | Escore |
-|-----------|------------------------|--------|
+**a.** Rode `6OIM`, que é o KRAS G12C com o fármaco sotorasibe ligado.
+
+**b.** Rode `4OBE`, a mesma proteína sem fármaco nenhum.
+
+**c.** Compare as duas listas.
+
+**O que você deve encontrar.**
+
+| Estrutura | A cavidade do switch II | Escore |
+|-----------|--------------------------|--------|
 | 6OIM, com o fármaco | aparece em 2º lugar, a 0,9 Å do sotorasibe | 6,7 |
 | 4OBE, sem o fármaco | aparece em 3º lugar, rasa | 9,5, contra 21,5 do sítio do GDP |
 
-**A história por trás.** O KRAS foi considerado não medicável por décadas: a superfície é lisa, sem bolsão evidente. Ostrem *et al.* (2013) mostraram que inibidores covalentes da cisteína 12 **abrem** um bolso novo, o switch II, e disso veio o sotorasibe (Canon *et al.*, 2019).
+O KRAS foi considerado não medicável por décadas, porque a superfície é lisa e não apresenta bolsão evidente ao lado do nucleotídeo. Ostrem *et al.* (2013) mostraram que inibidores covalentes da cisteína 12 abrem um bolso novo, o switch II, e desse achado veio o sotorasibe (Canon *et al.*, 2019).
 
-**O que a comparação ensina.** O bolso existe na estrutura sem fármaco, mas raso e mal pontuado. Uma cavidade pequena demais hoje pode ser um sítio amanhã, se algo a abrir. Sítios assim se chamam **crípticos**, e é a dinâmica molecular que costuma encontrá-los.
+O bolso já existe na estrutura sem fármaco, porém raso e mal pontuado. Cavidades que só se abrem na presença do ligante se chamam **crípticas**, e são encontradas com mais frequência pela dinâmica molecular do que pela previsão geométrica (Zimmerman *et al.*, 2021).
 
-## Passo 5: julgar uma cavidade
+![Escores das cavidades nas quatro estruturas](../imagens/fund_cavidades_ranking.png)
 
-Antes de apontar a caixa do docking para uma cavidade, passe por esta lista.
+## Passo final: julgar uma cavidade
+
+Antes de apontar a caixa de um docking para uma cavidade, passe por esta lista.
 
 | Pergunta | Se a resposta for sim |
 |----------|------------------------|
@@ -93,15 +115,15 @@ Antes de apontar a caixa do docking para uma cavidade, passe por esta lista.
 | Existe alguma estrutura da mesma proteína com ligante ali? | é a evidência mais forte que existe |
 | O escore é alto, mas nada se liga ali em nenhuma estrutura? | escore alto diz que **parece** sítio, não que seja |
 
-**A regra prática.** Escore do P2Rank ordena suspeitas. Só estrutura experimental, ensaio ou mutagênese confirma um sítio.
+O escore do P2Rank ordena suspeitas. A confirmação de um sítio vem de estrutura experimental com ligante, ensaio de atividade ou mutagênese.
 
-## O que concluir
+## O que concluir desta prática
 
-- Proteínas têm muito mais cavidades do que sítios: oito contra um, na Mpro.
-- Sítios alostéricos são cavidades de verdade, só menores e pior pontuadas; descartá-las por causa do posto é perder alvos.
-- Sítios crípticos podem estar rasos ou ausentes na estrutura que você baixou.
-- Previsão de cavidade escolhe onde procurar. Ela não substitui evidência de que algo se liga ali.
+1. Proteínas têm muito mais cavidades do que sítios: oito contra um, na Mpro.
+2. Sítios alostéricos são cavidades de verdade, só menores e pior pontuadas. Descartá-las pelo posto é perder alvos.
+3. Sítios crípticos podem estar rasos ou ausentes na estrutura que você baixou.
+4. Previsão de cavidade escolhe onde procurar. Ela não substitui evidência de que algo se liga ali.
 
 ## Se o servidor estiver fora do ar
 
-Os resultados das quatro estruturas, com todas as cavidades e a distância até cada ligante do cristal, estão em [resultados/cavidades](https://github.com/madsondeluna/curso-docking/tree/main/resultados/cavidades).
+Os resultados das quatro estruturas, com todas as cavidades e a distância até cada ligante do cristal, estão em [resultados/cavidades](https://github.com/madsondeluna/curso-docking/tree/main/resultados/cavidades), um arquivo JSON por estrutura.

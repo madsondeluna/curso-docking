@@ -17,7 +17,16 @@ from openbabel import openbabel as ob
 
 ob.obErrorLog.SetOutputLevel(0)
 ROOT = Path(__file__).resolve().parents[1]
-KEEP = ('vina_dock.pdbqt', 'poses.json', 'interacoes.json', 'parameters')
+KEEP = ('vina_dock.pdbqt', 'vina_dock.pdb', 'poses.json', 'interacoes.json', 'parameters')
+
+
+def complexo(run, out, pose=1):
+    """Receptor + a pose pedida num unico PDB, com o ligante como HETATM (formato que o PLIP espera)."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from interactions import complex_pdb, ligand_lines
+    mol = list(pybel.readfile('pdbqt', str(run / 'vina_dock.pdbqt')))[pose - 1]
+    (out / f'complexo_pose{pose}.pdb').write_text(complex_pdb(run / 'receptor.pdb', ligand_lines(mol)))
 
 
 def main():
@@ -29,6 +38,7 @@ def main():
         for f in KEEP:
             if (run / f).exists():
                 shutil.copy(run / f, out / f)
+        complexo(run, out)
         sdf = pybel.Outputfile('sdf', str(out / 'poses_top3.sdf'), overwrite=True)
         for k, m in enumerate(pybel.readfile('pdbqt', str(run / 'vina_dock.pdbqt'))):
             if k == 3:
