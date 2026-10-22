@@ -1,4 +1,4 @@
-# Docking Molecular: da estrutura ao fármaco
+# Docking Molecular: da estrutura à interação
 
 Material didático e prática em servidores web sobre docking molecular: prever onde e como uma molécula pequena se encaixa numa proteína. Dois sistemas opostos, resolvidos no mesmo servidor: o ensitrelvir na protease principal do SARS-CoV-2, em que o programa acerta a pose do cristal, e o cap do mRNA na proteína eIF4E, em que erra. Todos os arquivos de entrada estão neste repositório e baixam com um clique.
 
