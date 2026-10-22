@@ -201,7 +201,7 @@ A pose 1 cai praticamente sobre o cristal. A pose 2, com energia apenas 0,4 kcal
 
 **8.3. Agora, as interações da sua pose.** O PLIP precisa de um arquivo com a proteína e o ligante juntos, e o ligante marcado como `HETATM`. Há dois caminhos.
 
-**Caminho curto.** Baixe o arquivo pronto [resultados/mpro/complexo_pose1.pdb](https://github.com/madsondeluna/curso-docking/blob/main/resultados/mpro/complexo_pose1.pdb) e envie ao PLIP pelo botão de upload.
+**Caminho curto.** Baixe o arquivo pronto [resultados/mpro/complexo_pose1.pdb](../resultados/mpro/complexo_pose1.pdb) e envie ao PLIP pelo botão de upload.
 
 **Caminho manual, com a sua própria pose.**
 
@@ -226,7 +226,7 @@ A pose 1 cai praticamente sobre o cristal. A pose 2, com energia apenas 0,4 kcal
 
 ## Se o servidor estiver fora do ar
 
-Tudo o que você precisa para os passos 6, 7 e 8 está em [resultados/mpro](https://github.com/madsondeluna/curso-docking/tree/main/resultados/mpro):
+Tudo o que você precisa para os passos 6, 7 e 8 está em [resultados/mpro](../resultados/mpro):
 
 | Arquivo | Para que serve |
 |---------|----------------|

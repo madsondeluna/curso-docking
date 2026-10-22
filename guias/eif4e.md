@@ -176,6 +176,6 @@ Pondo energia contra RMSD para todas as poses de A e B, a diferença fica eviden
 
 | Pasta | Conteúdo |
 |-------|----------|
-| [resultados/eif4e](https://github.com/madsondeluna/curso-docking/tree/main/resultados/eif4e) | as 20 poses do Vina, energias, RMSD, interações e o complexo pronto para o PLIP |
-| [resultados/eif4e_ac](https://github.com/madsondeluna/curso-docking/tree/main/resultados/eif4e_ac) | as 106 poses do Attracting Cavities |
-| [resultados/eif4e_m7gmp](https://github.com/madsondeluna/curso-docking/tree/main/resultados/eif4e_m7gmp) | o teste com o m7GMP |
+| [resultados/eif4e](../resultados/eif4e) | as 20 poses do Vina, energias, RMSD, interações e o complexo pronto para o PLIP |
+| [resultados/eif4e_ac](../resultados/eif4e_ac) | as 106 poses do Attracting Cavities |
+| [resultados/eif4e_m7gmp](../resultados/eif4e_m7gmp) | o teste com o m7GMP |

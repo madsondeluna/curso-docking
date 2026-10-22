@@ -126,4 +126,4 @@ O escore do P2Rank ordena suspeitas. A confirmação de um sítio vem de estrutu
 
 ## Se o servidor estiver fora do ar
 
-Os resultados das quatro estruturas, com todas as cavidades e a distância até cada ligante do cristal, estão em [resultados/cavidades](https://github.com/madsondeluna/curso-docking/tree/main/resultados/cavidades), um arquivo JSON por estrutura.
+Os resultados das quatro estruturas, com todas as cavidades e a distância até cada ligante do cristal, estão em [resultados/cavidades](../resultados/cavidades), um arquivo JSON por estrutura.

@@ -1,8 +1,8 @@
 """Monta site_src/ (entrada do MkDocs) a partir do README, dos guias e das imagens.
 
 O README vira uma pagina por secao `##`; a capa recebe o titulo, a introducao,
-os cartoes de navegacao e o roteiro. Copia dados/ para o site, para os links de
-download funcionarem. Gera tambem mkdocs.gen.yml com o nav.
+os cartoes de navegacao e o roteiro. Copia dados/ e resultados/ para o site, para os
+links de download funcionarem. Gera tambem mkdocs.gen.yml com o nav.
 """
 import re, shutil, unicodedata
 from pathlib import Path
@@ -33,7 +33,7 @@ def slug(text):
 
 def repo_links(text, prefix=''):
     """Links relativos para arquivos que nao entram no site viram links do GitHub."""
-    text = re.sub(rf'\]\({prefix}(tools|resultados)(/[^)]*)?\)',
+    text = re.sub(rf'\]\({prefix}(tools)(/[^)]*)?\)',
                   lambda m: f']({REPO}/tree/main/{m.group(1)}{m.group(2) or ""})', text)
     return re.sub(rf'\]\({prefix}LICENSE\)', f']({REPO}/blob/main/LICENSE)', text)
 
@@ -115,6 +115,7 @@ def main():
     (OUT / 'guias').mkdir(parents=True)
     shutil.copytree(ROOT / 'imagens', OUT / 'imagens', ignore=shutil.ignore_patterns('._*'))
     shutil.copytree(ROOT / 'dados', OUT / 'dados', ignore=shutil.ignore_patterns('._*'))
+    shutil.copytree(ROOT / 'resultados', OUT / 'resultados', ignore=shutil.ignore_patterns('._*'))
     shutil.copytree(ROOT / 'site_theme', OUT, dirs_exist_ok=True, ignore=shutil.ignore_patterns('._*'))
 
     preamble, sections = split_readme(repo_links((ROOT / 'README.md').read_text()))
