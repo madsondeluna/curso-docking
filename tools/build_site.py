@@ -1,8 +1,9 @@
 """Monta site_src/ (entrada do MkDocs) a partir do README, dos guias e das imagens.
 
 O README vira uma pagina por secao `##`; a capa recebe o titulo, a introducao,
-os cartoes de navegacao e o roteiro. Copia dados/ e resultados/ para o site, para os
-links de download funcionarem. Gera tambem mkdocs.gen.yml com o nav.
+os cartoes de navegacao e o roteiro. Guias em guias/, se houver, entram na pratica.
+Copia dados/ e resultados/ para o site, para os links de download funcionarem.
+Gera tambem mkdocs.gen.yml com o nav.
 """
 import re, shutil, unicodedata
 from pathlib import Path
@@ -51,7 +52,7 @@ def promote(body):
     return '\n'.join(out)
 
 
-GUIAS = {'mpro': 'Passo a passo: Mpro', 'eif4e': 'Passo a passo: eIF4E', 'cavidades': 'Passo a passo: cavidades'}
+GUIAS = {}
 
 
 def label(title):
@@ -141,7 +142,7 @@ def main():
         grupo = refs if title in REFERENCE else pratica if title.startswith(PRATICA) else aula
         grupo.append((title, name))
 
-    for guia in sorted((ROOT / 'guias').glob('[!._]*.md')):
+    for guia in sorted((ROOT / 'guias').glob('[!._]*.md')) if (ROOT / 'guias').is_dir() else []:
         text = guia.read_text().replace('[Voltar à aula](../README.md)', '[Voltar à aula](../index.md)')
         (OUT / 'guias' / guia.name).write_text(repo_links(text, r'\.\./'))
         pratica.append((GUIAS.get(guia.stem, guia.stem), f'guias/{guia.name}'))
