@@ -93,6 +93,7 @@ hide:
 
 [Ir para a prática]({pratica[0][1]}){{ .md-button .md-button--primary }}
 [Começar a aula]({pages[0][1]}){{ .md-button }}
+[Slides da aula (PDF)](curso-docking.pdf){{ .md-button }}
 
 </div>
 
@@ -119,6 +120,7 @@ def main():
     shutil.copytree(ROOT / 'dados', OUT / 'dados', ignore=shutil.ignore_patterns('._*'))
     shutil.copytree(ROOT / 'resultados', OUT / 'resultados', ignore=shutil.ignore_patterns('._*'))
     shutil.copytree(ROOT / 'site_theme', OUT, dirs_exist_ok=True, ignore=shutil.ignore_patterns('._*'))
+    shutil.copy(ROOT / 'curso-docking.pdf', OUT / 'curso-docking.pdf')
 
     preamble, sections = split_readme(repo_links((ROOT / 'README.md').read_text()))
 

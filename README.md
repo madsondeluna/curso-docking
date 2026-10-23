@@ -13,6 +13,7 @@ Material didático e prática em servidores web sobre docking molecular: prever 
 | Autor | **Madson A. de Luna-Aragão** |
 | Vínculos | Programa Interunidades de Pós-Graduação em Bioinformática, Universidade Federal de Minas Gerais (UFMG), Belo Horizonte, Brasil<br>Centre National de la Recherche Scientifique (CNRS), Institut de Biologie et Chimie des Protéines (IBCP), Lyon, França |
 | E-mail | [madsondeluna@gmail.com](mailto:madsondeluna@gmail.com) |
+| Slides da aula | [curso-docking.pdf](curso-docking.pdf) |
 | Site do curso | [madsondeluna.com/curso-docking](https://madsondeluna.com/curso-docking/) |
 | Repositório | [madsondeluna/curso-docking](https://github.com/madsondeluna/curso-docking) |
 | Curso de dinâmica molecular | [madsondeluna.com/curso-md](https://madsondeluna.com/curso-md/) |
