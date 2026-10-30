@@ -1,0 +1,32 @@
+{
+ "servico": "NVIDIA NIM, mit/diffdock (exemplo da página: SARS-CoV-2 Main Protease and Ensitrelvir Analog)",
+ "entrada_proteina": "dados/mpro_analogo/receptor_openfold.pdb",
+ "entrada_ligante": "dados/mpro_analogo/ligante_analogo_3d.sdf",
+ "num_poses": 20,
+ "steps": 18,
+ "time_divisions": 20,
+ "tempo_s": 24.7,
+ "data": "2026-10-30",
+ "confianca": [
+  -0.594,
+  -0.654,
+  -0.699,
+  -0.716,
+  -0.885,
+  -1.054,
+  -1.069,
+  -1.091,
+  -1.211,
+  -1.349,
+  -1.733,
+  -1.843,
+  -2.441,
+  -2.455,
+  -2.501,
+  -2.642,
+  -3.085,
+  -3.342,
+  -3.484,
+  -3.495
+ ]
+}

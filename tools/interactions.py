@@ -5,6 +5,7 @@ o mesmo programa do servidor web usado na pratica. Grava
 resultados/<sistema>/interacoes.json com as interacoes por residuo.
 
 Uso: python tools/interactions.py mpro eif4e [--poses 1 2 3]
+     python tools/interactions.py eif4e_diffdock --receptor eif4e --poses 1 2 3
 """
 from __future__ import annotations
 
@@ -61,15 +62,18 @@ def main():
     ap = argparse.ArgumentParser(description='Interacoes PLIP do cristal e das poses')
     ap.add_argument('sistemas', nargs='+')
     ap.add_argument('--poses', nargs='+', type=int, default=[1, 2, 3])
+    ap.add_argument('--receptor', help='sistema de dados/ quando difere do nome da pasta de resultados')
     a = ap.parse_args()
     for nome in a.sistemas:
-        d = ROOT / 'dados' / nome
+        d = ROOT / 'dados' / (a.receptor or nome)
         res = ROOT / 'runs' / 'swissdock' / nome
         res = res if res.exists() else ROOT / 'resultados' / nome
         out = {}
         cristal = next(pybel.readfile('sdf', str(d / 'ligante_cristal.sdf')))
         out['cristal'] = plip(complex_pdb(d / 'receptor.pdb', ligand_lines(cristal)))
-        poses = list(pybel.readfile('pdbqt', str(res / 'vina_dock.pdbqt')))
+        # Vina devolve PDBQT; DiffDock devolve SDF
+        arq = res / 'vina_dock.pdbqt'
+        poses = list(pybel.readfile('pdbqt', str(arq))) if arq.exists() else list(pybel.readfile('sdf', str(res / 'poses.sdf')))
         for k in a.poses:
             out[f'pose {k}'] = plip(complex_pdb(d / 'receptor.pdb', ligand_lines(poses[k - 1])))
         (res / 'interacoes.json').write_text(json.dumps(out, indent=1, ensure_ascii=False) + '\n')

@@ -1,0 +1,149 @@
+{
+ "rmsd_ca_openfold_8hbk_A": 0.58,
+ "residuos_alinhados": 300,
+ "atomos_nucleo_comum": 29,
+ "atomos_ensitrelvir": 37,
+ "atomos_analogo": 37,
+ "poses": [
+  {
+   "pose": 1,
+   "confianca": -0.594,
+   "rmsd_nucleo_A": 1.65,
+   "contatos_do_cristal": 3,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 2,
+   "confianca": -0.654,
+   "rmsd_nucleo_A": 3.22,
+   "contatos_do_cristal": 3,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 3,
+   "confianca": -0.699,
+   "rmsd_nucleo_A": 2.84,
+   "contatos_do_cristal": 4,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 4,
+   "confianca": -0.716,
+   "rmsd_nucleo_A": 2.87,
+   "contatos_do_cristal": 4,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 5,
+   "confianca": -0.885,
+   "rmsd_nucleo_A": 2.68,
+   "contatos_do_cristal": 4,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 6,
+   "confianca": -1.054,
+   "rmsd_nucleo_A": 8.47,
+   "contatos_do_cristal": 3,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 7,
+   "confianca": -1.069,
+   "rmsd_nucleo_A": 8.33,
+   "contatos_do_cristal": 2,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 8,
+   "confianca": -1.091,
+   "rmsd_nucleo_A": 2.94,
+   "contatos_do_cristal": 5,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 9,
+   "confianca": -1.211,
+   "rmsd_nucleo_A": 7.78,
+   "contatos_do_cristal": 2,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 10,
+   "confianca": -1.349,
+   "rmsd_nucleo_A": 5.21,
+   "contatos_do_cristal": 3,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 11,
+   "confianca": -1.733,
+   "rmsd_nucleo_A": 2.02,
+   "contatos_do_cristal": 4,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 12,
+   "confianca": -1.843,
+   "rmsd_nucleo_A": 8.83,
+   "contatos_do_cristal": 2,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 13,
+   "confianca": -2.441,
+   "rmsd_nucleo_A": 7.75,
+   "contatos_do_cristal": 1,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 14,
+   "confianca": -2.455,
+   "rmsd_nucleo_A": 7.9,
+   "contatos_do_cristal": 1,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 15,
+   "confianca": -2.501,
+   "rmsd_nucleo_A": 8.29,
+   "contatos_do_cristal": 1,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 16,
+   "confianca": -2.642,
+   "rmsd_nucleo_A": 5.95,
+   "contatos_do_cristal": 2,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 17,
+   "confianca": -3.085,
+   "rmsd_nucleo_A": 5.86,
+   "contatos_do_cristal": 1,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 18,
+   "confianca": -3.342,
+   "rmsd_nucleo_A": 8.84,
+   "contatos_do_cristal": 0,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 19,
+   "confianca": -3.484,
+   "rmsd_nucleo_A": 9.89,
+   "contatos_do_cristal": 3,
+   "contatos_no_cristal": 8
+  },
+  {
+   "pose": 20,
+   "confianca": -3.495,
+   "rmsd_nucleo_A": 6.53,
+   "contatos_do_cristal": 0,
+   "contatos_no_cristal": 8
+  }
+ ]
+}

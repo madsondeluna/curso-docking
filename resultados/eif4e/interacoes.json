@@ -159,6 +159,462 @@
    "residuo": "ARG112"
   }
  ],
+ "pose 4": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASP90"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ALA204"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR211"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLN198"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 5": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "LYS54"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "LYS54"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "PRO100"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 6": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR211"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "ARG112"
+  }
+ ],
+ "pose 7": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASP51"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASP90"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "PRO100"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  }
+ ],
+ "pose 8": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLN198"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "ARG112"
+  }
+ ],
+ "pose 9": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASP51"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 10": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER92"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER92"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 11": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "ARG157"
+  }
+ ],
+ "pose 12": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "PRO87"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ALA158"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "ARG157"
+  }
+ ],
+ "pose 13": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLN198"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR211"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "ARG112"
+  }
+ ],
+ "pose 14": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASP90"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLN198"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR211"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "cátion-π",
+   "residuo": "ARG112"
+  }
+ ],
+ "pose 15": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  }
+ ],
  "pose 16": [
   {
    "tipo": "ligação de hidrogênio",
@@ -203,6 +659,122 @@
   {
    "tipo": "cátion-π",
    "residuo": "TRP56"
+  }
+ ],
+ "pose 17": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ALA204"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLN198"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG112"
+  }
+ ],
+ "pose 18": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASP51"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  }
+ ],
+ "pose 19": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ASP90"
+  }
+ ],
+ "pose 20": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN50"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ALA204"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ASP90"
   }
  ]
 }

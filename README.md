@@ -1,19 +1,19 @@
 # Docking Molecular: da estrutura à interação
 
-Material didático e prática em servidores web sobre docking molecular: prever onde e como uma molécula pequena se encaixa numa proteína. A prática é o redocking do ensitrelvir na protease principal do SARS-CoV-2, em que o programa acerta a pose do cristal. Todos os arquivos de entrada estão neste repositório e baixam com um clique.
+Material didático e prática em servidores web sobre docking molecular: prever onde e como uma molécula pequena se encaixa numa proteína. A aula vai do mais simples ao mais complexo, de receptor e ligante até energia de ligação e dinâmica. A prática compara as poses do DiffDock com dois cristais: o cap do mRNA na eIF4E (1IPC) e um análogo do ensitrelvir na protease principal do SARS-CoV-2 (8HBK). Todos os arquivos de entrada e os resultados de referência estão neste repositório e baixam com um clique.
 
 | Etapa | Ferramenta | Conta | Conteúdo |
 |-------|------------|-------|----------|
-| Docking | [SwissDock](https://www.swissdock.ch/) (AutoDock Vina) | não | redocking do ensitrelvir, energia e RMSD contra o cristal |
-| Interações | [PLIP](https://plip-tool.biotec.tu-dresden.de/) | não | ligações de hidrogênio, contatos hidrofóbicos, empilhamento |
-| Visualização | [Mol*](https://molstar.org/) | não | ver a pose e o sítio em 3D |
+| Cristais | [RCSB PDB](https://www.rcsb.org/) | não | as estruturas 1IPC e 8HBK, o gabarito da prática |
+| Docking | [DiffDock](https://build.nvidia.com/mit/diffdock) (NVIDIA) | sim, gratuita | 20 poses por sistema, com a confiança do modelo |
+| Visualização | [Mol*](https://molstar.org/viewer/) | não | as poses sobre o cristal, em 3D |
+| Interações | [PLIP](https://plip-tool.biotec.tu-dresden.de/plip-web/plip/index) | não | contatos do cristal e da pose, resíduo por resíduo |
 
 | Autoria | |
 |---|---|
 | Autor | **Madson A. de Luna-Aragão** |
 | Vínculos | Programa Interunidades de Pós-Graduação em Bioinformática, Universidade Federal de Minas Gerais (UFMG), Belo Horizonte, Brasil<br>Centre National de la Recherche Scientifique (CNRS), Institut de Biologie et Chimie des Protéines (IBCP), Lyon, França |
 | E-mail | [madsondeluna@gmail.com](mailto:madsondeluna@gmail.com) |
-| Slides da aula | [curso-docking.pdf](curso-docking.pdf) |
 | Site do curso | [madsondeluna.com/curso-docking](https://madsondeluna.com/curso-docking/) |
 | Repositório | [madsondeluna/curso-docking](https://github.com/madsondeluna/curso-docking) |
 | Curso de dinâmica molecular | [madsondeluna.com/curso-md](https://madsondeluna.com/curso-md/) |
@@ -23,33 +23,50 @@ Material didático e prática em servidores web sobre docking molecular: prever 
 
 | Bloco | Conteúdo | Material |
 |-------|----------|----------|
-| 1 | O que o docking responde e o que não responde | seção 1 |
+| 1 | Receptor e ligante, pose, espaço conformacional, busca e pontuação | seção 1 |
 | 2 | Chave e fechadura, encaixe induzido, seleção conformacional | seção 2 |
 | 3 | As forças que seguram o ligante | seção 3 |
-| 3b | Energia de ligação: ΔG, Kd, ΔΔG entre poses, mutantes e ligantes | seção Energia de ligação |
 | 4 | Tipos de sítio; nem toda cavidade é um sítio | seção 4 |
-| 5 | Tipos de docking: flexibilidade, busca, parceiros | seção 5 |
-| 6 | Níveis de modelagem e quanto cada um custa | seção 6 |
-| 7 | De onde vêm receptores e ligantes; ler uma SMILES | seção 7 |
-| 8 | Métricas: energia, RMSD, interações, eficiência | seção 8 |
+| 5 | Tipos de docking: rígido-rígido, rígido-flexível, flexibilidade parcial, flexível-flexível | seção 5 |
+| 6 | Como avaliar uma pose: RMSD e interações | seção 6 |
+| 7 | Energia de ligação: ΔG e ΔΔG | seção 7 |
+| 8 | Cada programa tem a sua escala | seção 8 |
 | 9 | Mutações, resistência e câncer | seção 9 |
-| 10 | Por que o docking precisa da dinâmica molecular | seção 10 |
-| 11 | Prática: o ensitrelvir na Mpro do SARS-CoV-2 | seção Prática |
+| 10 | Níveis de modelagem: do docking à dinâmica, com o DiffDock | seção 10 |
+| 11 | De onde vêm receptores e ligantes; formatos de arquivo | seção 11 |
+| 12 | Prática: DiffDock contra o cristal | seção Prática |
 
 
 ## 1. O que o docking molecular faz
 
-O docking responde a duas perguntas sobre um par receptor e ligante: **onde** a molécula pequena se encaixa e **em que orientação e conformação**. O programa gera milhares de posições e orientações candidatas dentro de uma caixa de busca, calcula para cada uma um valor de energia com uma função de pontuação e devolve as melhores, ordenadas. Cada candidata é uma **pose**.
+**Receptor e ligante.** O **receptor** é a macromolécula, quase sempre uma proteína, que tem o sítio de ligação. O **ligante** é a molécula, em geral bem menor, que se encaixa no sítio e sai dele de forma reversível. No docking, o receptor costuma ficar parado e o ligante é a peça que o programa move.
+
+![Receptor e ligante](imagens/fund_receptor_ligante.png)
+
+| Caso | Receptor | Ligante |
+|------|----------|---------|
+| Célula saudável | eIF4E, o fator que inicia a tradução | o cap do mRNA, um ligante natural |
+| Infecção | Mpro, a protease do SARS-CoV-2 | o ensitrelvir, um fármaco |
+
+**Onde e em que orientação.** O docking responde a duas perguntas sobre um par receptor e ligante: **onde** a molécula pequena se encaixa e **em que orientação e conformação**. O programa gera milhares de posições candidatas, calcula para cada uma uma nota com uma função de pontuação e devolve as melhores, ordenadas.
 
 ![Vocabulário do docking](imagens/fund_vocabulario.png)
 
-A pergunta que o docking **não** responde bem é quanto a molécula se liga de fato. A função de pontuação é uma aproximação rápida, calibrada em complexos conhecidos; ela acerta a geometria com muito mais frequência do que a afinidade. Prever a pose e prever a afinidade são problemas diferentes, e o segundo continua difícil (Kitchen *et al.*, 2004).
+**O que é uma pose.** Pose é uma posição completa do ligante dentro do receptor: **onde** ele está (posição), **para onde aponta** (orientação) e **como suas ligações estão giradas** (conformação). Para o ensitrelvir, cada pose é definida por 12 números: 3 de posição, 3 de orientação e 6 ângulos de torção. O programa devolve uma lista de poses ordenada pela nota; a pose 1 é a de melhor nota, não necessariamente a certa.
 
-**Analogia: estacionar na vaga certa.** Achar a vaga e entrar nela com o carro na posição certa é a pose. Dizer quanto tempo o carro vai ficar estacionado é a afinidade. O docking faz a primeira tarefa bem e a segunda mal.
+![Pose: posição, orientação e conformação](imagens/fund_pose.png)
 
-**Exemplo saudável.** A eIF4E e milhares de outras proteínas funcionam porque reconhecem o parceiro certo entre milhares de moléculas na célula. A eIF4E segura o cap do mRNA, uma guanina metilada, e assim decide quais mensagens serão traduzidas.
+**Espaço conformacional.** É o conjunto de todas as poses possíveis do ligante. Cada ligação rotável acrescenta uma dimensão e multiplica o número de combinações. O cap do mRNA tem 11 torções contra 6 do ensitrelvir: testando só 3 ângulos por ligação, são 243 vezes mais conformações para percorrer.
 
-**Exemplo patológico e translacional.** O ensitrelvir, antiviral oral contra a COVID-19, foi descoberto por triagem virtual seguida de desenho baseado em estrutura: um programa de docking testou uma biblioteca interna contra a protease principal do vírus, e os compostos escolhidos foram otimizados a partir das estruturas (Unoh *et al.*, 2022). É o fármaco da prática.
+![Espaço conformacional](imagens/fund_espaco_conformacional.png)
+
+**Analogia: um cadeado de segredo.** Cada disco a mais multiplica por 10 as combinações. Cada ligação rotável faz o mesmo com as conformações do ligante.
+
+**Busca e pontuação.** Todo programa de docking junta duas peças. O **algoritmo de busca** gera poses. A **função de pontuação** dá uma nota a cada pose e ordena a lista. Por isso o docking erra de dois jeitos: no **erro de busca**, a pose certa nunca foi gerada; no **erro de pontuação**, ela foi gerada mas recebeu nota pior que uma errada.
+
+![Busca e pontuação](imagens/fund_busca_pontuacao.png)
+
+A pergunta que o docking **não** responde bem é quanto a molécula se liga de fato. A função de pontuação acerta a geometria com muito mais frequência do que a afinidade (Kitchen *et al.*, 2004).
 
 
 ## 2. Como o ligante reconhece o receptor
@@ -85,65 +102,6 @@ A energia de um complexo vem de interações fracas somadas, mais o custo de tir
 
 
 
-## Energia de ligação: ΔG e ΔΔG
-
-Todo número que o docking devolve é uma estimativa de ΔG de ligação. Esta seção diz o que esse número significa, como ele se liga à afinidade medida em bancada e o que é o ΔΔG, a diferença entre dois ΔG.
-
-**O que é ΔG de ligação.** É a diferença de energia livre entre o complexo e as duas moléculas separadas:
-
-$$\Delta G_{lig} = G_{complexo} - (G_{receptor} + G_{ligante})$$
-
-ΔG negativo quer dizer que a ligação acontece espontaneamente; quanto mais negativo, mais estável o complexo.
-
-**Analogia: o poço.** Receptor e ligante separados ficam no nível de referência. Ao se ligarem, o sistema desce para um poço, e o ΔG é a profundidade dele. Num poço fundo o ligante precisa de muita energia para sair e passa mais tempo ligado; num poço raso ele sai com facilidade.
-
-![ΔG como profundidade do poço](imagens/fund_dg_poco.png)
-
-**ΔG e Kd.** A constante de dissociação Kd é a concentração de ligante em que metade dos receptores está ocupada. As duas grandezas se relacionam por ΔG = RT ln Kd, com Kd em mol/L e RT = 0,593 kcal/mol a 25 °C. A escala é logarítmica: cada 1,36 kcal/mol mais negativo divide o Kd por 10.
-
-| ΔG (kcal/mol) | Kd | Leitura |
-|---------------|----|---------|
-| −4,1 | 1 mM | ligação muito fraca, típica de fragmentos |
-| −8,2 | 1 µM | ponto de partida comum de um composto ativo |
-| −12,3 | 1 nM | afinidade típica de um fármaco otimizado |
-| −16,4 | 1 pM | ligação muito forte, como a de anticorpos de alta afinidade |
-
-![Régua de afinidade](imagens/fund_dg_kd.png)
-
-**O que o docking calcula.** A energia do AutoDock Vina é uma função empírica: soma termos de contato estérico, ligação de hidrogênio e contato hidrofóbico, com pesos ajustados para reproduzir afinidades medidas, e divide o total por 1 + 0,0585 × N, em que N é o número de ligações rotáveis do ligante, uma correção grosseira para a liberdade perdida (Trott e Olson, 2010). A função não tem termo eletrostático explícito, trata a água de forma implícita e mantém o receptor rígido. No conjunto de treino, o erro padrão foi de 2,85 kcal/mol, o equivalente a um fator de cerca de 100 no Kd.
-
-**ΔG entre poses.** Para o mesmo ligante no mesmo receptor, cada pose recebe um ΔG, e o programa as ordena por ele. A diferença entre duas poses é pequena perto do erro da função:
-
-| Sistema | Pose 1 | Pose comparada | Diferença | RMSD das duas |
-|---------|--------|----------------|-----------|---------------|
-| Mpro, ensitrelvir | −9,13 | pose 2: −8,71 | 0,42 kcal/mol | 1,5 Å contra 8,3 Å |
-| eIF4E, cap do mRNA | −6,53 | pose 16: −4,98 | 1,55 kcal/mol | 6,5 Å contra 4,3 Å |
-
-Na Mpro, a pose certa e uma pose 8 Å fora estão separadas por 0,42 kcal/mol. Na eIF4E, a pose mais próxima do cristal fica 1,55 kcal/mol pior que a primeira. As duas diferenças estão dentro dos 2,85 kcal/mol de erro: a energia sozinha não decide entre elas.
-
-![ΔG entre poses nas práticas](imagens/fund_ddg_poses.png)
-
-**ΔΔG.** É a diferença entre dois ΔG. Comparando uma proteína mutante com a selvagem, para o mesmo ligante:
-
-$$\Delta\Delta G = \Delta G_{mutante} - \Delta G_{selvagem}$$
-
-| ΔΔG | Significado | Efeito no Kd |
-|-----|-------------|--------------|
-| positivo | a mutação deixa o poço mais raso e enfraquece a ligação | Kd maior |
-| perto de zero | a mutação não altera a ligação | igual |
-| negativo | a mutação aprofunda o poço e fortalece a ligação | Kd menor |
-
-A mesma conta compara dois ligantes no mesmo receptor, ΔG(ligante B) − ΔG(ligante A), e é a base para decidir qual análogo sintetizar. Um ΔΔG de 1,36 kcal/mol multiplica o Kd por 10; 2,73 kcal/mol, por 100.
-
-![ΔΔG entre selvagem e mutante](imagens/fund_ddg.png)
-
-**Exemplo saudável: hot spots de interfaces.** Trocando resíduos por alanina, um a um, e medindo o ΔΔG de cada troca em 2 325 mutantes, Bogan e Thorn (1998) mostraram que a energia de uma interface proteína-proteína se concentra em poucos resíduos, os hot spots, ricos em triptofano, tirosina e arginina e cercados por resíduos que afastam a água. Na barnase e na barstar, pares de resíduos carregados contribuem com 1,6 a 7 kcal/mol de energia de acoplamento (Schreiber e Fersht, 1995).
-
-**Exemplo patológico: resistência.** A mutação T315I da ABL é um ΔΔG positivo para o imatinibe: o fármaco perde a ligação de hidrogênio com a Thr315 e esbarra na isoleucina, enquanto a enzima continua ligando o ATP (seção 9). A resistência a um fármaco é, em termos de energia, uma mutação com ΔΔG grande para o fármaco e pequeno para o substrato natural.
-
-**O que o docking diz sobre ΔΔG.** No cap da eIF4E (resultado de referência em `resultados/eif4e`), o cap completo (m7GTP, três fosfatos) e o m7GMP (um fosfato) receberam −6,53 e −6,44 kcal/mol: ΔΔG de 0,09 kcal/mol, embora no cristal os três fosfatos façam pontes salinas com Arg157, Lys162 e Glu103. Diferenças de 1 a 2 kcal/mol ficam abaixo do que o docking resolve. Para ΔΔG nessa faixa, os cálculos de perturbação de energia livre chegam a um erro próximo de 1 kcal/mol (Wang *et al.*, 2015), ao custo de dias em GPU (seção 6).
-
-
 ## 4. Onde o ligante se encaixa: tipos de sítio
 
 Uma cavidade é um buraco na superfície da proteína. Um sítio de ligação é uma cavidade onde algo se liga de fato. **Toda proteína tem muito mais cavidades do que sítios.**
@@ -171,15 +129,24 @@ Uma cavidade é um buraco na superfície da proteína. Um sítio de ligação é
 
 ## 5. Tipos de docking
 
-**Pela flexibilidade.**
+**Pela flexibilidade, do mais simples ao mais completo.**
 
 ![Tipos de docking pela flexibilidade](imagens/fund_tipos_flexibilidade.png)
 
-| Tipo | O que se move | Custo | Programas |
-|------|---------------|-------|-----------|
-| Rígido-rígido | nada | muito baixo | buscas por forma, triagem inicial |
-| Ligante flexível, receptor rígido | ligações rotáveis do ligante | baixo | AutoDock Vina, SwissDock, DockThor |
-| Flexível-flexível | ligante e cadeias laterais, ou mais | alto | Rosetta, HADDOCK |
+| Tipo | O que se move | O que ganha em fidelidade | Custo | Exemplos |
+|------|---------------|---------------------------|-------|----------|
+| Rígido-rígido | nada; só posição e orientação | encaixe de forma | muito baixo | triagem por forma, ZDOCK |
+| Rígido-flexível (semiflexível) | torções do ligante | conformação do ligante | baixo | AutoDock, DockThor, DiffDock |
+| Flexibilidade parcial | ligante e cadeias laterais escolhidas | ajuste local do bolsão | médio | AutoDock com resíduos flexíveis, GOLD |
+| Flexível-flexível | ligante e receptor inteiros | encaixe induzido, alças que fecham | alto | Rosetta, HADDOCK, dinâmica |
+
+Na literatura, "semiflexível" quase sempre quer dizer o segundo tipo: ligante flexível, receptor rígido.
+
+**Quanto cada tipo pesa no cálculo.** Cada parte que se move acrescenta números que o programa ajusta em cada pose. Contados na Mpro com o ensitrelvir (PDB 8HBK): 6 no rígido-rígido, 12 com o ligante flexível, 31 liberando 8 resíduos do bolsão e cerca de 1 100 com a proteína inteira. Mais graus de liberdade deixam o modelo mais perto do que acontece em solução e custam mais tempo.
+
+![Graus de liberdade por tipo de docking](imagens/fund_graus_tipos.png)
+
+**Quando o receptor rígido falha: o imatinibe na quinase ABL.** A alça de ativação da ABL alterna entre uma forma ativa e uma inativa. O imatinibe só se encaixa na forma inativa (Schindler *et al.*, 2000): docado numa estrutura rígida da forma ativa, ele não cabe.
 
 **Pelo que se sabe do sítio.**
 
@@ -188,84 +155,91 @@ Uma cavidade é um buraco na superfície da proteína. Um sítio de ligação é
 | Tipo | Quando usar | Risco |
 |------|-------------|-------|
 | Baseado em molde | existe complexo parecido resolvido | depende de o molde ser mesmo parecido |
-| Local | o sítio é conhecido (esta prática) | se a caixa estiver errada, a resposta está errada |
-| Cego (global) | o sítio é desconhecido | muitas cavidades candidatas, mais falsos positivos |
+| Local | o sítio é conhecido | se a caixa estiver errada, a resposta está errada |
+| Cego (global) | o sítio é desconhecido; é o modo do DiffDock | muitas cavidades candidatas, mais falsos positivos |
 
 **Pelos parceiros.** Proteína e molécula pequena é o caso desta prática. Proteína e peptídeo e proteína e proteína pedem outros programas, porque a superfície de contato é larga e rasa.
 
-![Docking proteína-proteína](imagens/fund_barnase_barstar.png)
+![Docking proteína-proteína: PD-1 e PD-L1](imagens/fund_pd1_pdl1.png)
 
-A barnase e a barstar formam um dos complexos mais fortes já medidos entre duas proteínas, com uma interface de dezenas de resíduos (Buckle, Schreiber e Fersht, 1994). Para esse tipo de problema existem servidores próprios, como o [ClusPro](https://cluspro.bu.edu/), que também tem modo para peptídeos (Kozakov *et al.*, 2017; Porter *et al.*, 2017).
-
-
-## 6. Níveis de modelagem e quanto cada um custa
-
-![Níveis de modelagem](imagens/fund_niveis_custo.png)
-
-| Nível | O que modela | O que você ganha | Ordem de grandeza por ligante |
-|-------|--------------|------------------|-------------------------------|
-| Modelo de aprendizado de máquina | aprende poses a partir do PDB | velocidade | segundos em GPU |
-| Docking com receptor rígido | forma e interações, ligante flexível | pose, ranking grosseiro | 2 min medidos nesta aula |
-| Docking com cadeias laterais flexíveis | parte do encaixe induzido | sítios que precisam abrir | dezenas de minutos |
-| Ensemble docking | várias conformações do receptor, vindas da dinâmica | receptor que se move | horas (Amaro *et al.*, 2018) |
-| Dinâmica molecular com MM/GBSA | o complexo em água, com movimento | estabilidade da pose e energia melhor | horas a dias (Genheden e Ryde, 2015) |
-| Perturbação de energia livre (FEP) | diferença de energia livre entre dois ligantes | a melhor previsão de afinidade disponível | dias em GPU (Wang *et al.*, 2015) |
-
-**Como escolher o nível.** Use o mais barato que responda à sua pergunta. Para escolher 50 compostos entre um milhão, docking rígido basta. Para decidir qual de dois análogos sintetizar, docking não basta.
+**PD-1 e PD-L1.** O PD-1, na superfície do linfócito T, liga-se ao PD-L1 e freia a resposta imune. Na célula saudável, esse freio evita que o sistema imune ataque o próprio corpo. Muitos tumores expõem PD-L1 e usam o freio para escapar (Zak *et al.*, 2015). Os anticorpos de imunoterapia, como o pembrolizumabe (anti-PD-1) e o atezolizumabe (anti-PD-L1), ocupam essa interface e soltam o freio. Para esse tipo de problema existem servidores próprios, como o [ClusPro](https://cluspro.bu.edu/), que também tem modo para peptídeos (Kozakov *et al.*, 2017; Porter *et al.*, 2017).
 
 
+## 6. Como avaliar uma pose: RMSD e interações
 
-## 7. De onde vêm receptores e ligantes
+**Como o RMSD é calculado.** Para cada átomo pesado, mede-se a distância entre a posição na pose e a posição no cristal; o RMSD é a raiz da média dos quadrados dessas distâncias. O limiar de 2 Å é convenção da área: abaixo dele, a pose reproduz os mesmos contatos. Sem uma pose experimental de referência não há RMSD.
 
-**Receptores.** O Protein Data Bank guarda estruturas resolvidas por cristalografia de raios X, ressonância magnética nuclear e crio-microscopia eletrônica. Toda estrutura tem limitações que afetam o docking:
+![Como o RMSD é calculado](imagens/fund_rmsd.png)
 
-| O que olhar na estrutura | Por que importa |
-|--------------------------|-----------------|
-| Resolução | abaixo de 2,5 Å as cadeias laterais do sítio são confiáveis |
-| Ligante presente | uma estrutura com ligante parecido já tem o sítio aberto |
-| Resíduos faltando | alças não resolvidas podem fazer parte do sítio |
-| Hidrogênios | quase nunca estão no cristal; o programa os adiciona |
-| Moléculas do tampão | glicerol, PEG e sulfato ocupam cavidades sem serem ligantes |
+| RMSD | Leitura |
+|------|---------|
+| abaixo de 2 Å | pose correta, repete os mesmos contatos |
+| 2 a 3 Å | orientação geral certa, detalhes errados |
+| acima de 3 Å | pose errada |
 
-Modelos previstos, como os do AlphaFold (Jumper *et al.*, 2021), ampliaram muito a oferta de receptores, mas trazem o problema da seção 2: a conformação prevista pode não ser a que recebe o ligante.
+**Interações.** O PLIP lista as interações de um complexo por resíduo e por tipo (Adasme *et al.*, 2021). Comparando a pose com o cristal, dá para ver não só quantas interações se repetem, mas quais. O RMSD trata todos os átomos por igual; a lista de interações diz **quais** contatos a pose acerta, e é disso que depende a atividade de um fármaco.
 
-**Ligantes.** PDB, PubChem (Kim *et al.*, 2022), ChEMBL e DrugBank fornecem estruturas e identificadores. A forma mais portátil de escrever uma molécula pequena é a SMILES, uma linha de texto (Weininger, 1988).
-
-![A mesma molécula em desenho e em SMILES](imagens/fund_smiles.png)
-
-![Como ler uma SMILES](imagens/fund_smiles_leitura.png)
-
-**Como obter a SMILES de um ligante, na prática.**
-
-1. No RCSB PDB: abra a página do ligante, por exemplo [o ligante 7YY](https://www.rcsb.org/ligand/7YY), e copie a linha SMILES isomérica.
-2. No PubChem: busque pelo nome do composto e copie a SMILES canônica ou isomérica.
-3. No próprio SwissDock: desenhe a molécula no editor e deixe o servidor gerar a SMILES.
-4. A partir de um arquivo que você já tem: o Open Babel converte SDF, MOL2 ou PDB em SMILES.
-
-**Protonação importa.** A mesma molécula tem cargas diferentes em pH diferente. O cap m7GTP, em pH 7,4, fica com carga total −3, por causa dos três fosfatos. Ao colar uma SMILES no SwissDock, o servidor lista os estados possíveis e pede que você escolha; o material desta aula usa sempre o estado de pH 7,4, já gravado em `dados/`.
+![Interações do cristal e da pose 1 do DiffDock](imagens/pratica_interacoes_diffdock.png)
 
 
-## 8. Métricas: como ler um resultado de docking
+## 7. Energia de ligação: ΔG e ΔΔG
 
-Quatro números, e o que conta como bom e como ruim em cada um.
+**O que é ΔG de ligação.** É a diferença de energia livre entre o complexo e as duas moléculas separadas:
+
+$$\Delta G_{lig} = G_{complexo} - (G_{receptor} + G_{ligante})$$
+
+ΔG negativo quer dizer que a ligação acontece espontaneamente; quanto mais negativo, mais estável o complexo.
+
+**Analogia: o poço.** Receptor e ligante separados ficam no nível de referência. Ao se ligarem, o sistema desce para um poço, e o ΔG é a profundidade dele. Num poço fundo o ligante precisa de muita energia para sair e passa mais tempo ligado; num poço raso ele sai com facilidade.
+
+![ΔG como profundidade do poço](imagens/fund_dg_poco.png)
+
+**O que uma função de pontuação calcula.** Uma função empírica soma termos de contato estérico, ligação de hidrogênio e contato hidrofóbico, com pesos ajustados para reproduzir afinidades medidas. O resultado é uma estimativa grosseira do ΔG: o erro típico dessas funções passa de 2 kcal/mol (Trott e Olson, 2010), e duas poses separadas por menos que isso não podem ser ordenadas com segurança.
+
+**ΔΔG.** É a diferença entre dois ΔG. Comparando uma proteína mutante com a selvagem, para o mesmo ligante:
+
+$$\Delta\Delta G = \Delta G_{mutante} - \Delta G_{selvagem}$$
+
+| ΔΔG | Significado | Leitura |
+|-----|-------------|---------|
+| positivo | a mutação deixa o poço mais raso | ligação mais fraca |
+| perto de zero | a mutação não altera a ligação | sem efeito |
+| negativo | a mutação aprofunda o poço | ligação mais forte |
+
+A mesma conta compara dois ligantes no mesmo receptor, ΔG(ligante B) − ΔG(ligante A), e é a base para decidir qual análogo sintetizar. Um ΔΔG só tem significado quando é maior que o erro da função de pontuação.
+
+![ΔΔG entre selvagem e mutante](imagens/fund_ddg.png)
+
+**Exemplo saudável: hot spots de interfaces.** Trocando resíduos por alanina, um a um, e medindo o ΔΔG de cada troca em 2 325 mutantes, Bogan e Thorn (1998) mostraram que a energia de uma interface proteína-proteína se concentra em poucos resíduos, os hot spots, ricos em triptofano, tirosina e arginina.
+
+**Exemplo patológico: resistência.** A mutação T315I da ABL é um ΔΔG positivo para o imatinibe: o fármaco perde a ligação de hidrogênio com a Thr315 e esbarra na isoleucina, enquanto a enzima continua ligando o ATP (seção 9).
+
+
+## 8. Cada programa tem a sua escala
+
+Cada função soma termos diferentes, com pesos diferentes, ajustados a conjuntos de treino diferentes. Por isso os números de dois programas não se comparam.
+
+| Programa | Tipo de função | O que soma | Unidade e sinal |
+|----------|----------------|------------|-----------------|
+| AutoDock Vina | empírica | contato estérico, ligação de hidrogênio, contato hidrofóbico e penalidade por torção, com pesos ajustados a afinidades medidas | kcal/mol estimada; mais negativo é melhor |
+| AutoDock 4 | campo de força semiempírico | van der Waals, ligação de hidrogênio, eletrostática, dessolvatação e perda de torção | kcal/mol estimada; mais negativo é melhor |
+| Glide | empírica (GlideScore) | termos do tipo ChemScore com penalidades próprias | kcal/mol aproximada; mais negativo é melhor |
+| GOLD | fitness (ChemPLP) | contatos por tipo de átomo, ligação de hidrogênio e torção | sem unidade; **mais positivo é melhor** |
+| DiffDock | aprendizado de máquina | nenhum termo físico: um modelo treinado no PDB dá um escore à chance de a pose estar a menos de 2 Å da certa | confiança (logit), sem unidade; maior é melhor |
+
+Referências: Trott e Olson, 2010; Morris *et al.*, 1998; Friesner *et al.*, 2004; Korb *et al.*, 2009; Corso *et al.*, 2023.
+
+**Analogia: notas de provas diferentes.** Um 8 numa prova valendo 10 e um 80 noutra valendo 100 não dizem quem sabe mais. Do mesmo modo, uma energia em kcal/mol de um programa e a confiança do DiffDock não dizem qual pose é melhor. Compare apenas números do mesmo programa, na mesma versão e com os mesmos parâmetros, e compare programas diferentes pelo que se mede contra o cristal: RMSD e contatos.
+
+**Três números para julgar uma pose, e o que conta como bom e como ruim.** Com as poses do DiffDock nos dois sistemas da prática.
 
 ![Métricas do docking](imagens/fund_metricas.png)
 
 | Métrica | O que mede | Bom | Ruim | Armadilha |
 |---------|-----------|-----|------|-----------|
-| Energia (kcal/mol) | pontuação da função do programa | abaixo de −9 | acima de −6 | não é energia livre medida; não compara entre programas |
+| Confiança do DiffDock | nota do modelo para a pose | acima de 0 | abaixo de −1,5 | não é energia nem probabilidade; não se compara com outro programa |
 | RMSD (Å) | distância média entre a pose e uma referência | abaixo de 2 | acima de 3 | só existe quando há pose de referência |
 | Interações recuperadas | contatos do cristal que a pose repete | acima de 70% | abaixo de 30% | contar contato sem olhar quais contatos engana |
-| Eficiência do ligante | energia dividida pelo número de átomos pesados | acima de 0,3 | abaixo de 0,2 | molécula grande ganha energia por tamanho, não por encaixe |
-
-**Como o RMSD é calculado.** Para cada átomo pesado, mede-se a distância entre a posição na pose e a posição no cristal; o RMSD é a raiz da média dos quadrados dessas distâncias. O limiar de 2 Å é convenção da área: abaixo dele, a pose reproduz os mesmos contatos.
-
-![Como o RMSD é calculado](imagens/fund_rmsd.png)
-
-**Interações.** O PLIP lista as interações de um complexo por resíduo e por tipo (Adasme *et al.*, 2021). Comparando a pose com o cristal, dá para ver não só quantas interações se repetem, mas quais.
-
-![Impressão digital das interações](imagens/pratica_interacoes.png)
-
 
 
 ## 9. Mutações, resistência e câncer
@@ -283,7 +257,31 @@ Uma troca de um único resíduo no sítio muda o encaixe e pode anular um fárma
 **O que o docking consegue dizer sobre uma mutação.** Com cuidado: comparar a pose e a energia no selvagem e no mutante dá uma indicação, mas o receptor rígido não reproduz o rearranjo que costuma acompanhar a mutação. Para isso, a seção 10.
 
 
-## 10. Por que o docking precisa da dinâmica molecular
+## 10. Níveis de modelagem: do docking à dinâmica
+
+![Níveis de modelagem](imagens/fund_niveis_custo.png)
+
+| Nível | O que modela | O que você ganha | Ordem de grandeza por ligante |
+|-------|--------------|------------------|-------------------------------|
+| Modelo de aprendizado de máquina | aprende poses a partir do PDB | velocidade | segundos em GPU; 5 a 25 s medidos nesta aula |
+| Docking com receptor rígido | forma e interações, ligante flexível | pose, ranking grosseiro | minutos em CPU |
+| Docking com cadeias laterais flexíveis | parte do encaixe induzido | sítios que precisam abrir | dezenas de minutos |
+| Ensemble docking | várias conformações do receptor, vindas da dinâmica | receptor que se move | horas (Amaro *et al.*, 2018) |
+| Dinâmica molecular com MM/GBSA | o complexo em água, com movimento | estabilidade da pose e energia melhor | horas a dias (Genheden e Ryde, 2015) |
+| Perturbação de energia livre (FEP) | diferença de energia livre entre dois ligantes | a melhor previsão de afinidade disponível | dias em GPU (Wang *et al.*, 2015) |
+
+**Como escolher o nível.** Use o mais barato que responda à sua pergunta. Para escolher 50 compostos entre um milhão, docking rígido basta. Para decidir qual de dois análogos sintetizar, docking não basta.
+
+**Docking por aprendizado de máquina: o DiffDock.** O DiffDock não soma termos de energia. É um modelo de difusão treinado com complexos do PDB: parte de poses aleatórias e, passo a passo, ajusta posição, orientação e torções do ligante, os mesmos 6 + n graus de liberdade da seção 1 (Corso *et al.*, 2023). Um segundo modelo dá a cada pose uma **confiança**: um escore (logit) da chance de a pose estar a menos de 2 Å da certa. Não é probabilidade nem energia, e não tem unidade. A versão servida pela NVIDIA é o DiffDock 2.3, treinado com complexos do PDB reunidos nos conjuntos PLINDER e SAIR.
+
+| O que o DiffDock faz | Consequência |
+|----------------------|--------------|
+| procura na proteína inteira | não precisa de caixa de busca (docking cego) |
+| mantém o receptor rígido | o mesmo limite do docking clássico (seção 5) |
+| roda em segundos numa GPU | cabe numa aula; na NVIDIA exige conta gratuita |
+| aprendeu com complexos do PDB (PLINDER e SAIR, na versão 2.3 da NVIDIA) | pode reconhecer complexos que já viu; o acerto num caso conhecido não garante o acerto numa molécula nova |
+
+**Antes e depois do docking.**
 
 ![Docking e dinâmica molecular](imagens/fund_md_docking.png)
 
@@ -294,258 +292,289 @@ Uma troca de um único resíduo no sítio muda o encaixe e pode anular um fárma
 | Depois | testa se a pose se mantém em água, a 310 K | uma pose boa no escore pode se desfazer em poucos nanossegundos |
 | Depois | estima a energia com MM/GBSA ou FEP | funções de pontuação de docking são rápidas, não exatas |
 
-**Como testar a estabilidade de uma pose.** Simule o complexo e acompanhe o RMSD do ligante ao longo do tempo. Se ele oscila numa faixa estreita, a pose é estável. Se cresce e o ligante sai do sítio, o docking entregou uma pose plausível na geometria e errada na física.
-
-O curso de dinâmica molecular deste mesmo conjunto cobre essa parte: [madsondeluna.com/curso-md](https://madsondeluna.com/curso-md/).
+**Como testar a estabilidade de uma pose.** Simule o complexo e acompanhe o RMSD do ligante ao longo do tempo. Se ele oscila numa faixa estreita, a pose é estável. Se cresce e o ligante sai do sítio, o docking entregou uma pose plausível na geometria e errada na física. O curso de dinâmica molecular cobre essa parte: [madsondeluna.com/curso-md](https://madsondeluna.com/curso-md/).
 
 
-## Prática: o ensitrelvir na Mpro do SARS-CoV-2
+## 11. De onde vêm receptores e ligantes
 
-![Os oito passos da prática](imagens/pratica_fluxo.png)
+**Receptores.** O Protein Data Bank guarda estruturas resolvidas por cristalografia de raios X, ressonância magnética nuclear e crio-microscopia eletrônica. Toda estrutura tem limitações que afetam o docking:
 
-**A proteína e o fármaco.** A protease principal (Mpro, ou 3CL) corta a poliproteína do vírus em pontos específicos; sem ela, o vírus não se replica. O ensitrelvir é um inibidor não covalente, de uso oral, aprovado no Japão. A estrutura 8HBK traz os dois juntos, a 1,8 Å.
+| O que olhar na estrutura | Por que importa |
+|--------------------------|-----------------|
+| Resolução | abaixo de 2,5 Å as cadeias laterais do sítio são confiáveis |
+| Ligante presente | uma estrutura com ligante parecido já tem o sítio aberto |
+| Resíduos faltando | alças não resolvidas podem fazer parte do sítio |
+| Hidrogênios | quase nunca estão no cristal; o programa os adiciona |
+| Moléculas do tampão | glicerol, PEG e sulfato ocupam cavidades sem serem ligantes |
 
-**Redocking.** Apagar o fármaco, entregar ao programa só a proteína, pedir que ele descubra onde a molécula se encaixa e comparar com a posição verdadeira, que ficou guardada. O teste mede se o protocolo recupera uma resposta conhecida: é o requisito mínimo antes de usá-lo em moléculas cuja pose ninguém conhece.
+Modelos previstos, como os do AlphaFold (Jumper *et al.*, 2021) e do OpenFold, ampliaram a oferta de receptores, mas a conformação prevista pode não ser a que recebe o ligante (seção 2, seleção conformacional). O sistema B da prática usa uma Mpro predita pelo OpenFold.
+
+**Ligantes.** PDB, PubChem (Kim *et al.*, 2022), ChEMBL e DrugBank fornecem estruturas e identificadores. A forma mais portátil de escrever uma molécula pequena é a SMILES, uma linha de texto (Weininger, 1988).
+
+![A mesma molécula em desenho e em SMILES](imagens/fund_smiles.png)
+
+**Formatos de arquivo: o que cada um carrega.** Todos descrevem átomos; mudam no que guardam junto. A escolha do formato decide se o programa recebe coordenadas 3D, hidrogênios e cargas, ou se precisa gerá-los.
+
+| Formato | O que carrega | Coordenadas 3D | Hidrogênios e carga | Nesta prática |
+|---------|---------------|----------------|---------------------|---------------|
+| PDB (`.pdb`) | uma linha por átomo: nome, resíduo, cadeia, x, y, z, ocupação e fator B | sim | hidrogênios quase nunca; sem carga parcial | `receptor.pdb`, `receptor_openfold.pdb` |
+| SDF (`.sdf`) | molécula pequena: tabela de átomos com x, y, z e tabela de ligações com a ordem de cada uma | sim | carga formal na linha `M  CHG`; hidrogênios se o arquivo trouxer | ligantes e poses do DiffDock |
+| Mol2 (`.mol2`) | átomos com tipo químico (`C.3`, `N.ar`) e carga parcial de cada um, mais as ligações | sim | sim, os dois | `ligante_3d.mol2` (alternativa) |
+| PDBQT (`.pdbqt`) | PDB com carga parcial (Q) e tipo de átomo do AutoDock (T), mais as ligações que giram | sim | só hidrogênios polares; carga parcial | formato do AutoDock; não usado aqui |
+| SMILES (`.smi`) | uma linha de texto: átomos, ligações, anéis, cargas e quiralidade | não | carga formal entre colchetes | `ligante.smi` (alternativa) |
+
+**Por dentro de um PDB.** Uma linha do Trp56 em `receptor.pdb`: número do átomo, nome do átomo, resíduo, cadeia, número do resíduo, x, y, z (Å), ocupação, fator B e elemento. O fator B (26,70) mede quanto o átomo vibra ou varia no cristal: quanto maior, menos certa a posição.
+
+```
+ATOM    258  CA  TRP A  56      60.302 111.176 -11.513  1.00 26.70           C
+```
+
+**Por dentro de um SDF.** O começo de `ligante_cristal.sdf`: nome, programa que gerou, linha de contagem (33 átomos, 35 ligações) e a primeira linha da tabela de átomos. Depois da tabela de átomos vem a de ligações (átomo 1, átomo 2, ordem). Por isso o SDF guarda a química da molécula, e o PDB, sem essa tabela, deixa as ligações para o programa adivinhar pela distância.
+
+```
+MGP
+  ModelServer 0.9.13
+
+ 33 35  0  0  1  0  0  0  0  0  0
+   52.8360  113.4570   -5.7970 P   0  0  0 ...
+```
+
+**Por dentro de um Mol2.** Primeiro átomo de `ligante_3d.mol2`: índice, nome, x, y, z, tipo químico (`C.3` é carbono sp3), número e nome do fragmento e a carga parcial (+0,1427). As cargas parciais somam −2,98, perto da carga total −3.
+
+```
+      1 C           0.3084   -2.7213   -2.8552 C.3     1  UNL1        0.1427
+```
+
+**SDF com várias moléculas.** As 20 poses do DiffDock vêm num SDF só: cada bloco é uma pose, termina em `$$$$` e traz no título a confiança.
+
+```
+pose_1 confianca -0.528
+     RDKit          3D
+
+ 33 35  0  0  0  0  0  0  0  0999 V2000
+   52.6286  ...
+$$$$
+pose_2 confianca -0.712
+```
+
+**Por dentro de uma SMILES.** O cap em `ligante.smi`: `[n+]` é o nitrogênio com carga positiva, `[O-]` cada oxigênio negativo dos fosfatos, `@` e `@@` a quiralidade dos carbonos do açúcar. Não há coordenadas: o programa gera o 3D.
+
+```
+C[n+]1cn([C@@H]2O[C@H](CO[P@@](=O)([O-])O[P@@](=O)([O-])OP(=O)([O-])[O-])[C@@H](O)[C@H]2O)c2nc(N)[nH]c(=O)c21
+```
+
+**Como obter a SMILES de um ligante.**
+
+1. No RCSB PDB: abra a página do ligante, por exemplo [o ligante MGP](https://www.rcsb.org/ligand/MGP), e copie a linha SMILES isomérica.
+2. No PubChem: busque pelo nome do composto e copie a SMILES canônica ou isomérica.
+3. A partir de um arquivo que você já tem: o Open Babel converte SDF, MOL2 ou PDB em SMILES, e também SDF em Mol2.
+
+**Protonação importa.** A mesma molécula tem cargas diferentes em pH diferente. O cap m7GTP, em pH 7,4, fica com carga total −3, por causa dos três fosfatos. Os arquivos de `dados/` já estão nesse estado.
+
+
+## Prática: DiffDock contra o cristal
+
+![Os nove passos da prática](imagens/pratica_fluxo.png)
+
+| Sistema | Pergunta | Passos | Ferramentas |
+|---------|----------|--------|-------------|
+| A: eIF4E + cap | o DiffDock reproduz o cap do cristal 1IPC? | 1 a 5 | RCSB PDB, DiffDock, Mol* |
+| B: Mpro + análogo | numa proteína predita e com uma molécula nova, ele chega perto do fármaco do cristal 8HBK? | 6 e 7 | DiffDock, Mol* |
+| A e B | a confiança do modelo acompanha o acerto? quais contatos se repetem? | 8 e 9 | tabela, PLIP |
+
+O DiffDock da NVIDIA pede uma conta gratuita. Em aula, o professor roda ao vivo e os alunos usam os resultados de referência deste repositório. Os outros serviços são livres e não pedem cadastro.
+
+### Por que estes dois sistemas e o DiffDock
+
+| | Sistema A: eIF4E + cap | Sistema B: Mpro + análogo do ensitrelvir |
+|---|---|---|
+| Receptor | cristal 1IPC, sem o cap (redocking) | modelo predito pelo OpenFold, sem ligante |
+| Ligante | ligante natural: m7GTP, carga −3, 11 torções | molécula nova: análogo de um fármaco aprovado |
+| Referência | o próprio cap no cristal 1IPC | o ensitrelvir no cristal 8HBK, no núcleo comum |
+| Biologia | tradução do mRNA; eIF4E em excesso no câncer | replicação do SARS-CoV-2; antiviral oral |
+| O que testa | o caso mais fácil: tudo vem do mesmo cristal | o caso real do desenho de fármacos |
+
+O DiffDock não pede caixa de busca, roda em segundos e representa a geração de docking por aprendizado de máquina (seção 10). O sistema B é o exemplo que já vem pronto na página do DiffDock: dá para rodar sem enviar arquivo nenhum. Os dois sistemas têm cristal, e é o cristal que diz se o modelo acertou.
+
+### Sistema A: o cap do mRNA e a eIF4E
+
+Todo mRNA de eucarioto começa com um **cap 5'**: uma guanina metilada no nitrogênio 7 (m7G), presa ao primeiro nucleotídeo por uma ponte de três fosfatos. O ligante da prática, o m7GTP, é essa ponta isolada. A **eIF4E** reconhece o cap e, com a eIF4G e a eIF4A, forma o complexo eIF4F, que traz o ribossomo até o mRNA. É o passo que limita a velocidade da tradução (Sonenberg e Hinnebusch, 2009).
+
+![O cap 5' e a eIF4E](imagens/pratica_cap_mrna.png)
+
+| Situação | O que acontece com a eIF4E | Consequência |
+|----------|----------------------------|--------------|
+| Célula em repouso | a 4E-BP ocupa o lugar da eIF4G e segura a eIF4E | pouca tradução dependente do cap |
+| Nutrientes e fatores de crescimento | a mTOR fosforila a 4E-BP e solta a eIF4E (Gingras *et al.*, 1999) | a tradução acelera |
+| Câncer | eIF4E em excesso ou sempre livre | mais tradução de mRNAs de proliferação, como ciclina D1 e c-Myc |
+| Tratamento em estudo | a ribavirina imita o cap e compete pelo sítio | testada em leucemia mieloide aguda (Assouline *et al.*, 2009) |
+
+No cristal 1IPC (Tomoo *et al.*, 2002), o anel da guanina metilada fica **entre Trp56 e Trp102**, como o recheio de um sanduíche, e os três fosfatos apontam para Arg157 e Lys162. O anel tem carga positiva e os anéis dos triptofanos atraem cargas positivas pela nuvem de elétrons π: é a interação **cátion-π** (Ma e Dougherty, 1997). O cap tem carga −3, 11 ligações rotáveis e depende dessa interação: é o tipo de ligante em que funções de pontuação clássicas erram.
+
+![O cap entre dois triptofanos](imagens/pratica_eif4e_sitio.png)
+
+### Sistema B: a Mpro e um análogo do ensitrelvir
+
+A **Mpro** corta a poliproteína do SARS-CoV-2 em pontos específicos; sem ela, o vírus não se replica. O **ensitrelvir** é um inibidor oral, não covalente, aprovado no Japão (Unoh *et al.*, 2022), e está no cristal 8HBK. O exemplo da NVIDIA traz um **análogo** do ensitrelvir e a Mpro **predita pelo OpenFold**, sem ligante. É a situação real do desenho de fármacos: uma molécula que nunca foi cristalizada, num receptor que veio de um modelo.
+
+![Ensitrelvir e o análogo](imagens/pratica_analogo.png)
 
 ### Antes de começar
 
-Precisa só de um navegador. Nenhum dos serviços pede cadastro.
+Sistema A: baixe [dados/eif4e.zip](dados/eif4e.zip) e descompacte, ou baixe cada arquivo pelo link. Sistema B: os arquivos já vêm no exemplo da página do DiffDock; as cópias em `dados/mpro_analogo/` foram baixadas dos arquivos de exemplo da NVIDIA (assets.ngc.nvidia.com, exemplo do DiffDock).
 
-**Baixe o pacote de entradas:** [dados/mpro.zip](dados/mpro.zip) e descompacte.
+| Arquivo | O que é | Passo |
+|---------|---------|-------|
+| [receptor.pdb](dados/eif4e/receptor.pdb) | A: cadeia A da 1IPC, 1 540 átomos pesados, sem água, sem íons e sem o cap | 3 |
+| [ligante_3d.sdf](dados/eif4e/ligante_3d.sdf) | A: o cap (m7GTP) em 3D, com hidrogênios e carga −3 | 3 |
+| [ligante_3d.mol2](dados/eif4e/ligante_3d.mol2) | A: o mesmo cap em Mol2 | alternativa ao passo 3 |
+| [ligante.smi](dados/eif4e/ligante.smi) | A: o cap em SMILES, pH 7,4 | alternativa ao passo 3 |
+| [ligante_cristal.sdf](dados/eif4e/ligante_cristal.sdf) | A: o cap na posição do cristal, o gabarito | 5 |
+| [receptor_openfold.pdb](dados/mpro_analogo/receptor_openfold.pdb) | B: a Mpro predita pelo OpenFold (`mpro_chain_OpenFold_processed_ms.pdb` no exemplo) | 6 |
+| [ligante_analogo_3d.sdf](dados/mpro_analogo/ligante_analogo_3d.sdf) | B: o análogo do ensitrelvir (`Ensitrelvir_analog_3d.sdf` no exemplo) | 6 |
+| [ligante_cristal.sdf (8HBK)](dados/mpro/ligante_cristal.sdf) | B: o ensitrelvir no cristal, a referência | 7 |
 
-| Arquivo | O que é | Usado no passo |
-|---------|---------|----------------|
-| `receptor.pdb` | cadeia A da 8HBK, só proteína | 3 |
-| `ligante.smi` | SMILES do ensitrelvir em pH 7,4 | 2 |
-| `caixa.json` | centro e tamanho da caixa | 4 |
-| `ligante_cristal.sdf` | ensitrelvir na posição verdadeira | 7 |
-| `ligante_3d.sdf` e `.mol2` | ligante em 3D com hidrogênios | alternativa ao passo 2 |
+### Passo 1: inspecionar os dois cristais
 
-### Passo 1: inspecionar a estrutura no PDB
+**1.1.** Abra [rcsb.org/structure/1IPC](https://www.rcsb.org/structure/1IPC). Na caixa **Experimental Data Snapshot**, confira o método (X-RAY DIFFRACTION) e a resolução (2,0 Å). Em **Small Molecules**, ache o ligante **MGP**: é o cap.
 
-**1.1.** Abra [rcsb.org/structure/8HBK](https://www.rcsb.org/structure/8HBK).
+**1.2.** Clique em **3D View** e clique sobre o ligante: o Mol* aproxima o sítio e mostra em bastões os resíduos ao redor. Passe o mouse sobre os dois anéis que prensam o cap; o nome aparece no canto inferior direito (TRP 56 e TRP 102).
 
-**1.2.** Na caixa **Experimental Data Snapshot**, no alto à direita, confira:
+**1.3.** Abra [rcsb.org/structure/8HBK](https://www.rcsb.org/structure/8HBK) e repita: o ligante **7YY** é o ensitrelvir, numa fenda entre dois domínios, onde ficam His41 e Cys145, a díade catalítica.
 
-| Campo | Valor esperado | Por que você confere |
-|-------|----------------|----------------------|
-| Method | X-RAY DIFFRACTION | as posições dos átomos são medidas, não previstas |
-| Resolution | 1.60 a 1.80 Å | abaixo de 2,5 Å as cadeias laterais do sítio são confiáveis |
+**Por quê.** O DiffDock não sabe onde fica o sítio e devolve poses em qualquer caso. Ver os dois ligantes no cristal agora dá o gabarito contra o qual cada pose será julgada.
 
-**1.3.** Role até **Macromolecules** e confirme que existe uma cadeia A de proteína. Em **Small Molecules**, confirme o ligante de código **7YY**: é o ensitrelvir.
+### Passo 2: abrir o DiffDock
 
-**1.4.** Clique em **3D View**. Abre o visualizador Mol*. Gire com o botão esquerdo do mouse e aproxime com a roda até ver o ligante, em bastões, dentro de uma fenda da proteína.
+**2.1.** Abra [build.nvidia.com/mit/diffdock](https://build.nvidia.com/mit/diffdock) e entre com a conta da NVIDIA (gratuita).
 
-**Por que este passo existe.** O programa de docking não sinaliza quando a estrutura é inadequada: ele devolve energias em qualquer caso. Resolução baixa, alças não resolvidas ou sítio fechado produzem resultados sem significado e com aparência normal.
+**2.2.** No painel da esquerda ficam os campos **Molecule** (o ligante) e **Target Protein** (o receptor), um menu de exemplos e os parâmetros **Number of poses**, **Steps** e **Time divisions**.
 
-**O que você deve ver.** Uma molécula alongada ocupando uma fenda entre dois domínios da proteína. Essa fenda é o sítio ativo, e é ali que a caixa do passo 4 vai ficar.
+**2.3.** Deixe 20 poses, 18 passos e 20 divisões de tempo, os valores da execução de referência.
 
-![Vocabulário do docking na própria 8HBK](imagens/fund_vocabulario.png)
+| Campo | O que aceita |
+|-------|--------------|
+| Molecule | SDF, Mol2 ou SMILES; uma molécula |
+| Target Protein | PDB; só as linhas ATOM são usadas |
+| Caixa de busca | não existe: o DiffDock procura na proteína inteira (docking cego) |
 
-### Passo 2: informar o ligante no SwissDock
+**Como o DiffDock gera as poses.** Parte de poses aleatórias e, em 18 passos, ajusta posição, orientação e torções do ligante: os mesmos 6 + n graus de liberdade da seção 1. Um segundo modelo dá a cada pose uma confiança (Corso *et al.*, 2023).
 
-**2.1.** Abra [swissdock.ch](https://www.swissdock.ch/) e vá para a página de submissão.
+### Passo 3: sistema A, enviar a eIF4E e o cap
 
-**2.2.** No campo do **ligante**, entre as opções de SMILES, arquivo Mol2 e desenho, escolha **SMILES**.
+**3.1.** Em **Target Protein**, clique para enviar arquivo e selecione `receptor.pdb` do pacote eif4e.
 
-**2.3.** Abra o arquivo `ligante.smi` num editor de texto e copie a linha, ou copie daqui:
+**3.2.** Em **Molecule**, envie `ligante_3d.sdf`: o cap em 3D, com os hidrogênios e carga −3.
 
-```
-Cn1cnc(Cn2c(=O)nc(Nc3cc4cn(C)nc4cc3Cl)n(Cc3cc(F)c(F)cc3F)c2=O)n1
-```
+**3.3.** Clique em **Run** e espere: a execução de referência levou 4,6 s.
 
-**2.4.** Cole no campo e confirme.
+| Removido de `receptor.pdb` | Motivo |
+|----------------------------|--------|
+| o cap (MGP) | com o sítio ocupado não haveria onde encaixar, e o teste perderia o sentido |
+| águas, íons e moléculas do tampão | vêm da cristalização e ocupariam o sítio |
 
-**2.5.** O servidor responde com uma lista de **estados de protonação**, cada um com a faixa de pH em que predomina. **Escolha o da faixa que contém 7,4.** Para o ensitrelvir, esse estado tem carga total 0.
+**Por que a carga −3 importa.** Os fosfatos negativos fazem pontes salinas com Arg157 e Lys162. Num estado neutro essas interações desaparecem. O pH 7,4 do citoplasma deixa os três fosfatos desprotonados.
 
-**Por que a protonação é uma escolha de verdade.** A mesma molécula tem cargas diferentes conforme o pH. Carga muda quais interações são possíveis: um grupo que deveria fazer ponte salina, se entrar neutro, simplesmente não faz. O pH 7,4 é o do sangue e do meio extracelular, e é o padrão quando se quer representar o ambiente fisiológico.
+### Passo 4: ler as poses e a confiança
 
-**Alternativa ao SMILES.** Se preferir enviar arquivo, use `ligante_3d.mol2`. O servidor exige um arquivo com **uma só molécula, com todos os hidrogênios e coordenadas 3D**, e esse arquivo já atende às três condições.
+**4.1.** Baixe o resultado. As 20 poses vêm num arquivo SDF, ordenadas pela confiança.
 
-**O que esperar.** A mensagem de que o ligante foi preparado e um **número de sessão**. Anote esse número: é por ele que você acompanha e recupera o trabalho.
+**4.2.** A execução de referência está em [resultados/eif4e_diffdock/poses.sdf](resultados/eif4e_diffdock/poses.sdf); o título de cada bloco traz a confiança da pose.
 
-### Passo 3: informar o receptor
+| Confiança | Leitura (versão original, Corso *et al.*, 2023) |
+|-----------|-------------------------------|
+| acima de 0 | alta |
+| entre −1,5 e 0 | moderada |
+| abaixo de −1,5 | baixa |
 
-**3.1.** No campo do **alvo**, escolha enviar arquivo e selecione `receptor.pdb`.
+**A confiança não é energia.** É um escore (logit) da chance, estimada pelo modelo, de a pose estar a menos de 2 Å da certa. Não é probabilidade nem energia, não tem unidade e não se compara com energias em kcal/mol (seção 8).
 
-**3.2.** Confirme o envio.
+### Passo 5: sistema A contra o cristal 1IPC
 
-**Por que enviar o arquivo em vez de digitar o código 8HBK.** O servidor aceita o código e deixa você escolher cadeias e heteroátomos ali mesmo. Funciona, mas o arquivo do pacote já foi limpo da mesma forma para todos, o que torna os resultados comparáveis entre os alunos e evita erro de seleção.
+**5.1.** Abra [molstar.org/viewer](https://molstar.org/viewer/); no menu à esquerda, clique em **Open Files**, selecione `receptor.pdb`, `ligante_cristal.sdf` e `poses.sdf` e clique em **Apply**.
 
-**O que já foi retirado desse arquivo, e por quê.**
+**5.2.** No painel à direita, em cada componente, clique nos três pontos, escolha **Set Coloring** e dê cores diferentes ao cristal e às poses. Passe o mouse sobre Trp56 e Trp102.
 
-| Removido | Motivo |
-|----------|--------|
-| O ligante 7YY | se ficasse, não haveria espaço livre e o teste perderia o sentido |
-| Águas | o programa trata o solvente de forma implícita; águas do cristal ocupariam o sítio |
-| Íons, glicerol, PEG e sulfato | são aditivos da cristalização, não fazem parte da proteína |
+![DiffDock contra o cristal 1IPC](imagens/pratica_diffdock_eif4e.png)
 
-**Se você optar pelo código PDB.** Marque só a cadeia A e **não selecione solvente químico** entre os heteroátomos. Desmarque também o próprio ligante 7YY; sem isso, não há redocking.
+**O que se vê.** A pose 1 põe a guanina entre os dois triptofanos, a 2,1 Å do cristal (0,8 Å só na guanina), e repete os 6 contatos do cristal. Até a pose 20, a de menor confiança, fica a 2,6 Å.
 
-**O que esperar.** O visualizador do servidor passa a mostrar a proteína.
+### Passo 6: sistema B, rodar o exemplo da Mpro
 
-### Passo 4: definir a caixa de busca
+**6.1.** No menu de exemplos, escolha **SARS-CoV-2 Main Protease and Ensitrelvir Analog**. Os campos se preenchem sozinhos: Molecule = `Ensitrelvir_analog_3d.sdf` e Target Protein = `mpro_chain_OpenFold_processed_ms.pdb`.
 
-**4.1.** Abra o arquivo `caixa.json`. Ele tem os seis números a digitar.
+**6.2.** Confira 20 poses, 18 passos e 20 divisões de tempo e clique em **Run**. A referência levou 24,7 s.
 
-**4.2.** Preencha os campos:
+**6.3.** Baixe as poses, ou use [resultados/mpro_diffdock/poses.sdf](resultados/mpro_diffdock/poses.sdf).
 
-| Campo | Valor |
-|-------|-------|
-| Centro X | −21,75 |
-| Centro Y | −11,26 |
-| Centro Z | 2,66 |
-| Tamanho X | 28 |
-| Tamanho Y | 27 |
-| Tamanho Z | 26 |
+**O que muda em relação ao sistema A.** O receptor não veio de um cristal: é a Mpro predita pelo OpenFold, que fica a 0,58 Å (carbonos alfa) da Mpro da 8HBK. O ligante não é o do cristal: o análogo divide 29 dos 37 átomos pesados com o ensitrelvir. Não existe gabarito exato; o mais perto é o ensitrelvir na 8HBK.
 
-**4.3.** Olhe o visualizador 3D ao lado. A caixa aparece desenhada sobre a proteína. **Confirme que ela envolve a fenda que você viu no passo 1.4.** Se estiver em outro lugar, confira os sinais negativos.
+### Passo 7: sistema B contra o cristal 8HBK
 
-**De onde vieram esses números.** O centro é o centro geométrico do ligante no cristal. O tamanho é a extensão do ligante mais 8 Å de folga em cada direção, para o programa poder testar orientações sem esbarrar na parede da caixa.
+**7.1.** O modelo OpenFold está em outro sistema de coordenadas. Use os arquivos já sobrepostos à 8HBK pelos carbonos alfa: [receptor_openfold_no_8hbk.pdb](resultados/mpro_diffdock/receptor_openfold_no_8hbk.pdb) e [poses_no_8hbk.sdf](resultados/mpro_diffdock/poses_no_8hbk.sdf).
 
-**Por que a caixa é a decisão mais importante da prática.** Ela define onde o programa procura. Uma caixa fora do sítio produz poses sempre erradas, com energias de aparência normal. Uma caixa grande demais aumenta o tempo e enche o resultado de poses inúteis. Como aqui o sítio é conhecido, isto é um **docking local**.
+**7.2.** No Mol*, abra os dois arquivos e o ensitrelvir do cristal, [dados/mpro/ligante_cristal.sdf](dados/mpro/ligante_cristal.sdf).
 
-**O que esperar.** Uma caixa que cobre o sítio ativo inteiro e sobra pouco para fora.
+**7.3.** Compare só o núcleo que as duas moléculas dividem: triazinatriona, indazol e trifluorobenzila.
 
-### Passo 5: escolher o método e enviar
+![DiffDock contra o cristal 8HBK](imagens/pratica_diffdock_mpro.png)
 
-**5.1.** Em amostragem, deixe a exaustividade em **8**, que é o valor da execução de referência.
+**O que se vê.** A pose 1 põe o núcleo a 1,6 Å do ensitrelvir do cristal, no sítio ativo, mesmo com a proteína predita. A pose 6 cai a 8,5 Å, já com confiança −1,05.
 
-**5.2.** Clique no botão **Docking with AutoDock Vina**.
+### Passo 8: a confiança acompanha o acerto?
 
-**Por que o Vina e não o outro botão.** O Vina é rápido, é o programa de docking mais usado e trata o ligante como flexível e o receptor como rígido (Trott e Olson, 2010). Esse é o compromisso padrão da área: mexer no ligante é barato, mexer no receptor é caro. O outro método do servidor, Attracting Cavities, é mais caro e não entra nesta prática.
+![Confiança contra RMSD](imagens/pratica_diffdock_confianca.png)
 
-**O que o servidor faz antes de aceitar.** Ele estima o tempo do trabalho e recusa se for longo demais. **Se recusar:** reduza o tamanho da caixa ou a exaustividade e envie de novo.
+| | Sistema A: eIF4E + cap | Sistema B: Mpro + análogo |
+|---|---|---|
+| Confiança da pose 1 | −0,53 | −0,59 |
+| RMSD da pose 1 | 2,07 Å (cap inteiro) | 1,65 Å (núcleo comum) |
+| Poses abaixo de 2 Å | 16 de 20 | 1 de 20 |
+| Contatos do cristal na pose 1 | 6 de 6 | 3 de 8 |
 
-**O que esperar.** Uma página de estado. O trabalho de referência levou **2 minutos** e devolveu 20 poses.
+**No sistema A, o DiffDock reproduz o cristal.** As 20 poses põem a guanina entre os triptofanos, e a pose 1 repete os seis contatos, incluindo as pontes salinas dos fosfatos.
 
-### Passo 6: baixar e ler o resultado
+**Leia com cuidado.** A versão da NVIDIA (DiffDock 2.3) foi treinada com complexos do PDB reunidos nos conjuntos PLINDER e SAIR, e a 1IPC está no PDB desde 2002. O modelo pode ter visto este complexo, ou outros quase iguais da eIF4E com o cap. O acerto mostra o que ele aprendeu e não prova que ele acertaria uma molécula nova.
 
-**6.1.** Quando a página indicar que terminou, baixe o pacote de resultados.
+**No sistema B, a tarefa é mais dura e o resultado é mais honesto.** Proteína predita e uma molécula que não está no PDB: só a pose 1 fica abaixo de 2 Å, e as poses de confiança baixa caem longe do sítio. Aqui a confiança separa bem as poses boas das ruins.
 
-**6.2.** Descompacte. Dentro dele:
+**O cristal é o juiz.** Sem a 1IPC e a 8HBK não haveria como saber quais poses estão certas.
 
-| Arquivo | Conteúdo |
-|---------|----------|
-| `vina_dock.pdbqt` | as 20 poses com as energias |
-| `vina_dock.pdb` | as mesmas poses, em formato PDB |
-| `receptor.pdb` | o receptor como o servidor o usou |
-| `parameters` | os valores que você preencheu, para registro |
+### Passo 9: ver as interações no PLIP
 
-**6.3.** Abra `vina_dock.pdbqt` num editor de texto. Cada bloco que começa em `MODEL` é uma pose, em ordem de energia. A linha logo abaixo traz a energia:
+**9.1.** Abra o [PLIP](https://plip-tool.biotec.tu-dresden.de/plip-web/plip/index), digite **1IPC** no campo do código PDB e clique em **Run analysis**. Repita com **8HBK**.
 
-```
-MODEL 1
-REMARK VINA RESULT:    -9.127      0.000      0.000
-```
+**9.2.** Leia a tabela do ligante (MGP na 1IPC, 7YY na 8HBK) por tipo de interação.
 
-O primeiro número é a energia em kcal/mol. Anote os valores das três primeiras poses.
+**9.3.** Envie a pose 1 junto com o receptor do mesmo sistema de coordenadas, num arquivo só, e compare as listas resíduo por resíduo. O PLIP precisa da proteína e do ligante no mesmo arquivo, com o ligante marcado como `HETATM`.
 
-**O que você deve obter.**
+**Caminho curto.** Os complexos prontos da pose 1 estão em [resultados/eif4e_diffdock/complexo_pose1.pdb](resultados/eif4e_diffdock/complexo_pose1.pdb) e [resultados/mpro_diffdock/complexo_pose1.pdb](resultados/mpro_diffdock/complexo_pose1.pdb).
 
-| Pose | Energia (kcal/mol) | RMSD contra o cristal (Å) |
-|------|--------------------|----------------------------|
-| 1 | −9,13 | 1,51 |
-| 2 | −8,71 | 8,32 |
-| 3 | −8,64 | 6,73 |
-| 4 | −8,43 | 7,27 |
+**Caminho manual.**
 
-**Por que seus números vão diferir um pouco.** O Vina sorteia a semente do gerador aleatório, então duas execuções iguais dão resultados próximos, não idênticos. Espere a pose 1 entre −9,5 e −8,5 kcal/mol. **Se a sua pose 1 passar de 3 Å, volte ao passo 4 e confira a caixa.**
+1. Converta a pose 1 de SDF para PDB, por exemplo com o Open Babel: `obabel poses.sdf -f 1 -l 1 -O pose1.pdb`.
+2. Abra o receptor que combina com as poses num editor de texto simples e apague a última linha, `END`. Sistema A: `dados/eif4e/receptor.pdb` com `poses.sdf`. Sistema B: `receptor_openfold_no_8hbk.pdb` com `poses_no_8hbk.sdf`; misturar o receptor original com as poses sobrepostas põe o ligante fora da proteína.
+3. Cole no fim do receptor as linhas de átomos de `pose1.pdb`.
+4. Nas linhas coladas, troque `ATOM  ` por `HETATM`. Sem isso o PLIP trata o ligante como proteína e não analisa nada.
+5. Acrescente `END` na última linha, salve como `complexo.pdb` e envie ao PLIP pelo botão de upload.
 
-### Passo 7: comparar a pose com o cristal
+![Interações do cristal e da pose 1](imagens/pratica_interacoes_diffdock.png)
 
-**7.1.** Abra [molstar.org/viewer](https://molstar.org/viewer/).
-
-**7.2.** No painel da esquerda, clique em **Open Files** e selecione dois arquivos: `ligante_cristal.sdf`, do pacote de entradas, e `vina_dock.pdb`, do pacote de resultados.
-
-**7.3.** Dê cores diferentes aos dois e gire a cena. Veja se os anéis da pose caem sobre os anéis do cristal.
-
-**O que o número significa.** O RMSD é a distância média entre cada átomo pesado da pose e o mesmo átomo no cristal. Não se realinha nada antes: as duas estruturas já estão no mesmo sistema de coordenadas, porque vieram da mesma estrutura.
-
-![Como o RMSD é calculado](imagens/fund_rmsd.png)
-
-| RMSD | Leitura |
-|------|---------|
-| abaixo de 2 Å | pose correta, repete os mesmos contatos |
-| 2 a 3 Å | orientação geral certa, detalhes errados |
-| acima de 3 Å | pose errada |
-
-**Por que o limiar é 2 Å.** É convenção da área, com razão física: acima disso os grupos funcionais deixam de apontar para os mesmos resíduos, e as interações mudam.
-
-A pose 1 cai praticamente sobre o cristal. A pose 2, com energia apenas 0,4 kcal/mol pior, está 8 Å fora.
-
-![Pose 1 e pose 2 contra o cristal](imagens/pratica_mpro_poses.png)
-
-**Por que isso só existe em redocking.** Sem uma pose experimental de referência não há RMSD para calcular. Com uma molécula nova você fica só com a energia, que é o número menos confiável.
-
-### Passo 8: ver as interações no PLIP
-
-**8.1. Primeiro, as interações do cristal.** Abra o [PLIP](https://plip-tool.biotec.tu-dresden.de/), digite **8HBK** no campo de código PDB e envie.
-
-**8.2.** Na saída, procure a tabela do ligante 7YY. Você deve encontrar:
-
-| Tipo | Resíduos |
-|------|----------|
-| Ligação de hidrogênio | Thr26, Gly143, Ser144, Cys145, Glu166 |
-| Hidrofóbica | Thr25, Met165 |
-| Empilhamento π | His41 |
-
-**Por que esses resíduos e não outros.** Cys145 e His41 são a díade catalítica da protease: o ensitrelvir ocupa justamente o ponto onde o substrato seria cortado. Gly143, Ser144 e Cys145 formam o buraco de oxiânion, que estabiliza o intermediário da reação. O fármaco funciona porque imita as interações do substrato.
-
-**8.3. Agora, as interações da sua pose.** O PLIP precisa de um arquivo com a proteína e o ligante juntos, e o ligante marcado como `HETATM`. Há dois caminhos.
-
-**Caminho curto.** Baixe o arquivo pronto [resultados/mpro/complexo_pose1.pdb](resultados/mpro/complexo_pose1.pdb) e envie ao PLIP pelo botão de upload.
-
-**Caminho manual, com a sua própria pose.**
-
-1. Abra `receptor.pdb` num editor de texto simples e apague a última linha, `END`.
-2. Abra `vina_dock.pdb` e copie as linhas da primeira pose: começam depois de `MODEL 1` e terminam antes do primeiro `ENDMDL`. São 38 linhas que começam com `ATOM`.
-3. Cole essas linhas no fim do `receptor.pdb`.
-4. Nas linhas coladas, troque `ATOM  ` por `HETATM` no começo de cada uma. Sem isso o PLIP trata o ligante como parte da proteína e não analisa nada.
-5. Acrescente uma linha `END` no fim e salve como `complexo.pdb`.
-6. Envie esse arquivo ao PLIP.
-
-**8.4.** Compare as duas listas. A pose 1 da referência repete 75% das interações do cristal: mantém as ligações de hidrogênio com Gly143, Ser144, Cys145 e Glu166, o contato hidrofóbico com Met165 e o empilhamento com His41. Perde só os contatos com Thr25 e Thr26, que ficam na borda do sítio.
-
-![Impressão digital das interações](imagens/pratica_interacoes.png)
-
-**Por que contar interações, se já existe o RMSD.** O RMSD é um número só e trata todos os átomos por igual. Duas poses com RMSD parecido podem fazer contatos diferentes. A lista de interações diz **quais** contatos a pose acerta, e é disso que depende a atividade de um fármaco.
-
-### Resultados de referência
-
-Execução guardada em [resultados/mpro](resultados/mpro).
-
-| Parâmetro | Valor |
-|-----------|-------|
-| Receptor | 8HBK, cadeia A, 2 316 átomos pesados |
-| Ligante | ensitrelvir (código 7YY), 37 átomos pesados, 5 ligações rotáveis, carga 0 |
-| Centro da caixa | −21,75  −11,26  2,66 |
-| Tamanho da caixa | 28 × 27 × 26 Å |
-| Exaustividade | 8 |
-| Tempo e saída | 2 minutos, 20 poses |
-
-| Pose | Energia (kcal/mol) | RMSD (Å) | Interações do cristal recuperadas |
-|------|--------------------|----------|-----------------------------------|
-| 1 | −9,13 | 1,51 | 75% |
-| 2 | −8,71 | 8,32 | 25% |
-| 3 | −8,64 | 6,73 | 50% |
+Na eIF4E, a pose 1 repete os 6 contatos do cristal. Na Mpro, o análogo repete 3 dos 8 contatos do ensitrelvir (Gly143, Glu166 e Met165), perde His41, Cys145 e Ser144 e ganha uma ligação de halogênio com Gln189, pelo bromo que o ensitrelvir não tem.
 
 ### O que concluir desta prática
 
-1. A pose de melhor energia é também a pose certa: neste sistema o protocolo funciona.
-2. A diferença entre a pose 1 e a pose 2 é de 0,4 kcal/mol, e a pose 2 está 8 Å fora. A ordem do ranking é frágil; olhar só o primeiro número é arriscado.
-3. Um redocking bem-sucedido valida o protocolo para moléculas parecidas naquele sítio. Não valida para outro alvo.
+1. No sistema A, o DiffDock acerta: 16 de 20 poses abaixo de 2 Å e os 6 contatos do cristal. O modelo pode ter visto este complexo no treino.
+2. O sistema B é o caso real: proteína predita e molécula nova. A pose 1 acerta o núcleo (1,6 Å); as outras quase todas erram.
+3. A confiança ajuda a separar as poses: as de confiança abaixo de −1,5 caem longe do sítio. Ela não é energia.
+4. O cristal é o juiz. Com uma molécula nova, valide o protocolo antes com um redocking num complexo conhecido.
 
-### Se o servidor estiver fora do ar
+### Resultados de referência
 
-Tudo o que você precisa para os passos 6, 7 e 8 está em [resultados/mpro](resultados/mpro):
-
-| Arquivo | Para que serve |
-|---------|----------------|
-| `poses.json` | energia e RMSD de cada uma das 20 poses |
-| `poses_top3.sdf` | as três melhores poses em 3D, para abrir no Mol* |
-| `complexo_pose1.pdb` | receptor e pose 1 juntos, pronto para o PLIP |
-| `interacoes.json` | interações do cristal e das poses, já calculadas |
+| Pasta | Conteúdo |
+|-------|----------|
+| [resultados/eif4e_diffdock](https://github.com/madsondeluna/curso-docking/tree/main/resultados/eif4e_diffdock) | as 20 poses (`poses.sdf`), parâmetros, comparação com o cristal, interações e o complexo da pose 1 |
+| [resultados/mpro_diffdock](https://github.com/madsondeluna/curso-docking/tree/main/resultados/mpro_diffdock) | as 20 poses, as mesmas sobrepostas à 8HBK, o receptor sobreposto, a comparação no núcleo comum, interações e o complexo da pose 1 |
 
 
 ## Referência técnica
@@ -555,8 +584,10 @@ Tudo o que você precisa para os passos 6, 7 e 8 está em [resultados/mpro](resu
 | Caminho | Conteúdo |
 |---------|----------|
 | `dados/<sistema>/` | receptor limpo, ligante do cristal, ligante 3D, SMILES em pH 7,4 e caixa |
+| `dados/mpro_analogo/` | os dois arquivos do exemplo da NVIDIA: a Mpro predita pelo OpenFold e o análogo do ensitrelvir |
 | `dados/<sistema>.zip` | os mesmos arquivos num pacote, para baixar com um clique |
-| `resultados/<sistema>/` | poses, energias, RMSD e interações que eu obtive nos servidores |
+| `resultados/<sistema>_diffdock/` | poses do DiffDock, confiança, comparação com o cristal e interações |
+| `resultados/<sistema>/` | execuções com o Vina de versões anteriores do curso, mantidas como registro |
 | `resultados/cavidades/` | cavidades previstas pelo P2Rank e distância até cada ligante |
 | `tools/` | scripts que preparam as entradas, rodam os servidores e geram as figuras |
 
@@ -565,9 +596,11 @@ Tudo o que você precisa para os passos 6, 7 e 8 está em [resultados/mpro](resu
 | Script | O que faz |
 |--------|-----------|
 | `tools/prepare_inputs.py` | monta `dados/` a partir dos códigos PDB |
-| `tools/swissdock_cli.py` | roda o docking no SwissDock pela API |
+| `tools/swissdock_cli.py` | roda o Vina no SwissDock pela API (versões anteriores do curso) |
 | `tools/analyze_poses.py` | energia e RMSD de cada pose contra o cristal |
-| `tools/interactions.py` | interações do complexo com o PLIP |
+| `tools/compare_crystal.py` | RMSD do ligante inteiro, RMSD só da base e contatos do cristal recuperados, pose a pose |
+| `tools/compare_analog.py` | sobrepõe o modelo OpenFold à 8HBK e compara as poses do análogo com o ensitrelvir no núcleo comum |
+| `tools/interactions.py` | interações do complexo com o PLIP, para poses em PDBQT ou SDF |
 | `tools/pockets.py` | cavidades no PrankWeb e comparação com os sítios reais |
 | `tools/make_figures.py` | gera todas as figuras |
 | `tools/export_results.py` | publica os resultados de referência e empacota as entradas |
@@ -576,26 +609,36 @@ Tudo o que você precisa para os passos 6, 7 e 8 está em [resultados/mpro](resu
 
 | Sintoma | Causa provável | Solução |
 |---------|----------------|---------|
-| O servidor recusa o trabalho | fila cheia ou caixa grande demais | reduzir a caixa ou a exaustividade e repetir |
-| Todas as poses ficam fora do sítio | caixa no lugar errado | conferir o centro contra o ligante do cristal |
+| O DiffDock não aceita o ligante | arquivo com mais de uma molécula ou sem 3D | enviar um SDF com uma molécula, em 3D e com hidrogênios |
+| As poses aparecem longe do cristal no Mol* | receptor predito em outro sistema de coordenadas | usar os arquivos `_no_8hbk`, já sobrepostos ao cristal |
 | Energias muito melhores que o esperado | ligante grande demais ou com clash | olhar a pose, conferir a eficiência do ligante |
-| O ligante sai distorcido | SMILES com estado de protonação errado | usar o estado de pH 7,4 |
+| O ligante sai com a carga errada | estado de protonação errado | usar os arquivos de `dados/`, já em pH 7,4 |
 | RMSD impossível de calcular | falta a pose de referência | só dá para calcular em redocking |
 
 ### Ferramentas usadas
 
 | Ferramenta | Papel | Acesso |
 |------------|-------|--------|
-| SwissDock (Vina e Attracting Cavities) | docking | livre, sem conta |
+| DiffDock (NVIDIA) | docking por aprendizado de máquina | conta gratuita |
+| RCSB PDB | cristais de referência | livre, sem conta |
 | PrankWeb (P2Rank) | cavidades | livre, sem conta |
 | PLIP | interações | livre, sem conta |
 | Mol* | visualização | livre, sem conta |
 | ClusPro | proteína-proteína e peptídeo | livre, uso não comercial, conta opcional |
-| DiffDock (NVIDIA) | docking por aprendizado de máquina | exige conta e chave de API; não testado neste material |
 
 
 ## Referências
 
+- Corso, G.; Stärk, H.; Jing, B.; Barzilay, R.; Jaakkola, T. DiffDock: diffusion steps, twists, and turns for molecular docking. *International Conference on Learning Representations (ICLR)* **2023**. https://arxiv.org/abs/2210.01776
+- Morris, G. M. *et al.* Automated docking using a Lamarckian genetic algorithm and an empirical binding free energy function. *J. Comput. Chem.* **1998**, *19*, 1639-1662. https://doi.org/10.1002/(SICI)1096-987X(19981115)19:14<1639::AID-JCC10>3.0.CO;2-B
+- Friesner, R. A. *et al.* Glide: a new approach for rapid, accurate docking and scoring. 1. Method and assessment of docking accuracy. *J. Med. Chem.* **2004**, *47*, 1739-1749. https://doi.org/10.1021/jm0306430
+- Korb, O.; Stützle, T.; Exner, T. E. Empirical scoring functions for advanced protein-ligand docking with PLANTS. *J. Chem. Inf. Model.* **2009**, *49*, 84-96. https://doi.org/10.1021/ci800298z
+- Schindler, T. *et al.* Structural mechanism for STI-571 inhibition of Abelson tyrosine kinase. *Science* **2000**, *289*, 1938-1942. https://doi.org/10.1126/science.289.5486.1938
+- Sonenberg, N.; Hinnebusch, A. G. Regulation of translation initiation in eukaryotes: mechanisms and biological targets. *Cell* **2009**, *136*, 731-745. https://doi.org/10.1016/j.cell.2009.01.042
+- Gingras, A.-C. *et al.* Regulation of 4E-BP1 phosphorylation: a novel two-step mechanism. *Genes Dev.* **1999**, *13*, 1422-1437. https://doi.org/10.1101/gad.13.11.1422
+- Assouline, S. *et al.* Molecular targeting of the oncogene eIF4E in acute myeloid leukemia (AML): a proof-of-principle clinical trial with ribavirin. *Blood* **2009**, *114*, 257-260. https://doi.org/10.1182/blood-2009-02-205153
+- Ma, J. C.; Dougherty, D. A. The cation-π interaction. *Chem. Rev.* **1997**, *97*, 1303-1324. https://doi.org/10.1021/cr9603744
+- Tomoo, K. *et al.* Crystal structures of 7-methylguanosine 5'-triphosphate (m7GTP)- and P1-7-methylguanosine-P3-adenosine-5',5'-triphosphate (m7GpppA)-bound human full-length eukaryotic initiation factor 4E: biological importance of the C-terminal flexible region. *Biochem. J.* **2002**, *362*, 539-544. https://doi.org/10.1042/bj3620539
 - Trott, O.; Olson, A. J. AutoDock Vina: improving the speed and accuracy of docking with a new scoring function, efficient optimization, and multithreading. *J. Comput. Chem.* **2010**, *31*, 455-461. https://doi.org/10.1002/jcc.21334
 - Bugnon, M. *et al.* SwissDock 2024: major enhancements for small-molecule docking with Attracting Cavities and AutoDock Vina. *Nucleic Acids Res.* **2024**, *52*, W324-W332. https://doi.org/10.1093/nar/gkae300
 - Jakubec, D. *et al.* PrankWeb 3: accelerated ligand-binding site predictions for experimental and modelled protein structures. *Nucleic Acids Res.* **2022**, *50*, W593-W597. https://doi.org/10.1093/nar/gkac389
@@ -616,7 +659,7 @@ Tudo o que você precisa para os passos 6, 7 e 8 está em [resultados/mpro](resu
 - O'Hare, T. *et al.* AP24534, a pan-BCR-ABL inhibitor for chronic myeloid leukemia, potently inhibits the T315I mutant and overcomes mutation-based resistance. *Cancer Cell* **2009**, *16*, 401-412. https://doi.org/10.1016/j.ccr.2009.09.028
 - Kussie, P. H. *et al.* Structure of the MDM2 oncoprotein bound to the p53 tumor suppressor transactivation domain. *Science* **1996**, *274*, 948-953. https://doi.org/10.1126/science.274.5289.948
 - Vassilev, L. T. *et al.* In vivo activation of the p53 pathway by small-molecule antagonists of MDM2. *Science* **2004**, *303*, 844-848. https://doi.org/10.1126/science.1092472
-- Buckle, A. M.; Schreiber, G.; Fersht, A. R. Protein-protein recognition: crystal structural analysis of a barnase-barstar complex at 2.0-Å resolution. *Biochemistry* **1994**, *33*, 8878-8889. https://doi.org/10.1021/bi00196a004
+- Zak, K. M. *et al.* Structure of the complex of human programmed death 1, PD-1, and its ligand PD-L1. *Structure* **2015**, *23*, 2341-2348. https://doi.org/10.1016/j.str.2015.09.010
 - Lin, J.-H. *et al.* Computational drug design accommodating receptor flexibility: the relaxed complex scheme. *J. Am. Chem. Soc.* **2002**, *124*, 5632-5633. https://doi.org/10.1021/ja0260162
 - Amaro, R. E. *et al.* Ensemble docking in drug discovery. *Biophys. J.* **2018**, *114*, 2271-2278. https://doi.org/10.1016/j.bpj.2018.02.038
 - Genheden, S.; Ryde, U. The MM/PBSA and MM/GBSA methods to estimate ligand-binding affinities. *Expert Opin. Drug Discov.* **2015**, *10*, 449-461. https://doi.org/10.1517/17460441.2015.1032936
@@ -626,7 +669,6 @@ Tudo o que você precisa para os passos 6, 7 e 8 está em [resultados/mpro](resu
 - Kim, S. *et al.* PubChem 2023 update. *Nucleic Acids Res.* **2022**, *51*, D1373-D1380. https://doi.org/10.1093/nar/gkac956
 - Weininger, D. SMILES, a chemical language and information system. 1. Introduction to methodology and encoding rules. *J. Chem. Inf. Comput. Sci.* **1988**, *28*, 31-36. https://doi.org/10.1021/ci00057a005
 - Bogan, A. A.; Thorn, K. S. Anatomy of hot spots in protein interfaces. *J. Mol. Biol.* **1998**, *280*, 1-9. https://doi.org/10.1006/jmbi.1998.1843
-- Schreiber, G.; Fersht, A. R. Energetics of protein-protein interactions: analysis of the barnase-barstar interface by single mutations and double mutant cycles. *J. Mol. Biol.* **1995**, *248*, 478-486. https://doi.org/10.1016/s0022-2836(95)80064-6
 
 
 ## Licença

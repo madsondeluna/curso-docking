@@ -1,0 +1,528 @@
+{
+ "cristal (ensitrelvir, 8HBK)": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "CYS145"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR26"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "THR25"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "MET165"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "HIS41"
+  }
+ ],
+ "pose 1": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN142"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "MET165"
+  },
+  {
+   "tipo": "halogênio",
+   "residuo": "GLN189"
+  }
+ ],
+ "pose 2": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN142"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "GLN189"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "LEU27"
+  }
+ ],
+ "pose 3": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN142"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR26"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "THR25"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "GLN189"
+  }
+ ],
+ "pose 4": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "PHE140"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN142"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "CYS145"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "LEU27"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "GLN189"
+  }
+ ],
+ "pose 5": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "PHE140"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "LEU141"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR26"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "THR25"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "LEU27"
+  }
+ ],
+ "pose 6": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR190"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLN192"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "GLN189"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "MET165"
+  },
+  {
+   "tipo": "halogênio",
+   "residuo": "THR25"
+  },
+  {
+   "tipo": "halogênio",
+   "residuo": "CYS44"
+  }
+ ],
+ "pose 7": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "PHE140"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "LEU141"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN142"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR190"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLN192"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "MET165"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "GLN189"
+  }
+ ],
+ "pose 8": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN142"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR26"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "THR25"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "GLN189"
+  }
+ ],
+ "pose 9": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "LEU141"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "LEU141"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLN192"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "LEU27"
+  },
+  {
+   "tipo": "halogênio",
+   "residuo": "THR26"
+  }
+ ],
+ "pose 10": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "CYS145"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "MET49"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "ASN142"
+  }
+ ],
+ "pose 11": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN142"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "THR26"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "THR25"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "LEU27"
+  },
+  {
+   "tipo": "halogênio",
+   "residuo": "ASP187"
+  }
+ ],
+ "pose 12": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "LEU141"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "MET49"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "MET49"
+  }
+ ],
+ "pose 13": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN142"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASP187"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN142"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "ASN142"
+  }
+ ],
+ "pose 14": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "LEU27"
+  }
+ ],
+ "pose 15": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "LEU27"
+  },
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "GLU166"
+  }
+ ],
+ "pose 16": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "LEU141"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "HIS163"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "CYS145"
+  }
+ ],
+ "pose 17": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN142"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLU166"
+  }
+ ],
+ "pose 18": [
+  {
+   "tipo": "hidrofóbica",
+   "residuo": "MET49"
+  }
+ ],
+ "pose 19": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "CYS145"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "GLY143"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "SER144"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU166"
+  }
+ ],
+ "pose 20": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN142"
+  },
+  {
+   "tipo": "halogênio",
+   "residuo": "PHE140"
+  }
+ ]
+}

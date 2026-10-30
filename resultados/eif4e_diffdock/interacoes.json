@@ -1,0 +1,1056 @@
+{
+ "cristal": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 1": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 2": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 3": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 4": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 5": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 6": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 7": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 8": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 9": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 10": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 11": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 12": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 13": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 14": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 15": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 16": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 17": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 18": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ARG112"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "ASN155"
+  },
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 19": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ],
+ "pose 20": [
+  {
+   "tipo": "ligação de hidrogênio",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "ARG157"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "LYS162"
+  },
+  {
+   "tipo": "ponte salina",
+   "residuo": "GLU103"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP102"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  },
+  {
+   "tipo": "empilhamento π",
+   "residuo": "TRP56"
+  }
+ ]
+}

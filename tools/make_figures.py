@@ -209,54 +209,10 @@ def _load_rows(nome):
     return json.loads((resultados(nome) / 'poses.json').read_text())
 
 
-def fig_poses_scatter():
-    fig, ax = plt.subplots(figsize=(8.5, 4.6))
-    for nome, col, mk, lab in (('mpro', C[0], 'o', 'Mpro + ensitrelvir'), ('eif4e', C[7], 's', 'eIF4E + m7GTP')):
-        rows = _load_rows(nome)
-        e = [r['energia_kcal_mol'] for r in rows]; r = [r['rmsd_A'] for r in rows]
-        ax.scatter(r, e, s=46, color=col, marker=mk, edgecolor=INK, lw=0.4, label=lab, zorder=3)
-        ax.annotate('pose 1', (r[0], e[0]), xytext=(10, 4), textcoords='offset points', fontsize=8.5, color=col)
-    ax.axvspan(0, 2, color=BAND, lw=0, zorder=0)
-    ax.text(1.0, ax.get_ylim()[1] - 0.15, 'RMSD < 2 Å:\npose correta', ha='center', va='top', fontsize=8.5)
-    ax.set_xlim(0, None)
-    ax.set_xlabel('RMSD em relação à pose do cristal (Å)')
-    ax.set_ylabel('Energia do Vina (kcal/mol)')
-    ax.legend(loc='lower right')
-    ax.set_title('Todas as poses da prática: a melhor energia nem sempre é a pose certa')
-    save(fig, 'pratica_energia_rmsd.png')
-
-
 def _pose_xyz(nome, k):
     e, m = poses(resultados(nome) / 'vina_dock.pdbqt')[k - 1]
     m = skeleton(m)
     return m.GetConformer().GetPositions() * A, e
-
-
-def fig_mpro_result():
-    t = md.load_pdb(str(fetch_pdb('8HBK')))
-    L = Chem.MolFromMolFile(str(ROOT / 'dados' / 'mpro' / 'ligante_cristal.sdf'), sanitize=False).GetConformer().GetPositions() * A
-    near, X = pocket_scene(t, L, cut=0.9)
-    rows = _load_rows('mpro')
-    wrong = max(rows[1:6], key=lambda r: r['rmsd_A'])['pose']
-    fig, axs = plt.subplots(1, 2, figsize=(13, 5.8))
-    look = X[heavy(t, 'protein')].mean(0) - L.mean(0)
-    B = view_basis(look); c0 = L.mean(0)
-    for ax, k, title in ((axs[0], 1, f"Pose 1: {rows[0]['energia_kcal_mol']:.1f} kcal/mol, RMSD {rows[0]['rmsd_A']:.1f} Å"),
-                         (axs[1], wrong, f"Pose {wrong}: {rows[wrong - 1]['energia_kcal_mol']:.1f} kcal/mol, "
-                                         f"RMSD {rows[wrong - 1]['rmsd_A']:.1f} Å")):
-        Q, _ = _pose_xyz('mpro', k)
-        P = project(np.r_[X[near], L, Q], B, c0)
-        cols = [PROT] * len(near) + [CRISTAL] * len(L) + [POSE] * len(Q)
-        rad = [R_ATOM] * len(near) + [0.16] * len(L) + [0.16] * len(Q)
-        # ligantes por cima do bolsao, para nao sumirem atras dos atomos do receptor
-        draw_spheres(ax, P[:len(near)], cols[:len(near)], rad[:len(near)], pad=0.5)
-        draw_spheres(ax, P[len(near):], cols[len(near):], rad[len(near):], pad=0.5, z=3)
-        ax.set_xlim(P[:, 0].min() - 0.3, P[:, 0].max() + 0.3); ax.set_ylim(P[:, 1].min() - 0.3, P[:, 1].max() + 0.3)
-        ax.set_title(title, fontsize=10)
-    legend(fig, [('ensitrelvir no cristal (8HBK)', CRISTAL), ('pose do docking (SwissDock, Vina)', POSE),
-                 ('Mpro: átomos a menos de 9 Å do ligante', PROT)])
-    fig.suptitle('Prática A: o redocking do ensitrelvir na Mpro', y=1.0, fontsize=11)
-    save(fig, 'pratica_mpro_poses.png')
 
 
 def _trp_rings(t, resids):
@@ -267,62 +223,33 @@ def _trp_rings(t, resids):
     return out
 
 
-def fig_eif4e_result():
-    t = md.load_pdb(str(fetch_pdb('1IPC')))
-    L = Chem.MolFromMolFile(str(ROOT / 'dados' / 'eif4e' / 'ligante_cristal.sdf'), sanitize=False).GetConformer().GetPositions() * A
-    near, X = pocket_scene(t, L, cut=0.9)
-    trp = set(t.topology.select('resSeq 56 102 and not element H'))
-    rows = _load_rows('eif4e')
-    best = min(rows, key=lambda r: r['rmsd_A'])['pose']
-    look = X[heavy(t, 'protein')].mean(0) - L.mean(0)
-    B = view_basis(look); c0 = L.mean(0)
-    fig, axs = plt.subplots(1, 3, figsize=(16, 5.8))
-    panels = [(axs[0], None, 'Cristal (1IPC): a guanina metilada\nentre Trp56 e Trp102'),
-              (axs[1], 1, f"Pose 1: {rows[0]['energia_kcal_mol']:.1f} kcal/mol, RMSD {rows[0]['rmsd_A']:.1f} Å"),
-              (axs[2], best, f"Pose {best} (a mais próxima): {rows[best - 1]['energia_kcal_mol']:.1f} kcal/mol,\n"
-                             f"RMSD {rows[best - 1]['rmsd_A']:.1f} Å")]
-    for ax, k, title in panels:
-        Q = _pose_xyz('eif4e', k)[0] if k else np.zeros((0, 3))
-        P = project(np.r_[X[near], L, Q], B, c0)
-        cols = [DESTAQUE if i in trp else PROT for i in near] + [CRISTAL] * len(L) + [POSE] * len(Q)
-        rad = [R_ATOM] * len(near) + [0.16] * (len(L) + len(Q))
-        draw_spheres(ax, P[:len(near)], cols[:len(near)], rad[:len(near)], pad=0.5)
-        draw_spheres(ax, P[len(near):], cols[len(near):], rad[len(near):], pad=0.5, z=3)
-        ax.set_xlim(P[:, 0].min() - 0.3, P[:, 0].max() + 0.3); ax.set_ylim(P[:, 1].min() - 0.3, P[:, 1].max() + 0.3)
-        ax.set_title(title, fontsize=10)
-    legend(fig, [('m7GTP no cristal', CRISTAL), ('pose do docking (Vina)', POSE), ('Trp56 e Trp102', DESTAQUE),
-                 ('eIF4E: átomos a menos de 9 Å do ligante', PROT)])
-    fig.suptitle('Prática B: o Vina não reproduz o cap entre os dois triptofanos', y=1.0, fontsize=11)
-    save(fig, 'pratica_eif4e_poses.png')
-
-
 # ---------------------------------------------------------------- 4. RMSD explicado com dados reais
 def fig_rmsd():
-    ref = skeleton(Chem.MolFromMolFile(str(ROOT / 'dados' / 'mpro' / 'ligante_cristal.sdf'), sanitize=False, removeHs=False))
+    """RMSD explicado com duas poses do DiffDock para o cap, contra o cristal 1IPC."""
+    ref = skeleton(Chem.MolFromMolFile(str(ROOT / 'dados' / 'eif4e' / 'ligante_cristal.sdf'), sanitize=False, removeHs=False))
     P0 = ref.GetConformer().GetPositions()
-    rows = _load_rows('mpro')
+    rows = _dd_rows('eif4e_diffdock')
+    perto = min(rows, key=lambda r: r['rmsd_A'])['pose']; longe = max(rows, key=lambda r: r['rmsd_A'])['pose']
+    sup = Chem.SDMolSupplier(str(ROOT / 'resultados' / 'eif4e_diffdock' / 'poses.sdf'), sanitize=False, removeHs=False)
     fig, axs = plt.subplots(1, 2, figsize=(13, 5))
-    B = None
-    for ax, k in zip(axs, (1, max(rows[1:6], key=lambda r: r['rmsd_A'])['pose'])):
-        e, m = poses(resultados('mpro') / 'vina_dock.pdbqt')[k - 1]
-        m = skeleton(m); Q = m.GetConformer().GetPositions()
-        match = min(ref.GetSubstructMatches(m, uniquify=False, useChirality=False),
+    u, s, vt = np.linalg.svd(P0 - P0.mean(0)); B = np.c_[vt[0], vt[1], vt[2]]
+    for ax, k in zip(axs, (perto, longe)):
+        m = skeleton(sup[k - 1]); Q = m.GetConformer().GetPositions()
+        match = min(ref.GetSubstructMatches(m, uniquify=False, useChirality=False, maxMatches=5000),
                     key=lambda mt: ((Q - P0[list(mt)]) ** 2).sum())
         Pm = P0[list(match)]
-        if B is None:
-            u, s, vt = np.linalg.svd(P0 - P0.mean(0)); B = np.c_[vt[0], vt[1], vt[2]]
         a = (Pm - P0.mean(0)) @ B; b = (Q - P0.mean(0)) @ B
         for i in range(len(a)):
-            ax.plot([a[i, 0], b[i, 0]], [a[i, 1], b[i, 1]], color=ERRO, lw=0.7, alpha=0.7)
+            ax.plot([a[i, 0], b[i, 0]], [a[i, 1], b[i, 1]], color=ERRO, lw=0.8, alpha=0.8)
         ax.scatter(a[:, 0], a[:, 1], s=40, color=CRISTAL, edgecolor=INK, lw=0.4, zorder=3)
         ax.scatter(b[:, 0], b[:, 1], s=40, color=POSE, edgecolor=INK, lw=0.4, zorder=3)
         rmsd = np.sqrt(((Q - Pm) ** 2).sum(1).mean())
         ax.set_aspect('equal'); frame_off(ax)
-        ax.set_title(f'Pose {k}: RMSD = {rmsd:.2f} Å', fontsize=10)
-    legend(fig, [('átomo no cristal', CRISTAL), ('mesmo átomo na pose', POSE)], y=-0.06)
+        ax.set_title(f'Pose {k} do DiffDock: RMSD = {rmsd:.2f} Å'.replace('.', ','), fontsize=10)
+    legend(fig, [('átomo no cristal 1IPC', CRISTAL), ('mesmo átomo na pose', POSE)], y=-0.06)
     fig.text(0.5, 0.06, r'RMSD = $\sqrt{\frac{1}{N}\sum_i d_i^2}$, com $d_i$ a distância (linha vermelha) '
              'entre as duas posições do átomo $i$', ha='center', fontsize=10)
-    fig.suptitle('RMSD: a distância média entre a pose do docking e a do cristal (ensitrelvir, átomos pesados)',
+    fig.suptitle('RMSD: a distância média entre a pose e o cristal (cap do mRNA na eIF4E, átomos pesados)',
                  y=1.02, fontsize=11)
     save(fig, 'fund_rmsd.png')
 
@@ -385,13 +312,15 @@ def fig_forces():
 
 # ---------------------------------------------------------------- 6. tipos de docking
 def fig_flexibility():
-    fig, axs = plt.subplots(1, 3, figsize=(15, 3.8))
+    fig, axs = plt.subplots(1, 4, figsize=(18, 3.9))
     sq = np.array([[-0.5, 0.2], [-0.5, -0.62], [0.5, -0.62], [0.5, 0.2]])
     lig = np.array([[-0.42, 0.0], [-0.42, -0.55], [0.42, -0.55], [0.42, 0.0]])
-    titles = ['Rígido-rígido: nada se move', 'Ligante flexível, receptor rígido\n(Vina, SwissDock, DockThor)',
-              'Flexível-flexível: os dois se ajustam\n(Rosetta, HADDOCK, encaixe induzido)']
+    titles = ['Rígido-rígido\nnada se move', 'Rígido-flexível (semiflexível)\nligante flexível, receptor rígido',
+              'Flexibilidade parcial\ncadeias laterais do sítio se movem', 'Flexível-flexível\nligante e receptor inteiros se ajustam']
+    notas = ['o ligante só translada e gira', 'esferas claras: outras conformações testadas',
+             'só os resíduos da borda do bolsão', 'paredes e fundo do bolsão se movem']
     for k, (ax, title) in enumerate(zip(axs, titles)):
-        frame_off(ax); ax.set_aspect('equal'); ax.set_xlim(-1.8, 1.8); ax.set_ylim(-2.0, 0.9)
+        frame_off(ax); ax.set_aspect('equal'); ax.set_xlim(-1.8, 1.8); ax.set_ylim(-2.0, 0.55)
         _receptor(ax, 0.0, 0.0, sq, seed=5 + k)
         if k == 0:
             _ligand(ax, 0, 0, lig)
@@ -400,13 +329,17 @@ def fig_flexibility():
                 _ligand(ax, 0, 0.1 if ang else 0, lig, angle=ang, alpha=al)
         if k == 2:
             for dx in (-1, 1):
+                ax.add_patch(FancyArrowPatch((dx * 0.62, 0.32), (dx * 0.62, 0.05), arrowstyle='<|-|>',
+                                             mutation_scale=9, color=DESTAQUE, lw=1.3, zorder=6))
+        if k == 3:
+            for dx in (-1, 1):
                 ax.add_patch(FancyArrowPatch((dx * 0.95, -0.35), (dx * 0.62, -0.35), arrowstyle='<|-|>',
                                              mutation_scale=10, color=DESTAQUE, lw=1.4, zorder=6))
-            ax.text(0, -1.85, 'as paredes do bolsão também se movem', ha='center', fontsize=8.5, color=DESTAQUE)
-        if k == 1:
-            ax.text(0, -1.85, 'esferas claras: outras orientações testadas', ha='center', fontsize=8.5, color=GREY)
+            ax.add_patch(FancyArrowPatch((0, -1.0), (0, -0.7), arrowstyle='<|-|>', mutation_scale=10, color=DESTAQUE,
+                                         lw=1.4, zorder=6))
+        ax.text(0, -1.85, notas[k], ha='center', fontsize=8.5, color=DESTAQUE if k >= 2 else GREY)
         ax.set_title(title, fontsize=10)
-    fig.suptitle('Tipos de docking pela flexibilidade (esquema)', y=1.02, fontsize=11)
+    fig.suptitle('Tipos de docking pela flexibilidade, do mais simples ao mais completo (esquema)', y=1.04, fontsize=11)
     save(fig, 'fund_tipos_flexibilidade.png')
 
 
@@ -421,8 +354,8 @@ def fig_search():
     rad = [R_ATOM] * len(prot) + [0.18] * len(L)
     fig, axs = plt.subplots(1, 3, figsize=(15, 4.2))
     pl = P[len(prot):, :2]
-    titles = ['Baseado em molde: parte de um complexo\nconhecido e parecido', 'Local: caixa só no sítio conhecido\n(esta prática)',
-              'Cego (global): caixa na proteína inteira,\no programa procura o sítio']
+    titles = ['Baseado em molde: parte de um complexo\nconhecido e parecido', 'Local: caixa só no sítio conhecido',
+              'Cego (global): a proteína inteira,\no programa procura o sítio (DiffDock, esta prática)']
     for k, (ax, title) in enumerate(zip(axs, titles)):
         draw_spheres(ax, P if k else P, cols if k != 2 else [PROT] * len(prot) + [shade(CRISTAL, 0.5)] * len(L), rad, pad=1.0)
         if k == 1:
@@ -443,7 +376,7 @@ def fig_search():
 def fig_levels_cost():
     # ordem de grandeza do tempo por ligante (s); faixas indicativas, citadas no texto
     levels = [('Modelo de ML (DiffDock), GPU', 5, 60, C[4]),
-              ('Docking com receptor rígido (Vina), 1 CPU', 30, 600, C[0]),
+              ('Docking com receptor rígido (AutoDock), 1 CPU', 30, 600, C[0]),
               ('Docking com cadeias laterais flexíveis', 600, 3600 * 2, C[6]),
               ('Ensemble docking (várias conformações da MD)', 1800, 3600 * 10, C[3]),
               ('MD do complexo + MM/GBSA, GPU', 3600 * 5, 3600 * 48, C[1]),
@@ -453,8 +386,8 @@ def fig_levels_cost():
         y = len(levels) - 1 - k
         ax.plot([lo, hi], [y, y], color=col, lw=9, solid_capstyle='butt')
         ax.text(lo, y + 0.32, name, ha='left', va='bottom', fontsize=9)
-    ax.plot(122, len(levels) - 2, 'o', color='white', mec=INK, ms=8, zorder=5)
-    ax.annotate('medido nesta aula:\nMpro no SwissDock, 2 min', (122, len(levels) - 2), xytext=(4000, len(levels) - 1.55),
+    ax.plot(15, len(levels) - 1, 'o', color='white', mec=INK, ms=8, zorder=5)
+    ax.annotate('medido nesta aula:\nDiffDock, 5 a 25 s', (15, len(levels) - 1), xytext=(4000, len(levels) - 0.75),
                 ha='left', va='center', fontsize=8.5, arrowprops=dict(arrowstyle='-', color=INK, lw=0.8))
     ax.set_xscale('log'); ax.set_xlim(2, 3600 * 24 * 10); ax.set_ylim(-0.5, len(levels) + 0.1)
     ax.set_yticks([])
@@ -483,30 +416,6 @@ def fig_smiles():
         ax.text(0.5, -0.04, wrap, transform=ax.transAxes, ha='center', va='top', fontsize=8.5, family='monospace')
     fig.suptitle('A mesma molécula em desenho e em SMILES', y=1.0, fontsize=11)
     save(fig, 'fund_smiles.png')
-
-
-def fig_smiles_reading():
-    """Aspirina: cada atomo do desenho numerado na ordem em que aparece na SMILES."""
-    smi = 'CC(=O)Oc1ccccc1C(=O)O'
-    m = Chem.MolFromSmiles(smi)
-    for a in m.GetAtoms():
-        a.SetProp('atomNote', str(a.GetIdx() + 1))
-    img = Draw.MolToImage(m, size=(560, 440))
-    fig, (a, b) = plt.subplots(1, 2, figsize=(13, 4.8), gridspec_kw={'width_ratios': [1, 1.25]})
-    a.imshow(img); frame_off(a)
-    a.set_title('Aspirina: átomos numerados na ordem da SMILES', fontsize=10)
-    frame_off(b); b.set_xlim(0, 10); b.set_ylim(0, 10)
-    b.text(0.2, 9.0, smi, fontsize=15, family='monospace')
-    rules = [('C, O, N', 'átomo alifático'), ('c, n, o', 'átomo aromático (minúscula)'),
-             ('( )', 'ramificação'), ('=', 'ligação dupla'),
-             ('1 ... 1', 'abre e fecha um anel'), ('[n+], [O-]', 'carga entre colchetes'),
-             ('@, @@', 'quiralidade')]
-    for k, (sym, mean) in enumerate(rules):
-        b.text(0.2, 7.4 - 1.0 * k, sym, fontsize=11, family='monospace', color=C[0])
-        b.text(3.0, 7.4 - 1.0 * k, mean, fontsize=10)
-    b.set_title('Como ler', fontsize=10)
-    fig.suptitle('SMILES: a molécula escrita como uma linha de texto (Weininger, 1988)', y=1.0, fontsize=11)
-    save(fig, 'fund_smiles_leitura.png')
 
 
 # ---------------------------------------------------------------- 9. exemplos: resistencia, PPI
@@ -588,9 +497,10 @@ def fig_p53_mdm2():
     save(fig, 'fund_p53_mdm2.png')
 
 
-def fig_barnase_barstar():
-    t = md.load_pdb(str(fetch_pdb('1BRS')))
-    a = heavy(t, 'chainid 0'); b = heavy(t, 'chainid 3')
+def fig_pd1_pdl1():
+    """Docking proteina-proteina com um exemplo de imunoterapia: PD-1 e PD-L1 (PDB 4ZQK)."""
+    t = md.load_pdb(str(fetch_pdb('4ZQK')))
+    a = heavy(t, 'chainid 0 and protein'); b = heavy(t, 'chainid 1 and protein')
     X = t.xyz[0]
     d = np.min(np.linalg.norm(X[a][:, None] - X[b][None], axis=2), axis=1)
     ia = set(a[d < 0.45])
@@ -599,13 +509,13 @@ def fig_barnase_barstar():
     axis = X[b].mean(0) - X[a].mean(0)
     B = view_basis(np.cross(axis, [0, 0, 1.0]), up_hint=axis / np.linalg.norm(axis)); c0 = X[np.r_[a, b]].mean(0)
     P = project(X[np.r_[a, b]], B, c0)
-    cols = [shade(C[0], 0.0) if i in ia else '#b8c9e0' for i in a] + [C[5] if i in ib else '#ecc7a8' for i in b]
+    cols = [C[0] if i in ia else '#b8c9e0' for i in a] + [C[5] if i in ib else '#ecc7a8' for i in b]
     fig, ax = plt.subplots(figsize=(7.6, 7.2))
     draw_spheres(ax, P, cols, [R_ATOM] * len(P), pad=0.6)
-    ax.set_title('Docking proteína-proteína: barnase e barstar (PDB 1BRS)', fontsize=10.5)
-    legend(fig, [('barnase', '#b8c9e0'), ('barstar', '#ecc7a8'), ('interface da barnase', C[0]), ('interface da barstar', C[5])],
-           ncol=2, y=0.0)
-    save(fig, 'fund_barnase_barstar.png')
+    ax.set_title('Docking proteína-proteína: PD-1 e PD-L1 (PDB 4ZQK)', fontsize=10.5)
+    legend(fig, [('PD-L1 (proteína A)', '#b8c9e0'), ('PD-1 (proteína B)', '#ecc7a8'), ('interface do PD-L1', C[0]),
+                 ('interface do PD-1', C[5])], ncol=2, y=0.0)
+    save(fig, 'fund_pd1_pdl1.png')
 
 
 # ---------------------------------------------------------------- 10. docking precisa de MD (esquema)
@@ -658,108 +568,46 @@ def _pairs(rows):
 
 
 def fig_metrics():
-    rows_m, rows_e = _load_rows('mpro'), _load_rows('eif4e')
-    best_e = min(rows_e, key=lambda r: r['rmsd_A'])
-    fig, axs = plt.subplots(2, 2, figsize=(13.5, 8.6))
-    # (a) energia e Kd estimado
-    a = axs[0, 0]
-    g = np.linspace(-13, -3, 300)
-    a.axvspan(-13, -9, color=shade(C[3], 0.75), lw=0); a.axvspan(-9, -6, color=shade(C[1], 0.8), lw=0)
-    a.axvspan(-6, -3, color=shade(ERRO, 0.8), lw=0)
-    for x, t in ((-11, 'forte'), (-7.5, 'moderada'), (-4.5, 'fraca')):
-        a.text(x, 0.92, t, ha='center', va='top', fontsize=9, transform=a.get_xaxis_transform())
-    for e, lab, col, dy in ((rows_m[0]['energia_kcal_mol'], 'Mpro, pose 1', C[0], 0.62),
-                            (rows_e[0]['energia_kcal_mol'], 'eIF4E, pose 1', C[7], 0.38)):
-        kd = np.exp(e / RT)
-        txt = f'{kd * 1e9:.0f} nM' if kd < 1e-6 else f'{kd * 1e6:.0f} µM'
-        a.axvline(e, color=col, lw=1.6)
-        a.text(e + 0.12, dy, f'{lab}\n{e:.1f} kcal/mol\nKd ≈ {txt}', fontsize=8.5, va='center',
-               transform=a.get_xaxis_transform(), color=col)
-    a.set_xlim(-13, -3); a.set_yticks([])
-    a.set_xlabel('Energia do docking (kcal/mol); mais negativa = ligação mais forte')
-    a.set_title('Energia: Kd ≈ exp(ΔG/RT), uma estimativa grosseira', fontsize=10)
-    # (b) RMSD
-    b = axs[0, 1]
+    """Tres numeros para julgar uma pose, com as poses do DiffDock nos dois sistemas."""
+    ra, rb = _dd_rows('eif4e_diffdock'), _dd_rows('mpro_diffdock')
+    fig, axs = plt.subplots(1, 3, figsize=(16, 4.6))
+    a = axs[0]
+    a.axvspan(-4, -1.5, color=shade(ERRO, 0.8), lw=0); a.axvspan(-1.5, 0, color=shade(C[1], 0.8), lw=0)
+    a.axvspan(0, 1.5, color=shade(C[3], 0.75), lw=0)
+    for x, t in ((-2.75, 'baixa'), (-0.75, 'moderada'), (0.75, 'alta')):
+        a.text(x, 0.94, t, ha='center', va='top', fontsize=9, transform=a.get_xaxis_transform())
+    for v, lab, cor, y in ((ra[0]['confianca'], 'eIF4E, pose 1', C[7], 0.62), (rb[0]['confianca'], 'Mpro, pose 1', C[0], 0.38)):
+        a.plot(v, y, 'o', color=cor, mec=INK, ms=9, transform=a.get_xaxis_transform())
+        a.text(v - 0.12, y, f'{lab}: {v:.2f}'.replace('.', ',').replace('-', '−'), ha='right', va='center', fontsize=8.5,
+               transform=a.get_xaxis_transform())
+    a.set_xlim(-4, 1.5); a.set_yticks([]); a.set_xlabel('Confiança do DiffDock (maior = melhor)')
+    a.set_title('Confiança: a nota do próprio modelo', fontsize=10)
+    b = axs[1]
     b.axvspan(0, 2, color=shade(C[3], 0.75), lw=0); b.axvspan(2, 3, color=shade(C[1], 0.8), lw=0)
     b.axvspan(3, 10, color=shade(ERRO, 0.8), lw=0)
     for x, t in ((1, 'correta'), (2.5, 'quase'), (6.5, 'errada')):
-        b.text(x, 0.92, t, ha='center', va='top', fontsize=9, transform=b.get_xaxis_transform())
-    marks = [(rows_m[0]['rmsd_A'], 'Mpro\npose 1', C[0], 0.6), (rows_m[1]['rmsd_A'], 'Mpro\npose 2', C[0], 0.25),
-             (rows_e[0]['rmsd_A'], 'eIF4E\npose 1', C[7], 0.6),
-             (best_e['rmsd_A'], f"eIF4E\npose {best_e['pose']}", C[7], 0.25)]
-    for r, lab, col, y in marks:
-        b.plot(r, y, 'o', color=col, mec=INK, ms=9, transform=b.get_xaxis_transform())
-        b.text(r + 0.15, y, f'{lab}: {r:.1f} Å', fontsize=8.5, va='center', transform=b.get_xaxis_transform())
-    b.set_xlim(0, 10); b.set_yticks([])
-    b.set_xlabel('RMSD em relação ao cristal (Å); menor = mais parecida')
-    b.set_title('RMSD: só existe quando há uma pose de referência', fontsize=10)
-    # (c) recuperacao das interacoes do cristal
-    c = axs[1, 0]
-    labels, vals, cols = [], [], []
-    for nome, col, poses_ in (('mpro', C[0], (1, 2, 3)), ('eif4e', C[7], (1, 2, 3, best_e['pose']))):
-        it = _interactions(nome); ref = _pairs(it['cristal'])
-        for k in poses_:
-            key = f'pose {k}'
-            if key in it:
-                labels.append(f"{'Mpro' if nome == 'mpro' else 'eIF4E'} pose {k}")
-                vals.append(100 * len(ref & _pairs(it[key])) / len(ref)); cols.append(col)
-    y = np.arange(len(labels))[::-1]
-    c.barh(y, vals, color=cols, edgecolor=INK, lw=0.5, height=0.6)
-    for yy, v in zip(y, vals):
-        c.text(v + 1.5, yy, f'{v:.0f}%', va='center', fontsize=8.5)
-    c.set_yticks(y); c.set_yticklabels(labels, fontsize=9)
-    c.set_xlim(0, 110); c.set_xlabel('Interações do cristal recuperadas pela pose (%)')
-    c.tick_params(axis='y', right=False)
-    c.set_title('Interações: a pose repete os contatos do cristal?', fontsize=10)
-    # (d) eficiencia do ligante
-    d = axs[1, 1]
-    n_m = Chem.MolFromMolFile(str(ROOT / 'dados' / 'mpro' / 'ligante_cristal.sdf')).GetNumHeavyAtoms()
-    n_e = Chem.MolFromMolFile(str(ROOT / 'dados' / 'eif4e' / 'ligante_cristal.sdf'), sanitize=False).GetNumHeavyAtoms()
-    le = [(-rows_m[0]['energia_kcal_mol'] / n_m, f'ensitrelvir\n{n_m} átomos pesados', C[0]),
-          (-rows_e[0]['energia_kcal_mol'] / n_e, f'm7GTP\n{n_e} átomos pesados', C[7])]
-    d.bar([0, 1], [v for v, _, _ in le], color=[c_ for _, _, c_ in le], edgecolor=INK, lw=0.5, width=0.55)
-    for k, (v, _, _) in enumerate(le):
-        d.text(k, v + 0.008, f'{v:.2f}', ha='center', fontsize=9)
-    d.axhline(0.3, color=INK, ls=(0, (4, 3)), lw=1)
-    d.text(1.45, 0.305, 'referência usual: 0,3', ha='right', va='bottom', fontsize=8.5)
-    d.set_xticks([0, 1]); d.set_xticklabels([t for _, t, _ in le], fontsize=9)
-    d.set_xlim(-0.6, 1.6); d.set_ylim(0, 0.4)
-    d.set_ylabel('kcal/mol por átomo pesado')
-    d.tick_params(axis='x', top=False)
-    d.set_title('Eficiência do ligante: energia dividida pelo tamanho', fontsize=10)
-    fig.suptitle('Métricas do docking com os resultados da prática', y=0.995, fontsize=11)
-    fig.tight_layout(rect=(0, 0, 1, 0.97))
+        b.text(x, 0.94, t, ha='center', va='top', fontsize=9, transform=b.get_xaxis_transform())
+    errada = max(rb[:10], key=lambda r: r['rmsd_nucleo_A'])
+    for r, lab, cor, y in ((ra[0]['rmsd_A'], 'eIF4E\npose 1', C[7], 0.62), (rb[0]['rmsd_nucleo_A'], 'Mpro\npose 1', C[0], 0.3),
+                           (errada['rmsd_nucleo_A'], f"Mpro\npose {errada['pose']}", C[0], 0.62)):
+        b.plot(r, y, 'o', color=cor, mec=INK, ms=9, transform=b.get_xaxis_transform())
+        b.text(r + 0.2, y, f'{lab}: {r:.1f} Å'.replace('.', ','), fontsize=8.5, va='center', transform=b.get_xaxis_transform())
+    b.set_xlim(0, 10); b.set_yticks([]); b.set_xlabel('RMSD em relação ao cristal (Å)')
+    b.set_title('RMSD: só existe quando há um cristal', fontsize=10)
+    c = axs[2]
+    vals = [(ra[0]['contatos_do_cristal'] / ra[0]['contatos_no_cristal'], 'eIF4E pose 1', C[7]),
+            (rb[0]['contatos_do_cristal'] / rb[0]['contatos_no_cristal'], 'Mpro pose 1', C[0]),
+            (errada['contatos_do_cristal'] / errada['contatos_no_cristal'], f"Mpro pose {errada['pose']}", C[0])]
+    y = np.arange(len(vals))[::-1]
+    c.barh(y, [100 * v for v, _, _ in vals], color=[k for _, _, k in vals], edgecolor=INK, lw=0.5, height=0.55)
+    for yy, (v, _, _) in zip(y, vals):
+        c.text(100 * v + 2, yy, f'{100 * v:.0f}%', va='center', fontsize=9)
+    c.set_yticks(y); c.set_yticklabels([n for _, n, _ in vals], fontsize=9); c.tick_params(axis='y', right=False)
+    c.set_xlim(0, 115); c.set_xlabel('Contatos do cristal que a pose repete (%)')
+    c.set_title('Interações: quais contatos se repetem', fontsize=10)
+    fig.suptitle('Três números para julgar uma pose do DiffDock', y=1.02, fontsize=11)
+    fig.tight_layout(w_pad=2.5)
     save(fig, 'fund_metricas.png')
-
-
-def fig_fingerprint():
-    """Impressao digital de interacoes: residuo x (cristal, poses), cor pelo tipo."""
-    tipo_cor = {'ligação de hidrogênio': C[0], 'ponte salina': ERRO, 'hidrofóbica': C[1], 'empilhamento π': C[4],
-                'cátion-π': C[6], 'halogênio': C[3], 'ponte de água': WATER}
-    fig, axs = plt.subplots(1, 2, figsize=(14, 4.8), gridspec_kw={'width_ratios': [1, 1]})
-    best_e = min(_load_rows('eif4e'), key=lambda r: r['rmsd_A'])['pose']
-    for ax, nome, title, keys in ((axs[0], 'mpro', 'Mpro + ensitrelvir', ['cristal', 'pose 1', 'pose 2', 'pose 3']),
-                                  (axs[1], 'eif4e', 'eIF4E + m7GTP', ['cristal', 'pose 1', 'pose 2', f'pose {best_e}'])):
-        it = _interactions(nome)
-        res = sorted({r['residuo'] for k in keys for r in it.get(k, [])}, key=lambda s: int(''.join(ch for ch in s if ch.isdigit())))
-        for j, k in enumerate(keys):
-            for i, rname in enumerate(res):
-                tipos = sorted({r['tipo'] for r in it.get(k, []) if r['residuo'] == rname})
-                ax.add_patch(Rectangle((i - 0.45, j - 0.45), 0.9, 0.9, fc='white', ec=BAND, lw=0.8))
-                for t_i, t in enumerate(tipos):
-                    w = 0.9 / len(tipos)
-                    ax.add_patch(Rectangle((i - 0.45 + t_i * w, j - 0.45), w, 0.9, fc=tipo_cor[t], ec='white', lw=0.5))
-        ax.set_xlim(-0.6, len(res) - 0.4); ax.set_ylim(len(keys) - 0.4, -0.6)
-        ax.set_xticks(range(len(res))); ax.set_xticklabels(res, rotation=60, ha='right', fontsize=8.5)
-        ax.set_yticks(range(len(keys))); ax.set_yticklabels(keys, fontsize=9)
-        ax.tick_params(top=False, right=False, length=0)
-        for sp in ax.spines.values():
-            sp.set_visible(False)
-        ax.set_title(title, fontsize=10)
-    hs = [Rectangle((0, 0), 1, 1, fc=c_) for c_ in tipo_cor.values()]
-    fig.legend(hs, list(tipo_cor), loc='lower center', ncol=7, frameon=False, fontsize=8.5, bbox_to_anchor=(0.5, -0.08))
-    fig.suptitle('Impressão digital das interações (PLIP): cada coluna é um resíduo do receptor', y=1.02, fontsize=11)
-    save(fig, 'pratica_interacoes.png')
 
 
 # ---------------------------------------------------------------- 12. cavidades e tipos de sitio
@@ -881,77 +729,42 @@ def fig_tipos_sitio():
     save(fig, 'fund_tipos_sitio.png')
 
 
-def fig_pocket_ranking():
-    """Escore das cavidades previstas em quatro estruturas; marcadas as que sao sitios reais."""
-    casos = [('8HBK', 'Mpro + ensitrelvir', {1: 'sítio ativo'}),
-             ('5MO4', 'ABL + nilotinibe e asciminibe', {1: 'sítio do ATP', 3: 'bolso do miristoil'}),
-             ('6OIM', 'KRAS G12C + sotorasibe', {1: 'sítio do GDP', 2: 'bolso switch II'}),
-             ('4OBE', 'KRAS sem inibidor', {1: 'sítio do GDP (cópia B)', 2: 'sítio do GDP', 3: 'switch II ainda raso'})]
-    fig, axs = plt.subplots(1, 4, figsize=(16, 4.2), sharey=True)
-    for ax, (code, titulo, reais) in zip(axs, casos):
-        pk = _pockets(code)
-        x = [r['rank'] for r in pk]; y = [r['score'] for r in pk]
-        cols = [CRISTAL if r['rank'] in reais else ERRO for r in pk]
-        ax.bar(x, y, color=cols, edgecolor=INK, lw=0.5, width=0.7)
-        for r in pk:
-            if r['rank'] in reais:
-                ax.text(r['rank'], r['score'] + 0.6, reais[r['rank']], ha='center', fontsize=8, rotation=90, va='bottom')
-        ax.set_xticks(x); ax.tick_params(top=False, right=False)
-        ax.set_xlabel('posto da cavidade')
-        ax.set_title(f'{titulo}\n({code})', fontsize=9.5)
-        ax.set_ylim(0, 44)
-    axs[0].set_ylabel('escore do P2Rank')
-    legend(fig, [('cavidade com ligante conhecido', CRISTAL), ('cavidade sem ligante no cristal', ERRO)], y=-0.06)
-    fig.suptitle('Nem toda cavidade é um sítio: cavidades previstas pelo P2Rank (PrankWeb)', y=1.03, fontsize=11)
-    save(fig, 'fund_cavidades_ranking.png')
-
-
 # ---------------------------------------------------------------- 13. fluxo da pratica
 def fig_fluxo():
-    """Os oito passos da pratica, com a ferramenta de cada um."""
-    passos = [('1', 'Inspecionar\na estrutura', 'RCSB PDB', SITE),
-              ('2', 'Informar\no ligante', 'SwissDock', C[0]),
-              ('3', 'Informar\no receptor', 'SwissDock', C[0]),
-              ('4', 'Definir\na caixa', 'SwissDock', C[0]),
-              ('5', 'Rodar\no docking', 'SwissDock', C[0]),
-              ('6', 'Ler energias\ne poses', 'arquivo de saída', PROT),
-              ('7', 'Medir o RMSD\ncontra o cristal', 'Mol*', CRISTAL),
-              ('8', 'Ver as\ninterações', 'PLIP', DESTAQUE)]
-    fig, ax = plt.subplots(figsize=(15, 3.4))
+    """Os nove passos da pratica com o DiffDock, com a ferramenta de cada um."""
+    passos = [('1', 'Inspecionar\nos cristais', 'RCSB PDB', SITE),
+              ('2', 'Abrir o\nDiffDock', 'NVIDIA', C[7]),
+              ('3', 'eIF4E: enviar\nproteína e cap', 'DiffDock', C[7]),
+              ('4', 'Ler poses\ne confiança', 'arquivo SDF', PROT),
+              ('5', 'Comparar com\no cristal 1IPC', 'Mol*', CRISTAL),
+              ('6', 'Mpro: rodar\no exemplo', 'DiffDock', C[0]),
+              ('7', 'Sobrepor ao\ncristal 8HBK', 'Mol*', CRISTAL),
+              ('8', 'Confiança\ncontra RMSD', 'tabela', CRISTAL),
+              ('9', 'Ver as\ninterações', 'PLIP', DESTAQUE)]
+    fig, ax = plt.subplots(figsize=(16, 2.6))
     frame_off(ax)
-    ax.set_xlim(-0.6, len(passos) - 0.4); ax.set_ylim(-1.5, 1.3)
+    ax.set_xlim(-0.6, len(passos) - 0.4); ax.set_ylim(-1.5, 0.6)
     for i, (num, texto, ferramenta, cor) in enumerate(passos):
         ax.add_patch(FancyBboxPatch((i - 0.42, -0.45), 0.84, 0.9, boxstyle='round,pad=0,rounding_size=0.08',
                                     fc='white', ec=cor, lw=1.6, zorder=2))
         ax.add_patch(Circle((i - 0.3, 0.33), 0.1, fc=cor, ec='none', zorder=3))
         ax.text(i - 0.3, 0.33, num, ha='center', va='center', fontsize=8, color='white', fontweight='bold', zorder=4)
-        ax.text(i, -0.05, texto, ha='center', va='center', fontsize=9, zorder=4)
+        ax.text(i, -0.07, texto, ha='center', va='center', fontsize=9, zorder=4)
         ax.text(i, -0.75, ferramenta, ha='center', va='center', fontsize=8, color=cor, zorder=4)
         if i < len(passos) - 1:
             ax.add_patch(FancyArrowPatch((i + 0.46, 0), (i + 0.54, 0), arrowstyle='-|>', mutation_scale=11,
                                          color=GREY, lw=1.2, zorder=1))
-    ax.annotate('', xy=(1.0, -1.15), xytext=(4.0, -1.15),
-                arrowprops=dict(arrowstyle='-', color=C[0], lw=1.2))
-    ax.text(2.5, -1.3, 'tudo no navegador, sem cadastro', ha='center', va='top', fontsize=8.5, color=C[0])
-    ax.annotate('', xy=(6.0, -1.15), xytext=(7.0, -1.15), arrowprops=dict(arrowstyle='-', color=CRISTAL, lw=1.2))
-    ax.text(6.5, -1.3, 'só existe em redocking', ha='center', va='top', fontsize=8.5, color=CRISTAL)
-    fig.suptitle('Os oito passos da prática e a ferramenta de cada um', y=0.98, fontsize=11)
+    ax.annotate('', xy=(2.0, -1.15), xytext=(4.0, -1.15), arrowprops=dict(arrowstyle='-', color=C[7], lw=1.2))
+    ax.text(3.0, -1.3, 'sistema A: eIF4E + cap', ha='center', va='top', fontsize=8.5, color=C[7])
+    ax.annotate('', xy=(5.0, -1.15), xytext=(6.0, -1.15), arrowprops=dict(arrowstyle='-', color=C[0], lw=1.2))
+    ax.text(5.5, -1.3, 'sistema B: Mpro + análogo', ha='center', va='top', fontsize=8.5, color=C[0])
+    fig.suptitle('Os nove passos da prática e a ferramenta de cada um', y=1.02, fontsize=11)
     save(fig, 'pratica_fluxo.png')
 
 
 # ---------------------------------------------------------------- energia de ligacao: dG e ddG
 RT = 0.593        # kcal/mol a 25 C
 ERRO_VINA = 2.85  # erro padrao da funcao do Vina no conjunto de treino (Trott e Olson, 2010)
-
-
-def _kd(g):
-    """Kd (mol/L) estimado a partir de um dG (kcal/mol), em texto curto."""
-    k = np.exp(g / RT)
-    for fator, un in ((1e-12, 'pM'), (1e-9, 'nM'), (1e-6, 'µM'), (1e-3, 'mM')):
-        if k < fator * 1000:
-            v = k / fator
-            return f'{float(f"{v:.2g}"):g} {un}'
-    return f'{k:.2f} M'
 
 
 def _poco(ax, x0, largura, profundidade, cor, n=200):
@@ -971,87 +784,30 @@ def _ligante(ax, x, y, cor=POSE):
 
 def fig_dg_poco():
     fig, ax = plt.subplots(figsize=(12, 5.2))
-    casos = ((0.3, 'Mpro + ensitrelvir', _load_rows('mpro')[0]['energia_kcal_mol'], C[0]),
-             (7.6, 'eIF4E + cap do mRNA', _load_rows('eif4e')[0]['energia_kcal_mol'], C[7]))
+    casos = ((0.3, 'ligação forte', 9.0, C[0]), (7.6, 'ligação fraca', 4.5, C[7]))
     ax.axhline(0, color=GREY, lw=1, ls=(0, (4, 3)), zorder=0)
     ax.text(14.4, 0.25, 'receptor e ligante separados: nível de referência', ha='right', fontsize=9.5, color=GREY)
-    for x0, nome, g, cor in casos:
-        c, fundo = _poco(ax, x0, 5.2, -g, cor)
+    for x0, nome, prof, cor in casos:
+        c, fundo = _poco(ax, x0, 5.2, prof, cor)
         _ligante(ax, c, fundo)
         ax.text(c, 1.1, nome, ha='center', fontsize=11)
         ax.plot([c, c + 2.9], [fundo, fundo], color=cor, lw=0.8, ls=(0, (2, 2)))
         ax.add_patch(FancyArrowPatch((c + 2.85, 0), (c + 2.85, fundo), arrowstyle='-|>', mutation_scale=13,
                                      lw=1.3, color=cor, zorder=4))
-        ax.text(c + 3.0, fundo / 2, f'ΔG = {g:.1f}\nkcal/mol'.replace('.', ',').replace('-', '−'), va='center',
+        ax.text(c + 3.0, fundo / 2, 'ΔG mais\nnegativo' if prof > 6 else 'ΔG menos\nnegativo', va='center',
                 fontsize=10, color=cor)
-        ax.text(c, fundo - 0.9, f'Kd estimado ≈ {_kd(g)}', ha='center', va='top', fontsize=9.5)
     ax.text(7.2, -12.2, 'Poço mais fundo: o ligante precisa de mais energia para sair, e passa mais tempo ligado.',
             ha='center', fontsize=10)
     ax.set_xlim(0, 14.5); ax.set_ylim(-12.8, 1.9)
-    ax.set_ylabel('Energia livre (kcal/mol)')
+    ax.set_ylabel('Energia livre')
     ax.tick_params(axis='x', bottom=False, top=False, labelbottom=False)
-    ax.set_title('ΔG de ligação: a profundidade do poço (pose 1 do Vina nas práticas A e B)')
+    ax.tick_params(axis='y', left=False, right=False, labelleft=False)
+    ax.set_title('ΔG de ligação: a profundidade do poço (esquema)')
     save(fig, 'fund_dg_poco.png')
 
 
-def fig_dg_kd():
-    fig, ax = plt.subplots(figsize=(13, 3.9))
-    zonas = ((0, -4.1, '#eef0f4', 'muito fraca\nKd acima de 1 mM'), (-4.1, -8.2, '#dde1e9', 'fraca\nKd entre 1 µM e 1 mM'),
-             (-8.2, -12.3, '#c5ccd9', 'forte\nKd entre 1 nM e 1 µM'), (-12.3, -16.4, '#aab4c6', 'muito forte\nKd abaixo de 1 nM'))
-    for a, b, cor, lab in zonas:
-        ax.add_patch(Rectangle((b, 0), a - b, 1, fc=cor, ec='white', lw=1.5, zorder=1))
-        ax.text((a + b) / 2, 0.5, lab, ha='center', va='center', fontsize=9.5)
-    for k, lab in ((1e-3, '1 mM'), (1e-6, '1 µM'), (1e-9, '1 nM'), (1e-12, '1 pM')):
-        g = RT * np.log(k)
-        ax.plot([g, g], [1, 1.12], color=INK, lw=1)
-        ax.text(g, 1.17, lab, ha='center', va='bottom', fontsize=9.5)
-    ax.text(-8.2, 1.55, 'Kd', ha='center', fontsize=10)
-    for nome, cor, lab in (('mpro', C[0], 'Prática A'), ('eif4e', C[7], 'Prática B')):
-        g = _load_rows(nome)[0]['energia_kcal_mol']
-        ax.plot(g, -0.18, marker='^', ms=11, color=cor, mec=INK, mew=0.5, clip_on=False, zorder=5)
-        ax.text(g, -0.38, f'{lab}\n{g:.1f}'.replace('.', ',').replace('-', '−'), ha='center', va='top', fontsize=9,
-                color=cor)
-    y = -1.05
-    ax.annotate('', xy=(-13.66, y), xytext=(-12.3, y), arrowprops=dict(arrowstyle='-|>', color=INK, lw=1.2))
-    ax.text(-14.0, y, '1,36 kcal/mol mais negativo = Kd 10 vezes menor', ha='left', va='center', fontsize=9.5)
-    ax.set_xlim(0.3, -16.9); ax.set_ylim(-1.35, 1.85)
-    ax.set_xticks(np.arange(0, -17, -2))
-    ax.set_xticklabels([f'{v:.0f}'.replace('-', '−') for v in np.arange(0, -17, -2)])
-    ax.set_xlabel('ΔG de ligação (kcal/mol), ΔG = RT ln Kd com RT = 0,593 kcal/mol a 25 °C')
-    ax.tick_params(axis='y', left=False, right=False, labelleft=False)
-    ax.tick_params(axis='x', top=False)
-    for lado in ('left', 'right', 'top'):
-        ax.spines[lado].set_visible(False)
-    ax.spines['bottom'].set_position(('data', -1.35))
-    ax.set_title('Régua de afinidade: ΔG e Kd')
-    save(fig, 'fund_dg_kd.png')
-
-
-def fig_dg_entalpia():
-    fig, ax = plt.subplots(figsize=(9.5, 5.0))
-    lig = (('ligante A\nmuitos contatos, perde liberdade', -14.0, 5.0), ('ligante B\npoucos contatos, libera água', -5.0, -4.0))
-    w = 0.24
-    for i, (nome, dh, ts) in enumerate(lig):
-        for j, (v, cor) in enumerate(((dh, C[0]), (ts, C[5]), (dh + ts, INK))):
-            x = i + (j - 1) * (w + 0.04)
-            ax.bar(x, v, width=w, color=cor, edgecolor=INK, lw=0.5)
-            ax.text(x, v + (0.4 if v > 0 else -0.4), f'{v:+.0f}'.replace('-', '−'), ha='center',
-                    va='bottom' if v > 0 else 'top', fontsize=9.5)
-    ax.axhline(0, color=INK, lw=0.8)
-    ax.set_xticks([0, 1]); ax.set_xticklabels([n for n, _, _ in lig])
-    ax.tick_params(axis='x', top=False, bottom=False)
-    ax.set_xlim(-0.55, 1.55); ax.set_ylim(-17, 8)
-    ax.set_ylabel('kcal/mol')
-    ax.legend(handles=[Rectangle((0, 0), 1, 1, fc=C[0], ec=INK, lw=0.5, label='ΔH: ligações e contatos formados'),
-                       Rectangle((0, 0), 1, 1, fc=C[5], ec=INK, lw=0.5, label='−TΔS: liberdade perdida, água liberada'),
-                       Rectangle((0, 0), 1, 1, fc=INK, ec=INK, lw=0.5, label='ΔG = ΔH − TΔS')],
-              loc='upper right', fontsize=9)
-    ax.set_title('Dois ligantes com o mesmo ΔG = −9 kcal/mol por caminhos diferentes (esquema)')
-    save(fig, 'fund_dg_entalpia.png')
-
-
 def fig_ddg():
-    fig, (a, b) = plt.subplots(1, 2, figsize=(13, 5.0), gridspec_kw={'width_ratios': [1.25, 1]})
+    fig, a = plt.subplots(figsize=(10, 5.0))
     a.axhline(0, color=GREY, lw=1, ls=(0, (4, 3)), zorder=0)
     a.text(10.9, 0.15, 'separados', ha='right', va='bottom', fontsize=9.5, color=GREY)
     c1, f1 = _poco(a, 0.3, 4.6, 9.0, CRISTAL)
@@ -1066,63 +822,425 @@ def fig_ddg():
     a.text(5.5, -10.6, 'ΔΔG = ΔG(mutante) − ΔG(selvagem)', ha='center', fontsize=10.5)
     a.text(5.5, -11.5, 'positivo: a mutação deixa o poço mais raso e enfraquece a ligação', ha='center', fontsize=9.5)
     a.set_xlim(0, 11); a.set_ylim(-12, 1.4)
-    a.set_ylabel('Energia livre (kcal/mol)')
+    a.set_ylabel('Energia livre')
     a.tick_params(axis='x', bottom=False, top=False, labelbottom=False)
+    a.tick_params(axis='y', left=False, right=False, labelleft=False)
     a.set_title('ΔΔG: o mesmo ligante em duas proteínas (esquema)')
-    dd = [0, 1.364, 2.728, 4.092]
-    vezes = [1, 10, 100, 1000]
-    b.bar(range(4), vezes, color=[GREY, C[5], ERRO, ERRO], edgecolor=INK, lw=0.5, width=0.6)
-    for i, v in enumerate(vezes):
-        b.text(i, v * 1.25, f'{v}×'.replace('1000', '1 000'), ha='center', va='bottom', fontsize=10)
-    b.axvline(1.62, color=INK, ls=(0, (4, 3)), lw=1)
-    b.text(1.68, 6000, 'hot spot: ΔΔG ≥ 2 kcal/mol\n(Bogan e Thorn, 1998)', fontsize=9, va='top')
-    b.set_yscale('log'); b.set_ylim(0.5, 1e4)
-    b.set_xticks(range(4)); b.set_xticklabels([f'{v:.2f}'.replace('.', ',') for v in dd])
-    b.tick_params(axis='x', top=False)
-    b.set_xlabel('ΔΔG (kcal/mol)'); b.set_ylabel('Quantas vezes o Kd aumenta')
-    b.set_title('Cada 1,36 kcal/mol multiplica o Kd por 10')
-    fig.tight_layout(w_pad=3)
     save(fig, 'fund_ddg.png')
 
 
-def fig_ddg_poses():
-    fig, axs = plt.subplots(1, 2, figsize=(13, 5.0))
-    lugar = {'mpro': ((1.6, -9.55), (5.0, -8.95)), 'eif4e': ((1.6, -6.95), (9.6, -5.62))}
-    for ax, nome, alvo, titulo in ((axs[0], 'mpro', 2, 'Prática A, Mpro: pose 1 contra pose 2'),
-                                   (axs[1], 'eif4e', 16, 'Prática B, eIF4E: pose 1 contra pose 16')):
-        rows = _load_rows(nome)
-        e = np.array([r['energia_kcal_mol'] for r in rows]); r = np.array([r['rmsd_A'] for r in rows])
-        x = np.arange(1, len(e) + 1)
-        ax.axhspan(e[0], e[0] + ERRO_VINA, color=BAND, lw=0, zorder=0)
-        cores = [CRISTAL if v < 2 else ERRO for v in r]
-        ax.scatter(x, e, c=cores, s=50, edgecolor=INK, lw=0.4, zorder=3)
-        g1, g2 = e[0], e[alvo - 1]
-        ax.annotate(f'pose {alvo}: {g2:.2f} kcal/mol, RMSD {r[alvo - 1]:.1f} Å'.replace('.', ',').replace('-', '−'),
-                    (alvo, g2), xytext=lugar[nome][1], textcoords='data', ha='left', va='center', fontsize=9,
-                    arrowprops=dict(arrowstyle='-', color=INK, lw=0.7))
-        ax.annotate(f'pose 1: {g1:.2f} kcal/mol, RMSD {r[0]:.1f} Å'.replace('.', ',').replace('-', '−'),
-                    (1, g1), xytext=lugar[nome][0], textcoords='data', ha='left', va='center', fontsize=9,
-                    arrowprops=dict(arrowstyle='-', color=INK, lw=0.7))
-        ax.text(len(e) + 0.5, e[0] + ERRO_VINA - 0.12,
-                f'faixa de {ERRO_VINA:.2f} kcal/mol acima da pose 1:\no erro típico do Vina não separa estas poses\n'
-                f'ΔΔG entre pose 1 e pose {alvo} = {g2 - g1:.2f} kcal/mol'.replace('.', ','),
-                ha='right', va='top', fontsize=9)
-        ax.set_xlim(0, len(e) + 1); ax.set_ylim(e.min() - 1.3, e[0] + ERRO_VINA + 0.3)
-        ax.set_xticks([1, 5, 10, 15, 20])
-        ax.set_xlabel('Pose, em ordem de energia'); ax.set_ylabel('Energia do Vina (kcal/mol)')
-        ax.set_title(titulo)
-    legend(fig, [('RMSD < 2 Å: pose correta', CRISTAL), ('RMSD > 3 Å: pose errada', ERRO)], y=-0.01)
-    fig.tight_layout(rect=(0, 0.05, 1, 1), w_pad=3)
-    save(fig, 'fund_ddg_poses.png')
+# ---------------------------------------------------------------- conceitos basicos: receptor, ligante, pose
+def _heavy_lig(path):
+    m = Chem.MolFromMolFile(str(path), sanitize=False, removeHs=False)
+    keep = [a.GetIdx() for a in m.GetAtoms() if a.GetAtomicNum() > 1]
+    return m.GetConformer().GetPositions()[keep] * A
+
+
+def _separado(ax, code, lig_path, lig_col, gap):
+    """Receptor inteiro e o ligante afastado do sitio, na direcao que sai do bolsao."""
+    t = md.load_pdb(str(fetch_pdb(code)))
+    prot = heavy(t, 'chainid 0 and protein')
+    X = t.xyz[0][prot]
+    L = _heavy_lig(lig_path)
+    pc, lc = X.mean(0), L.mean(0)
+    out = (lc - pc) / np.linalg.norm(lc - pc)
+    look = np.cross(out, [0, 0, 1.0])
+    if np.linalg.norm(look) < 0.1:
+        look = np.cross(out, [1.0, 0, 0])
+    B = view_basis(look, up_hint=out)
+    L2 = L + out * gap
+    P = project(np.r_[X, L2], B, pc)
+    draw_spheres(ax, P[:len(X)], [PROT] * len(X), [R_ATOM] * len(X), pad=0.6)
+    draw_spheres(ax, P[len(X):], [lig_col] * len(L2), [0.17] * len(L2), pad=0.6, z=3)
+    sitio = project(L, B, pc)
+    ax.add_patch(FancyArrowPatch((P[len(X):, 0].mean(), P[len(X):, 1].min() - 0.15),
+                                 (sitio[:, 0].mean(), sitio[:, 1].max() + 0.25), arrowstyle='-|>',
+                                 mutation_scale=16, color=INK, lw=1.4, zorder=6))
+    ax.set_xlim(P[:, 0].min() - 0.6, P[:, 0].max() + 0.6); ax.set_ylim(P[:, 1].min() - 0.4, P[:, 1].max() + 0.5)
+    return P, len(X), len(L)
+
+
+def fig_receptor_ligante():
+    fig, axs = plt.subplots(1, 2, figsize=(12, 7.2))
+    casos = [(axs[0], '1IPC', ROOT / 'dados' / 'eif4e' / 'ligante_cristal.sdf', CRISTAL, 'eIF4E', 'cap do mRNA (m7GTP)',
+              'Ligante natural: a eIF4E reconhece o cap do mRNA\n(PDB 1IPC, célula saudável)'),
+             (axs[1], '8HBK', ROOT / 'dados' / 'mpro' / 'ligante_cristal.sdf', POSE, 'Mpro do SARS-CoV-2', 'ensitrelvir',
+              'Fármaco: o ensitrelvir bloqueia a protease do vírus\n(PDB 8HBK, infecção)')]
+    for ax, code, lig, col, rec, nome, titulo in casos:
+        P, nx, nl = _separado(ax, code, lig, col, gap=2.4)
+        pl = P[nx:, :2]
+        label(ax, (pl[:, 0].max(), pl[:, 1].mean()), f'ligante: {nome}\n{nl} átomos pesados',
+              (pl[:, 0].max() + 1.6, pl[:, 1].mean()), col)
+        low = [k for k in range(nx) if P[k, 1] < P[:nx, 1].min() + 0.6]
+        label(ax, front(P, low), f'receptor: {rec}\n{nx} átomos pesados', (P[:, 0].max() + 0.4, P[:nx, 1].min() + 0.6), GREY)
+        ax.set_xlim(P[:, 0].min() - 0.4, max(P[:, 0].max(), pl[:, 0].max() + 1.6) + 1.4)
+        ax.set_title(titulo, fontsize=10.5)
+    fig.suptitle('Receptor: a macromolécula que tem o sítio. Ligante: a molécula que se encaixa nele.', y=1.0, fontsize=11.5)
+    fig.tight_layout(w_pad=0.5)
+    save(fig, 'fund_receptor_ligante.png')
+
+
+def _mol_2d(ax, Q, bonds, cor, alpha=1.0, z=3, s=46):
+    for i, j in bonds:
+        ax.plot(Q[[i, j], 0], Q[[i, j], 1], color=shade(INK, 1 - alpha), lw=1.6, zorder=z, solid_capstyle='round')
+    ax.scatter(Q[:, 0], Q[:, 1], s=s, color=shade(cor, 1 - alpha), edgecolor=shade(INK, 1 - alpha), lw=0.5, zorder=z + 1)
+
+
+def fig_pose():
+    """Pose = posicao + orientacao + conformacao, com o ensitrelvir do cristal."""
+    m = Chem.MolFromMolFile(str(ROOT / 'dados' / 'mpro' / 'ligante_cristal.sdf'))
+    m = Chem.RemoveHs(m)
+    from rdkit.Chem import rdMolTransforms as T
+    X0 = m.GetConformer().GetPositions()
+    u, s_, vt = np.linalg.svd(X0 - X0.mean(0)); B = vt.T
+    bonds = [(b.GetBeginAtomIdx(), b.GetEndAtomIdx()) for b in m.GetBonds()]
+    # ligacao rotavel cujo lado movel tem ~10 atomos
+    patt = Chem.MolFromSmarts('[!$([NH])&!D1&!$(*#*)]-&!@[!D1&!$(*#*)]')
+    melhor = None
+    for i, j in m.GetSubstructMatches(patt):
+        em = Chem.RWMol(m); em.RemoveBond(i, j)
+        frags = Chem.GetMolFrags(em.GetMol(), asMols=False)
+        lado = [f for f in frags if j in f][0]
+        if melhor is None or abs(len(lado) - 9) < abs(melhor[2] - 9):
+            melhor = (i, j, len(lado))
+    i, j, _ = melhor
+    a_ = [n.GetIdx() for n in m.GetAtomWithIdx(i).GetNeighbors() if n.GetIdx() != j][0]
+    d_ = [n.GetIdx() for n in m.GetAtomWithIdx(j).GetNeighbors() if n.GetIdx() != i][0]
+    mt = Chem.Mol(m); conf = mt.GetConformer()
+    T.SetDihedralDeg(conf, a_, i, j, d_, T.GetDihedralDeg(conf, a_, i, j, d_) + 140)
+    Xt = conf.GetPositions()
+    c = X0.mean(0)
+    th = np.radians(60); R = np.array([[np.cos(th), -np.sin(th), 0], [np.sin(th), np.cos(th), 0], [0, 0, 1]])
+    proj = lambda X: (X - c) @ B
+    ref = proj(X0)
+    casos = [('Pose de referência (cristal)', ref, CRISTAL),
+             ('Outra posição: translação\n(3 números: x, y, z)', ref + np.array([4.0, 2.0, 0]), POSE),
+             ('Outra orientação: rotação\n(3 números: três ângulos)', ref @ R.T, POSE),
+             ('Outra conformação: torção\n(1 número por ligação rotável)', proj(Xt), POSE)]
+    fig, axs = plt.subplots(1, 4, figsize=(17, 4.4))
+    for k, (ax, (titulo, Q, cor)) in enumerate(zip(axs, casos)):
+        if k:
+            _mol_2d(ax, ref, bonds, CRISTAL, alpha=0.3, z=1, s=30)
+        _mol_2d(ax, Q, bonds, cor)
+        if k == 3:
+            ax.plot(*Q[[i, j], :2].T, color=DESTAQUE, lw=4, zorder=5, solid_capstyle='round')
+        ax.set_aspect('equal'); frame_off(ax)
+        ax.set_xlim(-10, 13); ax.set_ylim(-7, 8.5)
+        ax.set_title(titulo, fontsize=10.5)
+    legend(fig, [('ensitrelvir no cristal (8HBK)', CRISTAL), ('nova pose', POSE), ('ligação girada', DESTAQUE)], y=-0.04)
+    fig.suptitle('Pose = posição + orientação + conformação do ligante dentro do receptor', y=1.02, fontsize=11.5)
+    save(fig, 'fund_pose.png')
+
+
+TORS = {'ensitrelvir': 6, 'm7GTP': 11}   # TORSDOF do Vina em resultados/*/vina_dock.pdbqt
+
+
+def fig_espaco_conformacional():
+    fig, (a, b) = plt.subplots(1, 2, figsize=(13.5, 4.6), gridspec_kw={'width_ratios': [1.15, 1]})
+    nomes = list(TORS)
+    y = np.arange(len(nomes))[::-1]
+    for yy, n in zip(y, nomes):
+        partes = [(3, C[0], 'translação'), (3, C[6], 'rotação'), (TORS[n], C[5], 'torções')]
+        x0 = 0
+        for v, cor, lab in partes:
+            a.barh(yy, v, left=x0, color=cor, edgecolor=INK, lw=0.5, height=0.5, label=lab if yy == y[0] else None)
+            a.text(x0 + v / 2, yy, str(v), ha='center', va='center', fontsize=10, color='white')
+            x0 += v
+        a.text(x0 + 0.3, yy, f'{x0} números por pose', va='center', fontsize=10)
+    a.set_yticks(y); a.set_yticklabels(nomes, fontsize=10.5); a.tick_params(axis='y', right=False)
+    a.set_xlim(0, 25); a.set_xlabel('Graus de liberdade do ligante')
+    a.legend(loc='upper right', ncol=3, fontsize=9, bbox_to_anchor=(1.0, 1.0))
+    a.set_ylim(-0.6, 1.9)
+    a.set_title('Cada pose é descrita por 6 + n números')
+    comb = [3 ** TORS[n] for n in nomes]
+    b.bar(range(len(nomes)), comb, color=[C[0], C[7]], edgecolor=INK, lw=0.5, width=0.5)
+    for k, v in enumerate(comb):
+        b.text(k, v * 1.4, f'$3^{{{TORS[nomes[k]]}}}$ = {v:,}'.replace(',', ' '), ha='center', va='bottom', fontsize=10)
+    b.set_yscale('log'); b.set_ylim(1, 1e7)
+    b.set_xticks(range(len(nomes))); b.set_xticklabels(nomes, fontsize=10.5); b.tick_params(axis='x', top=False)
+    b.set_ylabel('Conformações possíveis')
+    b.set_title('Testando só 3 ângulos por ligação rotável (contagem ilustrativa)')
+    fig.suptitle('Espaço conformacional: cada ligação rotável multiplica o que o programa precisa percorrer', y=1.02,
+                 fontsize=11.5)
+    fig.tight_layout(w_pad=3)
+    save(fig, 'fund_espaco_conformacional.png')
+
+
+def fig_busca_pontuacao():
+    x = np.linspace(0, 10, 600)
+    real = -6 * np.exp(-((x - 6.6) ** 2) / 0.35) - 3.2 * np.exp(-((x - 2.4) ** 2) / 0.6) + 0.15 * np.sin(3 * x)
+    func = -4.4 * np.exp(-((x - 6.6) ** 2) / 0.35) - 5.0 * np.exp(-((x - 2.4) ** 2) / 0.6) + 0.15 * np.sin(3 * x)
+    fig, (a, b) = plt.subplots(1, 2, figsize=(14, 4.8), sharey=True)
+    rng = np.random.default_rng(4)
+    vis = np.sort(np.r_[rng.uniform(0.3, 4.5, 9), rng.uniform(8.2, 9.8, 3)])
+    a.plot(x, func, color=INK, lw=1.6)
+    a.scatter(vis, np.interp(vis, x, func), s=60, color=POSE, edgecolor=INK, lw=0.5, zorder=4)
+    k = np.argmin(np.interp(vis, x, func))
+    a.annotate('melhor pose encontrada', (vis[k], np.interp(vis[k], x, func)), xytext=(3.4, -6.6), fontsize=9.5,
+               ha='left', arrowprops=dict(arrowstyle='-', color=INK, lw=0.8))
+    a.annotate('poço que a busca\nnunca visitou', (6.75, np.interp(6.75, x, func)), xytext=(7.6, -2.0), fontsize=9.5, ha='left',
+               arrowprops=dict(arrowstyle='-', color=ERRO, lw=0.8), color=ERRO)
+    a.set_title('Busca: o programa só conhece as poses que visitou')
+    b.plot(x, real, color=CRISTAL, lw=1.6, ls=(0, (5, 3)), label='energia real (o que a natureza faz)')
+    b.plot(x, func, color=INK, lw=1.6, label='função de pontuação (o que o programa calcula)')
+    b.annotate('a função prefere\neste poço', (2.4, func[np.argmin(np.abs(x - 2.4))]), xytext=(0.2, -7.6), fontsize=9.5,
+               arrowprops=dict(arrowstyle='-', color=INK, lw=0.8))
+    b.annotate('a pose certa\nestá aqui', (6.6, real.min()), xytext=(7.6, -6.4), fontsize=9.5, color=CRISTAL,
+               arrowprops=dict(arrowstyle='-', color=CRISTAL, lw=0.8))
+    b.legend(loc='upper right', fontsize=9)
+    b.set_title('Pontuação: a nota da função não é a energia real')
+    for ax in (a, b):
+        ax.set_xlim(0, 10); ax.set_ylim(-8.4, 2.4)
+        ax.set_xlabel('Poses possíveis (espaço conformacional)')
+        ax.tick_params(axis='x', bottom=False, top=False, labelbottom=False)
+    a.set_ylabel('Pontuação (mais baixo = melhor)')
+    fig.suptitle('Todo programa de docking tem duas partes: um algoritmo de busca e uma função de pontuação (esquema)',
+                 y=1.02, fontsize=11.5)
+    fig.tight_layout(w_pad=2)
+    save(fig, 'fund_busca_pontuacao.png')
+
+
+# ---------------------------------------------------------------- tipos de docking: graus de liberdade reais (Mpro)
+def _graus_mpro():
+    t = md.load_pdb(str(fetch_pdb('8HBK')))
+    a = t.atom_slice(t.topology.select('chainid 0 and protein'))
+    sitio = {41, 49, 142, 145, 163, 165, 166, 189}
+    chis = [getattr(md, f'compute_chi{i}')(a)[0] for i in range(1, 5)]
+    chi_sitio = sum(1 for idx in chis for q in idx if a.topology.atom(q[1]).residue.resSeq in sitio)
+    bb = len(md.compute_phi(a)[0]) + len(md.compute_psi(a)[0])
+    n_lig = 6 + TORS['ensitrelvir']
+    return [('Rígido-rígido', 6), ('Ligante flexível,\nreceptor rígido', n_lig),
+            ('+ cadeias laterais\ndo sítio flexíveis', n_lig + chi_sitio),
+            ('Flexível-flexível\n(proteína inteira)', n_lig + bb + sum(len(c) for c in chis))], chi_sitio, len(sitio)
+
+
+def fig_graus_tipos():
+    tipos, chi_sitio, n_res = _graus_mpro()
+    ganho = ['só a forma: o ligante e o bolsão já se encaixam',
+             'a molécula dobra e gira suas ligações',
+             f'{n_res} resíduos do bolsão ajustam seus {chi_sitio} ângulos χ',
+             'alças e domínios se movem: encaixe induzido real']
+    custo = ['segundos', 'minutos', 'dezenas de minutos a horas', 'horas a dias (dinâmica)']
+    fig, ax = plt.subplots(figsize=(13, 4.8))
+    y = np.arange(len(tipos))[::-1]
+    cores = [GREY, C[0], C[6], C[7]]
+    ax.barh(y, [v for _, v in tipos], color=cores, edgecolor=INK, lw=0.5, height=0.55)
+    for yy, (_, v), g, c_ in zip(y, tipos, ganho, custo):
+        ax.text(v * 1.15, yy + 0.12, f'{v:,}'.replace(',', ' ') + ' graus de liberdade', va='center', fontsize=10)
+        ax.text(v * 1.15, yy - 0.2, f'{g}; custo: {c_}', va='center', fontsize=9, color=GREY)
+    ax.set_xscale('log'); ax.set_xlim(3, 4e5)
+    ax.set_yticks(y); ax.set_yticklabels([n for n, _ in tipos], fontsize=10); ax.tick_params(axis='y', right=False)
+    ax.set_xlabel('Números que o programa ajusta por pose (escala logarítmica)')
+    ax.set_title('Mpro + ensitrelvir: quanto mais flexível o modelo, mais fiel e mais caro')
+    save(fig, 'fund_graus_tipos.png')
+
+
+# ---------------------------------------------------------------- cada programa tem a sua escala
+# ---------------------------------------------------------------- pratica: contexto da eIF4E e o resultado do AC
+def fig_cap_mrna():
+    """Esquema: mRNA com cap 5', eIF4E no cap, eIF4F recrutando o ribossomo; 4E-BP como freio."""
+    fig, (a, b) = plt.subplots(1, 2, figsize=(15, 4.0), gridspec_kw={'width_ratios': [1, 1]})
+    for ax in (a, b):
+        frame_off(ax); ax.set_xlim(0, 10); ax.set_ylim(0.3, 5.0); ax.set_aspect('equal')
+    # mRNA
+    a.plot([1.2, 9.6], [1.6, 1.6], color=INK, lw=3, solid_capstyle='round', zorder=2)
+    a.add_patch(Rectangle((4.2, 1.35), 3.2, 0.5, fc=shade(C[0], 0.4), ec=INK, lw=0.8, zorder=3))
+    a.text(5.8, 1.6, 'região codificadora', ha='center', va='center', fontsize=9, zorder=4)
+    a.text(9.6, 1.1, 'AAAA…', ha='right', fontsize=9.5)
+    a.add_patch(Circle((1.0, 1.6), 0.28, fc=CRISTAL, ec=INK, lw=0.8, zorder=4))
+    a.text(1.0, 0.95, "cap 5'\n(m7G-ppp)", ha='center', va='top', fontsize=9)
+    # eIF4F
+    a.add_patch(Circle((1.0, 2.35), 0.45, fc=DESTAQUE, ec=INK, lw=0.8, zorder=4))
+    a.text(1.0, 2.35, 'eIF4E', ha='center', va='center', fontsize=8.5, color='white', zorder=5)
+    a.add_patch(FancyBboxPatch((1.5, 2.05), 1.9, 0.6, boxstyle='round,pad=0.05', fc=shade(C[1], 0.3), ec=INK, lw=0.8, zorder=3))
+    a.text(2.45, 2.35, 'eIF4G', ha='center', va='center', fontsize=9, zorder=4)
+    a.add_patch(Circle((2.2, 3.0), 0.35, fc=shade(C[6], 0.2), ec=INK, lw=0.8, zorder=4))
+    a.text(2.2, 3.0, 'eIF4A', ha='center', va='center', fontsize=8, zorder=5)
+    a.add_patch(FancyBboxPatch((3.2, 2.7), 1.6, 1.3, boxstyle='round,pad=0.1', fc=shade(GREY, 0.4), ec=INK, lw=0.8, zorder=3))
+    a.text(4.0, 3.35, 'ribossomo\n(40S)', ha='center', va='center', fontsize=9, zorder=4)
+    a.add_patch(FancyArrowPatch((4.9, 2.2), (6.5, 2.2), arrowstyle='-|>', mutation_scale=14, color=INK, lw=1.2))
+    a.text(5.7, 2.45, 'varre até o AUG', ha='center', fontsize=9)
+    a.text(0.4, 4.7, 'Célula saudável: a eIF4E segura o cap e o complexo eIF4F traz o ribossomo', fontsize=10)
+    # freio e cancer
+    b.add_patch(Circle((2.0, 3.2), 0.5, fc=DESTAQUE, ec=INK, lw=0.8))
+    b.text(2.0, 3.2, 'eIF4E', ha='center', va='center', fontsize=8.5, color='white')
+    b.add_patch(FancyBboxPatch((2.55, 2.95), 1.2, 0.5, boxstyle='round,pad=0.05', fc=shade(ERRO, 0.4), ec=INK, lw=0.8))
+    b.text(3.15, 3.2, '4E-BP', ha='center', va='center', fontsize=9)
+    b.text(2.6, 2.2, 'freio: a 4E-BP ocupa o lugar\nda eIF4G; a mTOR solta o freio', ha='center', fontsize=9)
+    for k, dx in enumerate((6.0, 6.8, 7.6, 8.4, 6.4, 7.2, 8.0)):
+        yy = 3.4 if k < 4 else 2.8
+        b.add_patch(Circle((dx, yy), 0.32, fc=DESTAQUE, ec=INK, lw=0.6))
+    b.text(7.2, 2.0, 'câncer: eIF4E em excesso traduz\nmais mRNAs de proliferação', ha='center', fontsize=9)
+    b.text(0.3, 4.7, 'Regulação (freio) e doença (excesso)', fontsize=10)
+    fig.suptitle("O cap 5' do mRNA e a eIF4E: o primeiro passo da tradução (esquema)", y=1.0, fontsize=11.5)
+    fig.tight_layout(w_pad=2)
+    save(fig, 'pratica_cap_mrna.png')
+
+
+def fig_eif4e_sitio():
+    fig, ax = plt.subplots(figsize=(10, 6.6))
+    P, hp = _scene_with_ligand(ax, '1IPC', 'MGP', 'A', '56 102', DESTAQUE, cut=0.9,
+                               title='O cap no sítio da eIF4E (PDB 1IPC): a guanina metilada entre Trp56 e Trp102')
+    label(ax, hp, 'Trp56 e Trp102:\no anel do cap fica\nentre os dois (cátion-π)', (P[:, 0].max() + 1.3, hp[1] + 0.4),
+          DESTAQUE)
+    ax.set_xlim(P[:, 0].min() - 0.3, P[:, 0].max() + 2.4)
+    fit(fig, ax, largura=11, extra=0.5)
+    legend(fig, [('cap (m7GTP)', CRISTAL), ('Trp56 e Trp102', DESTAQUE), ('eIF4E: átomos a menos de 9 Å do cap', PROT)],
+           y=-0.08, ax=ax)
+    save(fig, 'pratica_eif4e_sitio.png')
+
+
+def _dd_rows(nome):
+    d = json.loads((ROOT / 'resultados' / nome / 'comparacao_cristal.json').read_text())
+    return d['poses'] if isinstance(d, dict) else d
+
+
+def _sdf_xyz(path, k):
+    m = Chem.SDMolSupplier(str(path), sanitize=False, removeHs=False)[k - 1]
+    return skeleton(m).GetConformer().GetPositions() * A
+
+
+def _cena_sitio(ax, t, L, Q, near, X, B, c0, destaque, titulo):
+    P = project(np.r_[X[near], L, Q], B, c0)
+    cols = [DESTAQUE if i in destaque else PROT for i in near] + [CRISTAL] * len(L) + [POSE] * len(Q)
+    rad = [R_ATOM] * len(near) + [0.16] * (len(L) + len(Q))
+    draw_spheres(ax, P[:len(near)], cols[:len(near)], rad[:len(near)], pad=0.5)
+    draw_spheres(ax, P[len(near):], cols[len(near):], rad[len(near):], pad=0.5, z=3)
+    ax.set_xlim(P[:, 0].min() - 0.3, P[:, 0].max() + 0.3); ax.set_ylim(P[:, 1].min() - 0.3, P[:, 1].max() + 0.3)
+    ax.set_title(titulo.replace('.', ',').replace('-', '−'), fontsize=10)
+
+
+def fig_diffdock_eif4e():
+    """eIF4E: cristal, pose 1 e pose 20 do DiffDock."""
+    t = md.load_pdb(str(fetch_pdb('1IPC')))
+    L = _heavy_lig(ROOT / 'dados' / 'eif4e' / 'ligante_cristal.sdf')
+    near, X = pocket_scene(t, L, cut=0.9)
+    trp = set(t.topology.select('resSeq 56 102 and not element H'))
+    rows = _dd_rows('eif4e_diffdock')
+    B = view_basis(X[heavy(t, 'protein')].mean(0) - L.mean(0)); c0 = L.mean(0)
+    sdf = ROOT / 'resultados' / 'eif4e_diffdock' / 'poses.sdf'
+    fig, axs = plt.subplots(1, 3, figsize=(16, 5.8))
+    for ax, k in ((axs[0], 0), (axs[1], 1), (axs[2], 20)):
+        Q = _sdf_xyz(sdf, k) if k else np.zeros((0, 3))
+        tit = ('Cristal (1IPC): a guanina\nentre Trp56 e Trp102' if not k else
+               f"Pose {k}: confiança {rows[k - 1]['confianca']:.2f}\nRMSD {rows[k - 1]['rmsd_A']:.1f} Å")
+        _cena_sitio(ax, t, L, Q, near, X, B, c0, trp, tit)
+    legend(fig, [('cap no cristal', CRISTAL), ('pose do DiffDock', POSE), ('Trp56 e Trp102', DESTAQUE),
+                 ('eIF4E: átomos a menos de 9 Å do cap', PROT)])
+    fig.suptitle('eIF4E + cap: a pose de maior e a de menor confiança do DiffDock contra o cristal', y=1.0, fontsize=11)
+    save(fig, 'pratica_diffdock_eif4e.png')
+
+
+def fig_diffdock_mpro():
+    """Mpro: ensitrelvir no cristal 8HBK e poses do analogo (receptor OpenFold sobreposto a 8HBK)."""
+    t = md.load_pdb(str(fetch_pdb('8HBK')))
+    L = _heavy_lig(ROOT / 'dados' / 'mpro' / 'ligante_cristal.sdf')
+    near, X = pocket_scene(t, L, cut=0.9)
+    rows = _dd_rows('mpro_diffdock')
+    B = view_basis(X[heavy(t, 'protein')].mean(0) - L.mean(0)); c0 = L.mean(0)
+    sdf = ROOT / 'resultados' / 'mpro_diffdock' / 'poses_no_8hbk.sdf'
+    errada = max(rows[:10], key=lambda r: r['rmsd_nucleo_A'])['pose']
+    fig, axs = plt.subplots(1, 3, figsize=(16, 5.8))
+    for ax, k in ((axs[0], 0), (axs[1], 1), (axs[2], errada)):
+        Q = _sdf_xyz(sdf, k) if k else np.zeros((0, 3))
+        tit = ('Cristal (8HBK): o ensitrelvir\nno sítio ativo' if not k else
+               f"Análogo, pose {k}: confiança {rows[k - 1]['confianca']:.2f}\nRMSD do núcleo {rows[k - 1]['rmsd_nucleo_A']:.1f} Å")
+        _cena_sitio(ax, t, L, Q, near, X, B, c0, set(), tit)
+    legend(fig, [('ensitrelvir no cristal', CRISTAL), ('análogo, pose do DiffDock', POSE),
+                 ('Mpro: átomos a menos de 9 Å do ligante', PROT)])
+    fig.suptitle('Mpro: o análogo docado na proteína predita (OpenFold), sobreposta ao cristal 8HBK', y=1.0, fontsize=11)
+    save(fig, 'pratica_diffdock_mpro.png')
+
+
+def fig_analogo():
+    """Ensitrelvir e o analogo do exemplo da NVIDIA, com o nucleo comum destacado."""
+    from rdkit.Chem import rdFMCS, AllChem
+    ens = Chem.MolFromSmiles((ROOT / 'dados' / 'mpro' / 'ligante.smi').read_text().split()[0])
+    ana = Chem.RemoveHs(Chem.MolFromMolFile(str(ROOT / 'dados' / 'mpro_analogo' / 'ligante_analogo_3d.sdf')))
+    ana = Chem.MolFromSmiles(Chem.MolToSmiles(ana))
+    mcs = Chem.MolFromSmarts(rdFMCS.FindMCS([ens, ana], ringMatchesRingOnly=True, completeRingsOnly=True, timeout=20).smartsString)
+    AllChem.Compute2DCoords(mcs)
+    fig, axs = plt.subplots(1, 2, figsize=(14, 5.4))
+    for ax, m, nome in ((axs[0], ens, 'Ensitrelvir (no cristal 8HBK)'), (axs[1], ana, 'Análogo do exemplo da NVIDIA')):
+        AllChem.GenerateDepictionMatching2DStructure(m, mcs)
+        hit = m.GetSubstructMatch(mcs)
+        diff = [a.GetIdx() for a in m.GetAtoms() if a.GetIdx() not in hit]
+        img = Draw.MolToImage(m, size=(640, 480), highlightAtoms=diff,
+                              highlightColor=tuple(v for v in plt.matplotlib.colors.to_rgb(shade(ERRO, 0.4))))
+        ax.imshow(img); frame_off(ax)
+        ax.set_title(f'{nome}: {m.GetNumHeavyAtoms()} átomos pesados', fontsize=10.5)
+    fig.text(0.5, 0.02, f'Núcleo comum: {mcs.GetNumAtoms()} átomos. Em vermelho, o que muda: o metiltriazol vira um grupo '
+             'hidrazona com bromo, e o cloro do indazol vira flúor.', ha='center', fontsize=10)
+    fig.suptitle('O ligante do exemplo é um análogo: o RMSD contra o cristal só vale no núcleo comum', y=1.0, fontsize=11.5)
+    save(fig, 'pratica_analogo.png')
+
+
+def fig_diffdock_confianca():
+    """Confianca do DiffDock contra o RMSD, nos dois sistemas."""
+    fig, axs = plt.subplots(1, 2, figsize=(14, 4.9), sharey=True)
+    for ax, nome, chave, titulo, cor in ((axs[0], 'eif4e_diffdock', 'rmsd_A', 'eIF4E + cap (receptor do cristal 1IPC)', C[7]),
+                                         (axs[1], 'mpro_diffdock', 'rmsd_nucleo_A',
+                                          'Mpro + análogo (receptor predito, OpenFold)', C[0])):
+        rows = _dd_rows(nome)
+        c = np.array([r['confianca'] for r in rows]); r = np.array([r[chave] for r in rows])
+        ax.axvspan(0, 2, color=BAND, lw=0, zorder=0)
+        ax.axhline(-1.5, color=GREY, ls=(0, (4, 3)), lw=1)
+        ax.scatter(r, c, s=46, color=cor, edgecolor=INK, lw=0.4, zorder=3)
+        ax.scatter(r[0], c[0], s=150, facecolor='none', edgecolor=INK, lw=1.4, zorder=4)
+        ax.annotate('pose 1', (r[0], c[0]), xytext=(12, 4), textcoords='offset points', fontsize=9)
+        ax.text(13.8, -1.45, 'acima de −1,5: confiança moderada', ha='right', va='bottom', fontsize=8.5, color=GREY)
+        ax.set_xlim(0, 14); ax.set_xlabel('RMSD do cap (Å)' if chave == 'rmsd_A' else 'RMSD do núcleo comum (Å)')
+        ax.set_title(f'{titulo}: {(r < 2).sum()} de {len(r)} abaixo de 2 Å', fontsize=10)
+    axs[0].set_ylabel('Confiança do DiffDock (maior = melhor)')
+    axs[0].text(1.0, 0.03, 'RMSD < 2 Å', transform=axs[0].get_xaxis_transform(), ha='center', fontsize=8.5)
+    fig.suptitle('DiffDock contra o cristal: a confiança acompanha o acerto?', y=1.02, fontsize=11.5)
+    fig.tight_layout(w_pad=2)
+    save(fig, 'pratica_diffdock_confianca.png')
+
+
+def fig_interacoes_diffdock():
+    """Contatos do cristal e da pose 1 do DiffDock, nos dois sistemas."""
+    tipo_cor = {'ligação de hidrogênio': C[0], 'ponte salina': ERRO, 'hidrofóbica': C[1], 'empilhamento π': C[4],
+                'cátion-π': C[6], 'halogênio': C[3]}
+    fig, axs = plt.subplots(1, 2, figsize=(15, 3.6), gridspec_kw={'width_ratios': [1, 1.3]})
+    for ax, nome, kc, titulo in ((axs[0], 'eif4e_diffdock', 'cristal', 'eIF4E + cap'),
+                                 (axs[1], 'mpro_diffdock', 'cristal (ensitrelvir, 8HBK)', 'Mpro: ensitrelvir e análogo')):
+        it = json.loads((ROOT / 'resultados' / nome / 'interacoes.json').read_text())
+        keys = [kc, 'pose 1']
+        res = sorted({r['residuo'] for k in keys for r in it[k]}, key=lambda s: int(''.join(ch for ch in s if ch.isdigit())))
+        for j, k in enumerate(keys):
+            for i, rn in enumerate(res):
+                tipos = sorted({r['tipo'] for r in it[k] if r['residuo'] == rn})
+                ax.add_patch(Rectangle((i - 0.45, j - 0.45), 0.9, 0.9, fc='white', ec=BAND, lw=0.8))
+                for ti, tp in enumerate(tipos):
+                    w = 0.9 / len(tipos)
+                    ax.add_patch(Rectangle((i - 0.45 + ti * w, j - 0.45), w, 0.9, fc=tipo_cor.get(tp, GREY), ec='white', lw=0.5))
+        ax.set_xlim(-0.6, len(res) - 0.4); ax.set_ylim(1.6, -0.6)
+        ax.set_xticks(range(len(res))); ax.set_xticklabels(res, rotation=60, ha='right', fontsize=9)
+        ax.set_yticks([0, 1]); ax.set_yticklabels(['cristal', 'DiffDock, pose 1'], fontsize=9.5)
+        ax.tick_params(top=False, right=False, length=0)
+        for sp in ax.spines.values():
+            sp.set_visible(False)
+        ax.set_title(titulo, fontsize=10.5)
+    hs = [Rectangle((0, 0), 1, 1, fc=c_) for c_ in tipo_cor.values()]
+    fig.legend(hs, list(tipo_cor), loc='lower center', ncol=6, frameon=False, fontsize=9, bbox_to_anchor=(0.5, -0.2))
+    fig.suptitle('Contatos (PLIP) do cristal e da pose 1 do DiffDock, uma coluna por resíduo', y=1.04, fontsize=11)
+    save(fig, 'pratica_interacoes_diffdock.png')
 
 
 def main():
     fig_binding_models(); fig_vocabulary(); fig_forces(); fig_flexibility(); fig_search(); fig_levels_cost()
-    fig_dg_poco(); fig_dg_kd(); fig_dg_entalpia(); fig_ddg(); fig_ddg_poses()
-    fig_smiles(); fig_smiles_reading(); fig_resistance(); fig_p53_mdm2(); fig_barnase_barstar(); fig_md_docking()
-    fig_cavidades(); fig_tipos_sitio(); fig_pocket_ranking(); fig_fluxo()
-    fig_poses_scatter(); fig_mpro_result(); fig_eif4e_result(); fig_rmsd(); fig_metrics(); fig_fingerprint()
-
+    fig_dg_poco(); fig_ddg()
+    fig_smiles(); fig_resistance(); fig_p53_mdm2(); fig_pd1_pdl1(); fig_md_docking()
+    fig_cavidades(); fig_tipos_sitio(); fig_fluxo()
+    fig_rmsd(); fig_metrics()
+    fig_receptor_ligante(); fig_pose(); fig_espaco_conformacional(); fig_busca_pontuacao(); fig_graus_tipos()
+    fig_cap_mrna(); fig_eif4e_sitio()
+    fig_diffdock_eif4e(); fig_diffdock_mpro(); fig_analogo(); fig_diffdock_confianca(); fig_interacoes_diffdock()
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) > 1:
+        for nome in sys.argv[1:]:
+            globals()[nome]()
+    else:
+        main()

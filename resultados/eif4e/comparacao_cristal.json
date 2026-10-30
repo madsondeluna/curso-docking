@@ -1,0 +1,182 @@
+[
+ {
+  "pose": 1,
+  "energia_kcal_mol": -6.529,
+  "rmsd_A": 6.51,
+  "rmsd_base_A": 7.33,
+  "contatos_do_cristal": 3,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 2,
+  "energia_kcal_mol": -6.325,
+  "rmsd_A": 6.82,
+  "rmsd_base_A": 7.44,
+  "contatos_do_cristal": 2,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 3,
+  "energia_kcal_mol": -6.163,
+  "rmsd_A": 6.95,
+  "rmsd_base_A": 7.28,
+  "contatos_do_cristal": 2,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 4,
+  "energia_kcal_mol": -6.138,
+  "rmsd_A": 4.93,
+  "rmsd_base_A": 2.93,
+  "contatos_do_cristal": 4,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": true
+ },
+ {
+  "pose": 5,
+  "energia_kcal_mol": -6.108,
+  "rmsd_A": 6.75,
+  "rmsd_base_A": 7.09,
+  "contatos_do_cristal": 3,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 6,
+  "energia_kcal_mol": -5.819,
+  "rmsd_A": 6.12,
+  "rmsd_base_A": 7.67,
+  "contatos_do_cristal": 3,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 7,
+  "energia_kcal_mol": -5.61,
+  "rmsd_A": 6.8,
+  "rmsd_base_A": 7.37,
+  "contatos_do_cristal": 1,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 8,
+  "energia_kcal_mol": -5.609,
+  "rmsd_A": 6.45,
+  "rmsd_base_A": 7.21,
+  "contatos_do_cristal": 1,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 9,
+  "energia_kcal_mol": -5.26,
+  "rmsd_A": 6.38,
+  "rmsd_base_A": 2.21,
+  "contatos_do_cristal": 3,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": true
+ },
+ {
+  "pose": 10,
+  "energia_kcal_mol": -5.25,
+  "rmsd_A": 6.65,
+  "rmsd_base_A": 6.77,
+  "contatos_do_cristal": 2,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 11,
+  "energia_kcal_mol": -5.191,
+  "rmsd_A": 8.63,
+  "rmsd_base_A": 10.85,
+  "contatos_do_cristal": 0,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 12,
+  "energia_kcal_mol": -5.133,
+  "rmsd_A": 9.77,
+  "rmsd_base_A": 13.62,
+  "contatos_do_cristal": 3,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 13,
+  "energia_kcal_mol": -5.128,
+  "rmsd_A": 6.69,
+  "rmsd_base_A": 7.54,
+  "contatos_do_cristal": 2,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 14,
+  "energia_kcal_mol": -5.08,
+  "rmsd_A": 6.71,
+  "rmsd_base_A": 7.41,
+  "contatos_do_cristal": 2,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 15,
+  "energia_kcal_mol": -5.025,
+  "rmsd_A": 6.19,
+  "rmsd_base_A": 6.86,
+  "contatos_do_cristal": 1,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 16,
+  "energia_kcal_mol": -4.98,
+  "rmsd_A": 4.35,
+  "rmsd_base_A": 3.16,
+  "contatos_do_cristal": 4,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": true
+ },
+ {
+  "pose": 17,
+  "energia_kcal_mol": -4.92,
+  "rmsd_A": 6.34,
+  "rmsd_base_A": 6.77,
+  "contatos_do_cristal": 0,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 18,
+  "energia_kcal_mol": -4.886,
+  "rmsd_A": 7.27,
+  "rmsd_base_A": 9.53,
+  "contatos_do_cristal": 1,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 19,
+  "energia_kcal_mol": -4.819,
+  "rmsd_A": 5.39,
+  "rmsd_base_A": 5.61,
+  "contatos_do_cristal": 0,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ },
+ {
+  "pose": 20,
+  "energia_kcal_mol": -4.807,
+  "rmsd_A": 6.0,
+  "rmsd_base_A": 5.37,
+  "contatos_do_cristal": 0,
+  "contatos_no_cristal": 6,
+  "sanduiche_trp56_trp102": false
+ }
+]
